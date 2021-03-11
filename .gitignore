@@ -1,0 +1,10 @@
+.idea/
+
+bin/
+_output/
+vendor/
+jsonnetpkg/
+
+coverage.txt
+
+cue.mod/

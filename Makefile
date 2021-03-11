@@ -1,0 +1,42 @@
+CUEM = go run ./cmd/cuem -v -p ./__examples__
+
+cuem.eval: cuem.fmt
+	$(CUEM) eval ./__examples__/kube
+
+cuem.fmt:
+	$(CUEM) fmt -l -w ./...
+
+cuem.get:
+	$(CUEM) get ./...
+
+build: download
+	goreleaser build --snapshot --rm-dist
+
+fmt:
+	goimports -l -w .
+	gofmt -l -w .
+
+test:
+	go test -v -race ./pkg/...
+
+cover:
+	go test -v -coverprofile=coverage.txt -covermode=atomic ./pkg/...
+
+install: build
+	mv ./bin/cuemod_$(shell go env GOOS)_$(shell go env GOARCH)/cuem ${GOPATH}/bin/cuem
+
+dep:
+	go get -u ./...
+
+download:
+	go mod download -x
+
+setup:
+	go install golang.org/x/tools/cmd/goimports@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/go-courier/husky/cmd/husky@latest
+	#go install github.com/goreleaser/goreleaser/cmd@latest
+
+debug:
+	go test -v ./pkg/cuemod
+	#tree ./pkg/cuemod/testdata/b/cue.mod
