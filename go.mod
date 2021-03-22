@@ -6,7 +6,6 @@ require (
 	cuelang.org/go v0.3.0-beta.6
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.10.0
 	github.com/go-courier/logr v0.0.2
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -14,7 +13,7 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/googleapis/gnostic v0.5.4 // indirect
-	github.com/grafana/tanka v0.14.0
+	github.com/grafana/tanka v0.15.0
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/mitchellh/copystructure v1.1.1 // indirect
