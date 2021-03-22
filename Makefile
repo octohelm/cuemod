@@ -1,20 +1,29 @@
 CUEM = go run ./cmd/cuem -v -p ./__examples__
 
+cuem.k.show:
+	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
+
+cuem.k.apply:
+	$(CUEM) k apply ./__examples__/clusters/demo/nginx.cue
+
+cuem.k.prune:
+	$(CUEM) k prune ./__examples__/clusters/demo/nginx.cue
+
+cuem.k.delete:
+	$(CUEM) k delete ./__examples__/clusters/demo/nginx.cue
+
+cuem.k.export:
+	rm -rf ./_output
+	$(CUEM) k show -o ./_output ./__examples__/clusters/demo/*.cue
+
 cuem.eval: cuem.fmt
-	$(CUEM) eval ./__examples__/kube
+	$(CUEM) eval ./__examples__/components/nginx
 
 cuem.fmt:
 	$(CUEM) fmt -l -w ./...
 
 cuem.get:
 	$(CUEM) get ./...
-
-cuem.k.show:
-	$(CUEM) k show ./__examples__/clusters/demo/kube.cue
-
-cuem.k.export:
-	rm -rf ./_output
-	$(CUEM) k show -o ./_output ./__examples__/clusters/demo/*.cue
 
 build: download
 	goreleaser build --snapshot --rm-dist

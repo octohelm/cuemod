@@ -40,7 +40,7 @@ func (l *LoadResult) Apply(opts ApplyOpts) error {
 
 	// prompt for confirmation
 	if opts.AutoApprove {
-	} else if err := confirmPrompt("Applying to", l.Env.Spec.Namespace, kube.Info()); err != nil {
+	} else if err := confirmPrompt("Applying to", l.Release.Metadata.Namespace, kube.Info()); err != nil {
 		return err
 	}
 

@@ -24,8 +24,8 @@ func (l *LoadResult) Show(opts ShowOpts) error {
 
 			filename := fmt.Sprintf(
 				"%s/%s/%s.%s.%s.yaml",
-				l.Env.Metadata.Name,
-				l.Env.Spec.Namespace,
+				l.Release.Metadata.Name,
+				l.Release.Metadata.Namespace,
 				r.Metadata().Name(),
 				r.Kind(),
 				strings.Replace(r.APIVersion(), "/", ".", -1),

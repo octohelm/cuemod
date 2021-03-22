@@ -41,7 +41,7 @@ func (l *LoadResult) Prune(opts PruneOpts) error {
 
 	// prompt for confirm
 	if opts.AutoApprove {
-	} else if err := confirmPrompt("Pruning from", l.Env.Spec.Namespace, kube.Info()); err != nil {
+	} else if err := confirmPrompt("Pruning from", l.Release.Metadata.Namespace, kube.Info()); err != nil {
 		return err
 	}
 

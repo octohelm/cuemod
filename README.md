@@ -194,12 +194,30 @@ replace: {
 
 like [Tanka](https://tanka.dev), but for cuelang.
 
-return [`tanka.dev/Environment` object](https://tanka.dev/inline-environments#converting-to-an-inline-environment)
+* need kubectl instead
+* make sure the cue file return an object as struct below:
+
+```cue
+apiVersion: "octohelm.tech/v1alpha"
+kind:       "Release"
+
+// release name
+metadata: name:      "\(#name)"
+
+// release namespace
+metadata: namespace: "\(#namespace)"
+
+// must an unique `NAME` of `kubectl config get-contexts`
+metadata: labels: context: "\(#context)"
+
+// nested object may contains kube resources
+spec: {} 
+```
 
 ```
 cd ./__examples__
-cuem k show ./kube
-cuem k apply ./kube
-cuem k delete ./kube
-cuem k prune ./kube
+cuem k show ./clusters/demo/nginx.cue
+cuem k apply ./clusters/demo/nginx.cue
+cuem k prune ./clusters/demo/nginx.cue
+cuem k delete ./clusters/demo/nginx.cue
 ```

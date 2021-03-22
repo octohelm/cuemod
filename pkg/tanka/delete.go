@@ -20,9 +20,11 @@ func (l *LoadResult) Delete(opts DeleteOpts) error {
 	}
 	defer kube.Close()
 
+	resources := ignoreNamespace(l.Resources)
+
 	// show diff
 	// static differ will never fail and always return something if input is not nil
-	diff, err := kubernetes.StaticDiffer(false)(l.Resources)
+	diff, err := kubernetes.StaticDiffer(false)(resources)
 
 	if err != nil {
 		fmt.Println("Error diffing:", err)
@@ -36,11 +38,11 @@ func (l *LoadResult) Delete(opts DeleteOpts) error {
 
 	// prompt for confirmation
 	if opts.AutoApprove {
-	} else if err := confirmPrompt("Deleting from", l.Env.Spec.Namespace, kube.Info()); err != nil {
+	} else if err := confirmPrompt("Deleting from", l.Release.Metadata.Namespace, kube.Info()); err != nil {
 		return err
 	}
 
-	return kube.Delete(l.Resources, kubernetes.DeleteOpts{
+	return kube.Delete(resources, kubernetes.DeleteOpts{
 		Force:    opts.Force,
 		Validate: opts.Validate,
 	})

@@ -108,16 +108,16 @@ func (e *pkgExtractor) load(ctx context.Context, fset *token.FileSet) error {
 											if tv, ok := e.TypesInfo.Types[keyValueExpr.Value]; ok {
 												v, _ := strconv.Unquote(tv.Value.String())
 
-												gv := &schema.GroupVersion{}
+												if e.GroupVersion == nil {
+													e.GroupVersion = &schema.GroupVersion{}
+												}
 
 												switch key.Name {
 												case "Group":
-													gv.Group = v
+													e.GroupVersion.Group = v
 												case "Version":
-													gv.Version = v
+													e.GroupVersion.Version = v
 												}
-
-												e.GroupVersion = gv
 											}
 										}
 									}
