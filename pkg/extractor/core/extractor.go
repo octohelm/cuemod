@@ -59,8 +59,12 @@ func (Extractors) do(ctx context.Context, extractor Extractor, src string, gen s
 	sumFile := filepath.Join(gen, ".sum")
 	sum, _ := os.ReadFile(sumFile)
 
-	// todo prefix should be an extractor version ?
-	dirSum, err := dirhash.HashDir(src, "", dirhash.DefaultHash)
+	origin, err := os.Readlink(src)
+	if err == nil {
+		src = origin
+	}
+
+	dirSum, err := dirhash.HashDir(src, src, dirhash.DefaultHash)
 	if err != nil {
 		return err
 	}
