@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"cuelang.org/go/cue"
-
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
 )

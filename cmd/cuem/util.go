@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"reflect"
 	"strings"
 
+	cueerrors "cuelang.org/go/cue/errors"
 	"github.com/octohelm/cuemod/pkg/cuemod"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -35,8 +36,7 @@ func runE(fn runFn) func(cmd *cobra.Command, args []string) {
 		}
 
 		if err := fn(ctx, args); err != nil {
-			fmt.Println("execute failed: ")
-			fmt.Println(err)
+			cueerrors.Print(os.Stdout, err, nil)
 		}
 	}
 }

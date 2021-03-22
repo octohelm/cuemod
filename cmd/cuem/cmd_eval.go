@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"cuelang.org/go/cue/errors"
 	"github.com/octohelm/cuemod/pkg/cuemod"
 
 	"github.com/spf13/cobra"
@@ -42,9 +41,7 @@ func cmdEval() *cobra.Command {
 
 		results, err := runtime.Eval(ctx, path, cuemod.YAML)
 		if err != nil {
-			errors.Print(os.Stdout, err, nil)
-			os.Exit(1)
-			return nil
+			return err
 		}
 
 		if o := opts.Output; o != "" {

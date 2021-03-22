@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/go-courier/logr"
 )
@@ -11,5 +12,6 @@ func main() {
 
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		log.Error(err)
+		os.Exit(1)
 	}
 }

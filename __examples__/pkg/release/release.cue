@@ -7,9 +7,23 @@ import (
 	networking_v1 "k8s.io/api/networking/v1"
 )
 
-#Release: {
+#ReleaseBase: {
 	apiVersion: "octohelm.tech/v1alpha"
 	kind:       "Release"
+
+	#name:      string
+	#namespace: string
+	#context:   *"default" | string
+
+	metadata: name:      "\(#name)"
+	metadata: namespace: "\(#namespace)"
+	metadata: labels: context: "\(#context)"
+
+	spec: _
+}
+
+#Release: {
+	#ReleaseBase
 
 	#name:      string
 	#namespace: string
