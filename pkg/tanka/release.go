@@ -29,6 +29,9 @@ func ProcessResources(r *releasev1alpha.Release, exprs process.Matchers) (manife
 		out = append(out, m)
 	}
 
+	// set default namespace
+	out = process.Namespace(out, r.Metadata.Namespace)
+
 	// tanka.dev/** labels
 	out = InjectLabels(out, r)
 
