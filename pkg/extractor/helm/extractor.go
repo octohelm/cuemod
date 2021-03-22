@@ -92,6 +92,12 @@ func (e *Extractor) extractChart(helmChart *chart.Chart) (files []*cueast.File, 
 	}
 	appendFile("values", values)
 
+	valuesDefaults, err := core.Extract(helmChart.Values)
+	if err != nil {
+		return nil, err
+	}
+	appendFile("defaults", valuesDefaults)
+
 	metadataFile, err := core.Extract(helmChart.Metadata)
 	if err != nil {
 		return nil, err

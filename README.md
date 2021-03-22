@@ -102,8 +102,7 @@ replace: {
 
 ## Post-Processing `@translate(<name>)`
 
-Now cuelang not provide api to added custom functions. 
-So we use the attribute to mark which value should be translated
+Now cuelang not provide api to added custom functions. So we use the attribute to mark which value should be translated
 to other formats.
 
 ### `toml`
@@ -124,6 +123,7 @@ import (
 
 "local-path-provisioner": {
 	chart
+	values: {}
 	release: name:      "local-path-provisioner"
 	release: namespace: "local-path-provisioner"
 } @translate("helm")

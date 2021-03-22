@@ -81,8 +81,10 @@ func ExtractWithType(v interface{}) (cueast.Expr, error) {
 				return nil, err
 			}
 			fields[i] = &cueast.Field{
-				Label: cueast.NewString(k),
-				Value: valueExpr,
+				Label:    cueast.NewString(k),
+				Token:    cuetoken.COLON,
+				Optional: cuetoken.Blank.Pos(),
+				Value:    valueExpr,
 			}
 		}
 
@@ -98,10 +100,7 @@ func ExtractWithType(v interface{}) (cueast.Expr, error) {
 		}
 		return cueast.NewList(&cueast.Ellipsis{Type: typ}), nil
 	case nil:
-		return defaultValueAndType(
-			cueast.NewNull(),
-			cueast.NewIdent("_"),
-		), nil
+		return cueast.NewIdent("_"), nil
 	default:
 		d, _ := encodingjson.Marshal(v)
 		expr, err := json.Extract("", d)

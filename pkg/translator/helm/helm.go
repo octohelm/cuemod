@@ -8,7 +8,6 @@ import (
 
 	"cuelang.org/go/cue"
 	"github.com/octohelm/cuemod/pkg/cuemod/translator"
-
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
@@ -32,8 +31,11 @@ type ReleaseOption struct {
 }
 
 type ChartWithRelease struct {
-	chart.Chart
-	Release ReleaseOption `json:"release"`
+	Metadata *chart.Metadata        `json:"metadata"`
+	Files    []*chart.File          `json:"files"`
+	Values   map[string]interface{} `json:"values"`
+	Defaults map[string]interface{} `json:"defaults"`
+	Release  ReleaseOption          `json:"release"`
 }
 
 func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
@@ -43,21 +45,26 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 		return nil, err
 	}
 
-	c.Chart.Templates = make([]*chart.File, 0)
+	helmChart := &chart.Chart{}
+	helmChart.Metadata = c.Metadata
+	helmChart.Files = c.Files
+	helmChart.Values = c.Defaults
 
-	for i := range c.Chart.Files {
-		f := c.Chart.Files[i]
+	helmChart.Templates = make([]*chart.File, 0)
+
+	for i := range helmChart.Files {
+		f := helmChart.Files[i]
 		if strings.HasPrefix(f.Name, "templates/") {
-			c.Chart.Templates = append(c.Chart.Templates, &chart.File{Name: f.Name, Data: f.Data})
+			helmChart.Templates = append(helmChart.Templates, &chart.File{Name: f.Name, Data: f.Data})
 		}
 	}
 
-	values, err := chartutil.CoalesceValues(&c.Chart, c.Chart.Values)
+	values, err := chartutil.CoalesceValues(helmChart, c.Values)
 	if err != nil {
 		return nil, err
 	}
 
-	valuesToRender, err := chartutil.ToRenderValues(&c.Chart, values, chartutil.ReleaseOptions{
+	valuesToRender, err := chartutil.ToRenderValues(helmChart, values, chartutil.ReleaseOptions{
 		Name:      c.Release.Name,
 		Namespace: c.Release.Namespace,
 	}, nil)
@@ -67,12 +74,12 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 
 	e := &engine.Engine{}
 
-	renderedContentMap, err := e.Render(&c.Chart, valuesToRender)
+	renderedContentMap, err := e.Render(helmChart, valuesToRender)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, c := range c.Chart.CRDObjects() {
+	for _, c := range helmChart.CRDObjects() {
 		renderedContentMap[c.Filename] = string(c.File.Data)
 	}
 
