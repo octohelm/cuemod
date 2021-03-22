@@ -63,7 +63,6 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	valuesToRender, err := chartutil.ToRenderValues(helmChart, values, chartutil.ReleaseOptions{
 		Name:      c.Release.Name,
 		Namespace: c.Release.Namespace,
@@ -90,8 +89,8 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 			continue
 		}
 
-		if strings.TrimSpace(renderedContent) != "" {
-			decoder := yaml.NewYAMLOrJSONDecoder(strings.NewReader(renderedContent), 4096)
+		if trimmedContent := strings.TrimSpace(renderedContent); trimmedContent != "" {
+			decoder := yaml.NewYAMLOrJSONDecoder(strings.NewReader(trimmedContent), 4096)
 
 			var manifest map[string]interface{}
 
@@ -99,7 +98,7 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 				if err == io.EOF {
 					break
 				}
-				return nil, errors.Wrapf(err, "helm template failed: %s\n%s", fileName, renderedContent)
+				return nil, errors.Wrapf(err, "helm template failed: %s\n%s", fileName, trimmedContent)
 			}
 
 			if len(manifest) == 0 {
