@@ -26,7 +26,4 @@ files: [{
 }, {
 	name: "templates/tests/test-connection.yaml"
 	data: _files["templates/tests/test-connection.yaml"]
-}, {
-	name: ".helmignore"
-	data: _files[".helmignore"]
 }]

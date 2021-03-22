@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	cueast "cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/literal"
 	cuetoken "cuelang.org/go/cue/token"
 	"cuelang.org/go/encoding/json"
 )
@@ -118,10 +119,18 @@ func defaultValueAndType(defaultValue cueast.Expr, t cueast.Expr) cueast.Expr {
 	return cueast.NewBinExpr(cuetoken.OR, &cueast.UnaryExpr{Op: cuetoken.MUL, X: defaultValue}, t)
 }
 
-func NewBytes(data []byte) *cueast.BasicLit {
+func NewTripleBytes(data []byte) *cueast.BasicLit {
 	return &cueast.BasicLit{
 		Kind:     cuetoken.STRING,
 		ValuePos: cuetoken.NoPos,
 		Value:    "'''\n" + strings.Replace(string(data), "\\", "\\\\", -1) + "'''",
+	}
+}
+
+func NewBytes(data []byte) *cueast.BasicLit {
+	return &cueast.BasicLit{
+		Kind:     cuetoken.STRING,
+		ValuePos: cuetoken.NoPos,
+		Value:    literal.Bytes.Quote(string(data)),
 	}
 }

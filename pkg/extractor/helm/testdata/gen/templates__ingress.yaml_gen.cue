@@ -3,47 +3,5 @@
 package chart
 
 _files: {
-	"templates/ingress.yaml": '''
-		{{- if .Values.ingress.enabled -}}
-		{{- $fullName := include "test.fullname" . -}}
-		{{- $svcPort := .Values.service.port -}}
-		{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-		apiVersion: networking.k8s.io/v1beta1
-		{{- else -}}
-		apiVersion: extensions/v1beta1
-		{{- end }}
-		kind: Ingress
-		metadata:
-		  name: {{ $fullName }}
-		  labels:
-		    {{- include "test.labels" . | nindent 4 }}
-		  {{- with .Values.ingress.annotations }}
-		  annotations:
-		    {{- toYaml . | nindent 4 }}
-		  {{- end }}
-		spec:
-		  {{- if .Values.ingress.tls }}
-		  tls:
-		    {{- range .Values.ingress.tls }}
-		    - hosts:
-		        {{- range .hosts }}
-		        - {{ . | quote }}
-		        {{- end }}
-		      secretName: {{ .secretName }}
-		    {{- end }}
-		  {{- end }}
-		  rules:
-		    {{- range .Values.ingress.hosts }}
-		    - host: {{ .host | quote }}
-		      http:
-		        paths:
-		          {{- range .paths }}
-		          - path: {{ .path }}
-		            backend:
-		              serviceName: {{ $fullName }}
-		              servicePort: {{ $svcPort }}
-		          {{- end }}
-		    {{- end }}
-		  {{- end }}
-		'''
+	"templates/ingress.yaml": '{{- if .Values.ingress.enabled -}}\n{{- $fullName := include "test.fullname" . -}}\n{{- $svcPort := .Values.service.port -}}\n{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}\napiVersion: networking.k8s.io/v1beta1\n{{- else -}}\napiVersion: extensions/v1beta1\n{{- end }}\nkind: Ingress\nmetadata:\n  name: {{ $fullName }}\n  labels:\n    {{- include "test.labels" . | nindent 4 }}\n  {{- with .Values.ingress.annotations }}\n  annotations:\n    {{- toYaml . | nindent 4 }}\n  {{- end }}\nspec:\n  {{- if .Values.ingress.tls }}\n  tls:\n    {{- range .Values.ingress.tls }}\n    - hosts:\n        {{- range .hosts }}\n        - {{ . | quote }}\n        {{- end }}\n      secretName: {{ .secretName }}\n    {{- end }}\n  {{- end }}\n  rules:\n    {{- range .Values.ingress.hosts }}\n    - host: {{ .host | quote }}\n      http:\n        paths:\n          {{- range .paths }}\n          - path: {{ .path }}\n            backend:\n              serviceName: {{ $fullName }}\n              servicePort: {{ $svcPort }}\n          {{- end }}\n    {{- end }}\n  {{- end }}\n'
 }

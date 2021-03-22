@@ -3,34 +3,5 @@
 package chart
 
 _files: {
-	"templates/hpa.yaml": '''
-		{{- if .Values.autoscaling.enabled }}
-		apiVersion: autoscaling/v2beta1
-		kind: HorizontalPodAutoscaler
-		metadata:
-		  name: {{ include "test.fullname" . }}
-		  labels:
-		    {{- include "test.labels" . | nindent 4 }}
-		spec:
-		  scaleTargetRef:
-		    apiVersion: apps/v1
-		    kind: Deployment
-		    name: {{ include "test.fullname" . }}
-		  minReplicas: {{ .Values.autoscaling.minReplicas }}
-		  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
-		  metrics:
-		    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
-		    - type: Resource
-		      resource:
-		        name: cpu
-		        targetAverageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
-		    {{- end }}
-		    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
-		    - type: Resource
-		      resource:
-		        name: memory
-		        targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
-		    {{- end }}
-		{{- end }}
-		'''
+	"templates/hpa.yaml": '{{- if .Values.autoscaling.enabled }}\napiVersion: autoscaling/v2beta1\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: {{ include "test.fullname" . }}\n  labels:\n    {{- include "test.labels" . | nindent 4 }}\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: {{ include "test.fullname" . }}\n  minReplicas: {{ .Values.autoscaling.minReplicas }}\n  maxReplicas: {{ .Values.autoscaling.maxReplicas }}\n  metrics:\n    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}\n    - type: Resource\n      resource:\n        name: cpu\n        targetAverageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}\n    {{- end }}\n    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}\n    - type: Resource\n      resource:\n        name: memory\n        targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}\n    {{- end }}\n{{- end }}\n'
 }

@@ -106,6 +106,9 @@ func (e *Extractor) extractChart(helmChart *chart.Chart) (files []*cueast.File, 
 
 	helmFiles := make([]cueast.Expr, 0)
 	for _, f := range append(helmChart.Templates, helmChart.Files...) {
+		if f.Name[0] == '.' {
+			continue
+		}
 
 		helmFiles = append(helmFiles, cueast.NewStruct(
 			&cueast.Field{Label: cueast.NewString("name"), Value: cueast.NewString(f.Name)},

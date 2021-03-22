@@ -3,18 +3,5 @@
 package chart
 
 _files: {
-	"templates/serviceaccount.yaml": '''
-		{{- if .Values.serviceAccount.create -}}
-		apiVersion: v1
-		kind: ServiceAccount
-		metadata:
-		  name: {{ include "test.serviceAccountName" . }}
-		  labels:
-		    {{- include "test.labels" . | nindent 4 }}
-		  {{- with .Values.serviceAccount.annotations }}
-		  annotations:
-		    {{- toYaml . | nindent 4 }}
-		  {{- end }}
-		{{- end }}
-		'''
+	"templates/serviceaccount.yaml": '{{- if .Values.serviceAccount.create -}}\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: {{ include "test.serviceAccountName" . }}\n  labels:\n    {{- include "test.labels" . | nindent 4 }}\n  {{- with .Values.serviceAccount.annotations }}\n  annotations:\n    {{- toYaml . | nindent 4 }}\n  {{- end }}\n{{- end }}\n'
 }

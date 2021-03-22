@@ -134,7 +134,7 @@ func (l *loader) Extract() (files []*cueast.File, err error) {
 		field.Label = cueast.NewString(f.Name)
 		field.Value = cueast.NewStruct(
 			&cueast.Field{Label: cueast.NewString("imports"), Value: cueast.NewStruct(imports...)},
-			&cueast.Field{Label: cueast.NewString("data"), Value: newBytes(f.Data)},
+			&cueast.Field{Label: cueast.NewString("data"), Value: core.NewTripleBytes(f.Data)},
 		)
 
 		cueast.SetRelPos(field, cuetoken.NewSection)
@@ -168,14 +168,6 @@ func (l *loader) Extract() (files []*cueast.File, err error) {
 	}
 
 	return
-}
-
-func newBytes(data []byte) *cueast.BasicLit {
-	return &cueast.BasicLit{
-		Kind:     cuetoken.STRING,
-		ValuePos: cuetoken.NoPos,
-		Value:    "'''\n" + strings.Replace(string(data), "\\", "\\\\", -1) + "'''",
-	}
 }
 
 func (l *loader) fileID(filename string) string {

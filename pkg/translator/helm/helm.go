@@ -99,7 +99,7 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 				if err == io.EOF {
 					break
 				}
-				return nil, errors.Wrap(err, "helm template failed")
+				return nil, errors.Wrapf(err, "helm template failed: %s\n%s", fileName, renderedContent)
 			}
 
 			if len(manifest) == 0 {

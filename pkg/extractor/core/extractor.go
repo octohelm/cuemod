@@ -64,7 +64,7 @@ func (Extractors) do(ctx context.Context, extractor Extractor, src string, gen s
 		src = origin
 	}
 
-	dirSum, err := dirhash.HashDir(src, src, dirhash.DefaultHash)
+	dirSum, err := dirhash.HashDir(src, "", dirhash.DefaultHash)
 	if err != nil {
 		return err
 	}
