@@ -2,6 +2,7 @@ package translator
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"cuelang.org/go/cue"
 )
@@ -57,5 +58,5 @@ func ValueFromCueValue(v cue.Value) (interface{}, error) {
 		}
 		return list, nil
 	}
-	return ValueFromCueValue(v)
+	return nil, fmt.Errorf("unsupported value %s: %#v", v.Kind(), v)
 }
