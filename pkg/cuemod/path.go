@@ -43,7 +43,8 @@ func (i *Path) SymlinkOrGen(ctx context.Context, root string) error {
 	pkgRoot := "cue.mod/pkg"
 
 	if root == i.Dir {
-		pkgRoot = "cue.mod/usr"
+		// skip root dir
+		return nil
 	}
 
 	gen := ""
