@@ -6,6 +6,8 @@
 
 **ALPHA VERSION**
 
+**May deprecated when [cue modules official supported](https://github.com/cuelang/cue/issues/851)**
+
 dependency management for [CUE](https://cuelang.org/) without committing `cue.mod`
 
 ## Requirements
