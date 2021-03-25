@@ -1,4 +1,3 @@
 run:
   skip-dirs:
-    - pkg/cue/internal
-    - pkg/modfetch/internal
+    - pkg/modutil/internal

@@ -21,7 +21,7 @@ func TestCache(t *testing.T) {
 		NewWithT(t).Expect(err).To(BeNil())
 
 		NewWithT(t).Expect(mod.Module).To(Equal("github.com/grafana/jsonnet-libs/grafana"))
-		NewWithT(t).Expect(mod.RepoRoot).To(Equal("github.com/grafana/jsonnet-libs"))
+		NewWithT(t).Expect(mod.Repo).To(Equal("github.com/grafana/jsonnet-libs"))
 	})
 
 	t.Run("should get sub go mod", func(t *testing.T) {
@@ -29,6 +29,6 @@ func TestCache(t *testing.T) {
 		NewWithT(t).Expect(err).To(BeNil())
 
 		NewWithT(t).Expect(mod.Module).To(Equal("github.com/prometheus/node_exporter/docs/node-mixin"))
-		NewWithT(t).Expect(mod.RepoRoot).To(Equal("github.com/prometheus/node_exporter/docs/node-mixin"))
+		NewWithT(t).Expect(mod.Repo).To(Equal("github.com/prometheus/node_exporter/docs/node-mixin"))
 	})
 }

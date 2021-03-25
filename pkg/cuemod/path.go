@@ -63,7 +63,7 @@ func (i *Path) SymlinkOrGen(ctx context.Context, root string) error {
 
 	importPath := i.ImportPath()
 
-	repoRootDir := filepath.Join(root, pkgRoot, i.RepoRoot)
+	repoRootDir := filepath.Join(root, pkgRoot, i.Repo)
 	importPathDir := filepath.Join(root, pkgRoot, importPath)
 
 	if err := i.symlink(ctx, i.RepoRootDir(), repoRootDir); err != nil {
@@ -129,9 +129,9 @@ func (i *Path) ResolvedImportPath() string {
 }
 
 func (i *Path) RepoRootDir() string {
-	if i.RepoRoot == i.Module {
+	if i.Repo == i.Module {
 		return i.Dir
 	}
-	rel, _ := subPath(i.RepoRoot, i.Module)
+	rel, _ := subPath(i.Repo, i.Module)
 	return i.Dir[0 : len(i.Dir)-len("/"+rel)]
 }

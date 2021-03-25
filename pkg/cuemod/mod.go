@@ -16,10 +16,10 @@ type Mod struct {
 
 	modfile.ModVersion
 
-	// RepoRoot where module in vcs root
-	RepoRoot string
-	// RepoSum repo absolute dir sum
-	RepoSum string
+	// Repo where module in vcs root
+	Repo string
+	// Sum repo absolute dir sum
+	Sum string
 	// Lang if set, will trigger extractor like `go`
 	Lang string
 	// Dir module absolute dir

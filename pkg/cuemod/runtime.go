@@ -31,6 +31,7 @@ func RuntimeFor(root string) *Runtime {
 	}
 
 	vm.mod = mod
+
 	vm.cache.Collect(ctx, mod)
 
 	return vm
@@ -112,14 +113,14 @@ func (r *Runtime) Eval(ctx context.Context, filename string, encoding Encoding) 
 	if err != nil {
 		return nil, err
 	}
-	return results, r.SyncModFileWhenSuccess(nil)
+	return results, r.SyncFilesWhenSuccess(nil)
 }
 
 func (r *Runtime) Get(ctx context.Context, i string) error {
 	if i[0] == '.' {
-		return r.SyncModFileWhenSuccess(r.autoImport(ctx, i))
+		return r.SyncFilesWhenSuccess(r.autoImport(ctx, i))
 	}
-	return r.SyncModFileWhenSuccess(r.download(ctx, i))
+	return r.SyncFilesWhenSuccess(r.download(ctx, i))
 }
 
 func (r *Runtime) Resolve(ctx context.Context, importPath string, importedAt string) (string, error) {
@@ -145,7 +146,7 @@ func (r *Runtime) CueModRoot() string {
 func (r *Runtime) setRequireFromImportPath(ctx context.Context, p *Path, indirect bool) error {
 	modVersion := p.ModVersion
 
-	if mv := r.cache.RepoVersion(p.RepoRoot); mv.Version != "" {
+	if mv := r.cache.RepoVersion(p.Repo); mv.Version != "" {
 		modVersion = mv
 	}
 
@@ -153,15 +154,18 @@ func (r *Runtime) setRequireFromImportPath(ctx context.Context, p *Path, indirec
 		return err
 	}
 
-	r.mod.SetRequire(p.RepoRoot, modVersion, indirect)
+	r.mod.SetRequire(p.Repo, modVersion, indirect)
 	return nil
 }
 
-func (r *Runtime) SyncModFileWhenSuccess(err error) error {
+func (r *Runtime) SyncFilesWhenSuccess(err error) error {
 	if err != nil {
 		return err
 	}
 	if err := writeFile(filepath.Join(r.mod.Dir, modfile.ModFilename), r.mod.ModFile.Bytes()); err != nil {
+		return nil
+	}
+	if err := writeFile(filepath.Join(r.mod.Dir, ModSumFilename), r.cache.ModuleSum()); err != nil {
 		return nil
 	}
 	return writeFile(filepath.Join(r.CueModRoot(), ".gitignore"), []byte(`gen/

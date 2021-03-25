@@ -43,6 +43,7 @@ install: build
 
 dep:
 	go get -u ./...
+	go mod tidy
 
 download:
 	go mod download -x

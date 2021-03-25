@@ -1,6 +1,7 @@
 package cuemod
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -8,15 +9,16 @@ import (
 
 	"github.com/go-courier/logr"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
-	"github.com/octohelm/cuemod/pkg/modfetch"
+	"github.com/octohelm/cuemod/pkg/modutil"
 	"github.com/pkg/errors"
+	"golang.org/x/mod/module"
 	"golang.org/x/tools/go/vcs"
 )
 
 func newCache() *cache {
 	return &cache{
 		replace:      map[modfile.PathMayWithVersion]replaceTargetWithMod{},
-		mods:         map[string]*Mod{},
+		mods:         map[module.Version]*Mod{},
 		repoVersions: map[string]modfile.ModVersion{},
 	}
 }
@@ -24,9 +26,33 @@ func newCache() *cache {
 type cache struct {
 	replace map[modfile.PathMayWithVersion]replaceTargetWithMod
 	// { [<module>@<version>]: *Mod }
-	mods map[string]*Mod
+	mods map[module.Version]*Mod
 	// { [<repo>]:latest-version }
 	repoVersions map[string]modfile.ModVersion
+}
+
+const ModSumFilename = "cue.mod/module.sum"
+
+func (c *cache) ModuleSum() []byte {
+	buf := bytes.NewBuffer(nil)
+
+	moduleVersions := make([]module.Version, 0)
+
+	for moduleVersion := range c.mods {
+		moduleVersions = append(moduleVersions, moduleVersion)
+	}
+
+	module.Sort(moduleVersions)
+
+	for _, n := range moduleVersions {
+		m := c.mods[n]
+
+		if m.Version != "" {
+			_, _ = fmt.Fprintf(buf, "%s %s %s\n", m.Module, m.Version, m.Sum)
+		}
+	}
+
+	return buf.Bytes()
 }
 
 type replaceTargetWithMod struct {
@@ -45,20 +71,20 @@ func (c *cache) LookupReplace(importPath string) (matched modfile.PathMayWithVer
 }
 
 func (c *cache) Collect(ctx context.Context, mod *Mod) {
-	id := mod.String()
+	moduleVersion := module.Version{Path: mod.Module, Version: mod.Version}
 
-	if mod.RepoRoot == "" {
-		mod.RepoRoot = mod.Module
+	if mod.Repo == "" {
+		mod.Repo = mod.Module
 	}
 
-	c.mods[id] = mod
+	c.mods[moduleVersion] = mod
 
 	// cached moduel@tag too
 	if mod.VcsVersion != "" {
-		c.mods[mod.Module+"@"+mod.VcsVersion] = mod
+		c.mods[module.Version{Path: mod.Module, Version: mod.VcsVersion}] = mod
 	}
 
-	c.SetRepoVersion(mod.RepoRoot, mod.ModVersion)
+	c.SetRepoVersion(mod.Repo, mod.ModVersion)
 
 	for repo, r := range mod.Require {
 		c.SetRepoVersion(repo, r.ModVersion)
@@ -73,7 +99,6 @@ func (c *cache) Collect(ctx context.Context, mod *Mod) {
 [WARNING] '%s' already replaced to 
 	'%s' (using by module '%s'), but another module want to replace as 
 	'%s' (requested by module %s)
-
 `,
 					k,
 					currentReplaceTarget.PathMayWithVersion, currentReplaceTarget.mod,
@@ -161,12 +186,10 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 
 	var root *Mod
 
-	if mod, ok := c.mods[repo+"@"+version]; ok && mod.Resolved() {
+	if mod, ok := c.mods[module.Version{Path: repo, Version: version}]; ok && mod.Resolved() {
 		root = mod
 	} else {
-		logr.FromContext(ctx).Debug(fmt.Sprintf("get %s@%s", repo, version))
-
-		m, err := c.download(ctx, repo, version)
+		m, err := c.downloadIfNeed(ctx, repo, version)
 		if err != nil {
 			return nil, err
 		}
@@ -188,21 +211,21 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 		// sub dir may as mod.
 		importPaths := paths(importPath)
 
-		for _, module := range importPaths {
-			if module == root.Module {
+		for _, m := range importPaths {
+			if m == root.Module {
 				break
 			}
 
-			if mod, ok := c.mods[module+"@"+version]; ok && mod.Resolved() {
+			if mod, ok := c.mods[module.Version{Path: m, Version: version}]; ok && mod.Resolved() {
 				return mod, nil
 			} else {
-				rel, _ := subPath(root.Module, module)
+				rel, _ := subPath(root.Module, m)
 
 				sub := Mod{}
-				sub.RepoRoot = root.RepoRoot
-				sub.RepoSum = root.RepoSum
+				sub.Repo = root.Repo
+				sub.Sum = root.Sum
 
-				sub.Module = module
+				sub.Module = m
 				sub.ModVersion = root.ModVersion
 
 				sub.Dir = filepath.Join(root.Dir, rel)
@@ -248,8 +271,9 @@ func (c *cache) repoRoot(ctx context.Context, importPath string) (string, error)
 	return r.Root, nil
 }
 
-func (cache) download(ctx context.Context, pkg string, version string) (*Mod, error) {
-	info := modfetch.Fetch(ctx, pkg, version, OptsFromContext(ctx).Verbose)
+func (cache) downloadIfNeed(ctx context.Context, pkg string, version string) (*Mod, error) {
+
+	info := modutil.Get(ctx, pkg, version, OptsFromContext(ctx).Verbose)
 	if info == nil {
 		return nil, fmt.Errorf("can't found %s@%s", pkg, version)
 	}
@@ -258,12 +282,22 @@ func (cache) download(ctx context.Context, pkg string, version string) (*Mod, er
 		return nil, errors.New(info.Error)
 	}
 
+	if info.Dir == "" {
+		logr.FromContext(ctx).Debug(fmt.Sprintf("get %s@%s", pkg, version))
+
+		modutil.Download(ctx, info)
+
+		if info.Error != "" {
+			return nil, errors.New(info.Error)
+		}
+	}
+
 	mod := &Mod{}
 
 	mod.Module = info.Path
-	mod.RepoRoot = info.Path
 	mod.Version = info.Version
-	mod.RepoSum = info.Sum
+	mod.Repo = info.Path
+	mod.Sum = info.Sum
 	mod.Dir = info.Dir
 
 	return mod, nil
