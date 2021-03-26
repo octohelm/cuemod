@@ -8,7 +8,7 @@ import (
 )
 
 func UnmarshalCueValue(cueValue cue.Value, v interface{}) error {
-	data, err := cueValue.MarshalJSON()
+	data, err := shared.Marshal(cueValue)
 	if err != nil {
 		return err
 	}

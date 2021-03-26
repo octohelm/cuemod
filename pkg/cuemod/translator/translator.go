@@ -14,7 +14,7 @@ type Translator interface {
 }
 type Translators map[string]Translator
 
-func (m Translators) Marshal(v cue.Value) (b []byte, err error) {
+func (m Translators) translateIfNeeds(v cue.Value) (b []byte, err error) {
 	attr := v.Attribute("translate")
 	if attr.Err() == nil {
 		name, err := attr.String(0)
@@ -39,7 +39,10 @@ func (m Translators) Marshal(v cue.Value) (b []byte, err error) {
 			}
 		}
 	}
+	return m.Marshal(v)
+}
 
+func (m Translators) Marshal(v cue.Value) (b []byte, err error) {
 	switch v.Kind() {
 	case cue.StructKind:
 		b = append(b, '{')
@@ -56,7 +59,9 @@ func (m Translators) Marshal(v cue.Value) (b []byte, err error) {
 				b = append(b, ':')
 
 				v := l.Value()
-				bb, err := m.Marshal(v)
+
+				// only on field value
+				bb, err := m.translateIfNeeds(v)
 				if err != nil {
 					return nil, err
 				}
