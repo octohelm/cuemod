@@ -5,6 +5,7 @@ import (
 
 	"github.com/octohelm/cuemod/pkg/extractor/core"
 
+	_ "github.com/octohelm/cuemod/pkg/extractor/crd"
 	_ "github.com/octohelm/cuemod/pkg/extractor/golang"
 	_ "github.com/octohelm/cuemod/pkg/extractor/helm"
 	_ "github.com/octohelm/cuemod/pkg/extractor/jsonnet"

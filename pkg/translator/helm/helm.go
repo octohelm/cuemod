@@ -92,33 +92,35 @@ func (t) MarshalCueValue(value cue.Value) ([]byte, error) {
 		if trimmedContent := strings.TrimSpace(renderedContent); trimmedContent != "" {
 			decoder := yaml.NewYAMLOrJSONDecoder(strings.NewReader(trimmedContent), 4096)
 
-			var manifest map[string]interface{}
+			for {
+				var manifest map[string]interface{}
 
-			if err := decoder.Decode(&manifest); err != nil {
-				if err == io.EOF {
-					break
+				if err := decoder.Decode(&manifest); err != nil {
+					if err == io.EOF {
+						break
+					}
+					return nil, errors.Wrapf(err, "helm template failed: %s\n%s", fileName, trimmedContent)
 				}
-				return nil, errors.Wrapf(err, "helm template failed: %s\n%s", fileName, trimmedContent)
-			}
 
-			if len(manifest) == 0 {
-				continue
-			}
+				if len(manifest) == 0 {
+					continue
+				}
 
-			if kind, ok := manifest["kind"]; ok {
-				if k, ok := kind.(string); ok {
-					if metadata, ok := manifest["metadata"]; ok {
-						if m, ok := metadata.(map[string]interface{}); ok {
-							if name, ok := m["name"]; ok {
-								if n, ok := name.(string); ok {
-									if manifests[k] == nil {
-										manifests[k] = map[string]interface{}{}
+				if kind, ok := manifest["kind"]; ok {
+					if k, ok := kind.(string); ok {
+						if metadata, ok := manifest["metadata"]; ok {
+							if m, ok := metadata.(map[string]interface{}); ok {
+								if name, ok := m["name"]; ok {
+									if n, ok := name.(string); ok {
+										if manifests[k] == nil {
+											manifests[k] = map[string]interface{}{}
+										}
+										manifests[k][n] = manifest
 									}
-									manifests[k][n] = manifest
 								}
 							}
-						}
 
+						}
 					}
 				}
 			}
