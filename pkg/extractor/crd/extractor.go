@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	cuetoken "cuelang.org/go/cue/token"
@@ -94,15 +95,23 @@ func (e *Extractor) fileFromCRD(crd *apiextensions_v1.CustomResourceDefinition) 
 		f.Decls = append(f.Decls, d)
 	}
 
-	decl(&cueast.Field{Label: cueast.NewIdent("#Group"), Value: cueast.NewString(crd.Spec.Group)})
-
 	for _, v := range crd.Spec.Versions {
+		if s, ok := v.Schema.OpenAPIV3Schema.Properties["kind"]; ok {
+			s.Enum = []apiextensions_v1.JSON{{Raw: []byte(strconv.Quote(crd.Spec.Names.Kind))}}
+			v.Schema.OpenAPIV3Schema.Properties["kind"] = s
+		}
+
+		if s, ok := v.Schema.OpenAPIV3Schema.Properties["apiVersion"]; ok {
+			s.Enum = []apiextensions_v1.JSON{{Raw: []byte(strconv.Quote(crd.Spec.Group + "/" + v.Name))}}
+			v.Schema.OpenAPIV3Schema.Properties["apiVersion"] = s
+		}
+
 		decl(&cueast.Field{
 			Label: cueast.NewIdent(v.Name),
 			Value: &cueast.StructLit{
 				Elts: []cueast.Decl{
 					&cueast.Field{
-						Label: cueast.NewIdent(crd.Spec.Names.Kind),
+						Label: cueast.NewIdent("#" + crd.Spec.Names.Kind),
 						Value: e.fromJSONSchema(v.Schema.OpenAPIV3Schema),
 					},
 				},
@@ -118,6 +127,19 @@ func (e Extractor) fromJSONSchema(s *apiextensions_v1.JSONSchemaProps) cueast.Ex
 
 		for i := range items {
 			items[i] = e.fromJSONSchema(&s.AnyOf[i])
+		}
+
+		return cueast.NewBinExpr(cuetoken.OR, items...)
+	}
+
+	if len(s.Enum) > 0 {
+		items := make([]cueast.Expr, len(s.Enum))
+
+		for i := range items {
+			items[i] = &cueast.BasicLit{
+				// TODO handle struct value
+				Value: string(s.Enum[i].Raw),
+			}
 		}
 
 		return cueast.NewBinExpr(cuetoken.OR, items...)
