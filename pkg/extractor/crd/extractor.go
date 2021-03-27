@@ -200,7 +200,7 @@ func (e Extractor) fromJSONSchema(s *apiextensions_v1.JSONSchemaProps) cueast.Ex
 		}
 		return cueast.NewIdent("float64")
 	case "boolean":
-		return cueast.NewIdent("boolean")
+		return cueast.NewIdent("bool")
 	case "array":
 		if s.Items == nil {
 			return cueast.NewList(&cueast.Ellipsis{
