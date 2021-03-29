@@ -2,6 +2,7 @@ package golang_test
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/go-courier/logr"
@@ -11,6 +12,8 @@ import (
 
 func TestExtractor(t *testing.T) {
 	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
+
+	_ = os.RemoveAll("./testdata/gen")
 
 	err := extractor.ExtractToDir(
 		ctx,

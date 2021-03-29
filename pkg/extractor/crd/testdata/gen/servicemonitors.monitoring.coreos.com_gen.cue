@@ -7,7 +7,12 @@ v1: #ServiceMonitor: {
 	apiVersion?: "monitoring.coreos.com/v1"
 	// Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 	kind?: "ServiceMonitor"
-	metadata?: {}
+	metadata?: {
+		annotations?: [string]: string
+		labels?: [string]: string
+		name?:      string
+		namespace?: string
+	}
 	// Specification of desired Service selection for target discovery by Prometheus.
 	spec: {
 		// A list of endpoints allowed as part of this ServiceMonitor.
@@ -21,7 +26,7 @@ v1: #ServiceMonitor: {
 					// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 					name?: string
 					// Specify whether the Secret or its key must be defined
-					optional?: boolean
+					optional?: bool
 				}
 				// The secret in the service monitor namespace that contains the username for authentication.
 				username?: {
@@ -30,7 +35,7 @@ v1: #ServiceMonitor: {
 					// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 					name?: string
 					// Specify whether the Secret or its key must be defined
-					optional?: boolean
+					optional?: bool
 				}
 			}
 			// File to read bearer token for scraping targets.
@@ -42,12 +47,12 @@ v1: #ServiceMonitor: {
 				// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 				name?: string
 				// Specify whether the Secret or its key must be defined
-				optional?: boolean
+				optional?: bool
 			}
 			// HonorLabels chooses the metric's labels on collisions with target labels.
-			honorLabels?: boolean
+			honorLabels?: bool
 			// HonorTimestamps controls whether Prometheus respects the timestamps present in scraped data.
-			honorTimestamps?: boolean
+			honorTimestamps?: bool
 			// Interval at which metrics should be scraped
 			interval?: string
 			// MetricRelabelConfigs to apply to samples before ingestion.
@@ -68,7 +73,7 @@ v1: #ServiceMonitor: {
 				targetLabel?: string
 			}]
 			// Optional HTTP URL parameters
-			params?: {}
+			params?: {[string]: [...string]}
 			// HTTP path to scrape for metrics.
 			path?: string
 			// Name of the service port this endpoint refers to. Mutually exclusive with targetPort.
@@ -109,7 +114,7 @@ v1: #ServiceMonitor: {
 						// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 						name?: string
 						// Specify whether the ConfigMap or its key must be defined
-						optional?: boolean
+						optional?: bool
 					}
 					// Secret containing data to use for the targets.
 					secret?: {
@@ -118,7 +123,7 @@ v1: #ServiceMonitor: {
 						// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 						name?: string
 						// Specify whether the Secret or its key must be defined
-						optional?: boolean
+						optional?: bool
 					}
 				}
 				// Path to the CA cert in the Prometheus container to use for the targets.
@@ -132,7 +137,7 @@ v1: #ServiceMonitor: {
 						// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 						name?: string
 						// Specify whether the ConfigMap or its key must be defined
-						optional?: boolean
+						optional?: bool
 					}
 					// Secret containing data to use for the targets.
 					secret?: {
@@ -141,13 +146,13 @@ v1: #ServiceMonitor: {
 						// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 						name?: string
 						// Specify whether the Secret or its key must be defined
-						optional?: boolean
+						optional?: bool
 					}
 				}
 				// Path to the client cert file in the Prometheus container for the targets.
 				certFile?: string
 				// Disable target certificate validation.
-				insecureSkipVerify?: boolean
+				insecureSkipVerify?: bool
 				// Path to the client key file in the Prometheus container for the targets.
 				keyFile?: string
 				// Secret containing the client key file for the targets.
@@ -157,7 +162,7 @@ v1: #ServiceMonitor: {
 					// Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?
 					name?: string
 					// Specify whether the Secret or its key must be defined
-					optional?: boolean
+					optional?: bool
 				}
 				// Used to verify the hostname for the targets.
 				serverName?: string
@@ -168,7 +173,7 @@ v1: #ServiceMonitor: {
 		// Selector to select which namespaces the Endpoints objects are discovered from.
 		namespaceSelector?: {
 			// Boolean describing whether all namespaces are selected in contrast to a list restricting them.
-			any?: boolean
+			any?: bool
 			// List of namespace names.
 			matchNames?: [...string]
 		}
@@ -188,7 +193,7 @@ v1: #ServiceMonitor: {
 				values?: [...string]
 			}]
 			// matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
-			matchLabels?: {}
+			matchLabels?: {[string]: string}
 		}
 		// TargetLabels transfers labels on the Kubernetes Service onto the target.
 		targetLabels?: [...string]

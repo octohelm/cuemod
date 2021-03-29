@@ -99,11 +99,38 @@ func (e *Extractor) fileFromCRD(crd *apiextensions_v1.CustomResourceDefinition) 
 		if s, ok := v.Schema.OpenAPIV3Schema.Properties["kind"]; ok {
 			s.Enum = []apiextensions_v1.JSON{{Raw: []byte(strconv.Quote(crd.Spec.Names.Kind))}}
 			v.Schema.OpenAPIV3Schema.Properties["kind"] = s
+			v.Schema.OpenAPIV3Schema.Required = append(v.Schema.OpenAPIV3Schema.Required, "kind")
 		}
 
 		if s, ok := v.Schema.OpenAPIV3Schema.Properties["apiVersion"]; ok {
 			s.Enum = []apiextensions_v1.JSON{{Raw: []byte(strconv.Quote(crd.Spec.Group + "/" + v.Name))}}
 			v.Schema.OpenAPIV3Schema.Properties["apiVersion"] = s
+			v.Schema.OpenAPIV3Schema.Required = append(v.Schema.OpenAPIV3Schema.Required, "apiVersion")
+		}
+
+		if s, ok := v.Schema.OpenAPIV3Schema.Properties["metadata"]; ok {
+			s.Properties = map[string]apiextensions_v1.JSONSchemaProps{
+				"name":      {Type: "string"},
+				"namespace": {Type: "string"},
+				"labels": {
+					Type: "object",
+					AdditionalProperties: &apiextensions_v1.JSONSchemaPropsOrBool{
+						Schema: &apiextensions_v1.JSONSchemaProps{
+							Type: "string",
+						},
+					},
+				},
+				"annotations": {
+					Type: "object",
+					AdditionalProperties: &apiextensions_v1.JSONSchemaPropsOrBool{
+						Schema: &apiextensions_v1.JSONSchemaProps{
+							Type: "string",
+						},
+					},
+				},
+			}
+
+			v.Schema.OpenAPIV3Schema.Properties["metadata"] = s
 		}
 
 		decl(&cueast.Field{
@@ -147,9 +174,32 @@ func (e Extractor) fromJSONSchema(s *apiextensions_v1.JSONSchemaProps) cueast.Ex
 
 	switch s.Type {
 	case "object":
-		structLit := &cueast.StructLit{}
+		if len(s.Properties) == 0 && s.AdditionalProperties == nil {
+			s.AdditionalProperties = &apiextensions_v1.JSONSchemaPropsOrBool{Allows: true}
+		}
 
-		//s.Required
+		if s.AdditionalProperties != nil {
+			f := &cueast.Field{
+				Label: cueast.NewList(cueast.NewIdent("string")),
+			}
+
+			if s.AdditionalProperties.Allows {
+				f.Value = any()
+			}
+
+			if s.AdditionalProperties.Schema != nil {
+				f.Value = e.fromJSONSchema(s.AdditionalProperties.Schema)
+			}
+
+			cueast.SetRelPos(f, cuetoken.Blank)
+
+			s := cueast.NewStruct(f)
+			s.Lbrace = cuetoken.Blank.Pos()
+			s.Rbrace = cuetoken.Blank.Pos()
+
+			return s
+
+		}
 
 		fields := make([]string, 0)
 		required := map[string]bool{}
@@ -163,6 +213,8 @@ func (e Extractor) fromJSONSchema(s *apiextensions_v1.JSONSchemaProps) cueast.Ex
 		}
 
 		sort.Strings(fields)
+
+		cueFields := make([]interface{}, 0)
 
 		for _, f := range fields {
 			p := s.Properties[f]
@@ -180,11 +232,11 @@ func (e Extractor) fromJSONSchema(s *apiextensions_v1.JSONSchemaProps) cueast.Ex
 				field.Optional = cuetoken.Blank.Pos()
 			}
 
-			structLit.Elts = append(structLit.Elts, field)
+			cueFields = append(cueFields, field)
 		}
 
-		return structLit
-
+		s := cueast.NewStruct(cueFields...)
+		return s
 	case "string":
 		return cueast.NewIdent("string")
 	case "integer":
