@@ -78,6 +78,13 @@ func (l *loader) refillImportPath(importPath string) string {
 		}
 	}
 
+	// may be alias import like
+	// `local memcached = import 'memcached/memcached.libsonnet';`
+	// to return `jsonnet.alias/` prefix hook, so we could use replace to fix
+	if len(strings.Split(importPath, "/")) == 1 {
+		return filepath.Join("jsonnet.alias", importPath)
+	}
+
 	return importPath
 }
 
