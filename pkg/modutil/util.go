@@ -3,6 +3,9 @@ package modutil
 import (
 	"context"
 
+	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/vcs"
+	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/web"
+
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/cfg"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/modfetch"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/modload"
@@ -15,6 +18,10 @@ type Module struct {
 	Error   string
 	Dir     string
 	Sum     string
+}
+
+func RepoRootForImportPath(importPath string) (*vcs.RepoRoot, error) {
+	return vcs.RepoRootForImportPath(importPath, vcs.IgnoreMod, web.DefaultSecurity)
 }
 
 // Get Module

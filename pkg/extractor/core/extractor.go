@@ -10,14 +10,13 @@ import (
 
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/format"
-	"github.com/go-courier/logr"
 	"github.com/pkg/errors"
 )
 
 type Extractor interface {
 	// Name
 	// Extractor name
-	// used in mod.cue @gen("")
+	// used in mod.cue @import("")
 	Name() string
 	// check dir should use extractor.
 	// if matched, return deps <repo>:<version> too.
@@ -111,8 +110,6 @@ func (Extractors) do(ctx context.Context, extractor Extractor, src string, gen s
 
 func writeCueFile(ctx context.Context, name string, dir string, f *cueast.File) error {
 	filename := filepath.Join(dir, f.Filename)
-
-	logr.FromContext(ctx).Trace("gen file %s", filename)
 
 	cueast.AddComment(f.Decls[0], &cueast.CommentGroup{
 		Doc: true,

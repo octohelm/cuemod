@@ -3,7 +3,6 @@ package golang
 import (
 	"context"
 	"go/build"
-	"os"
 	"path/filepath"
 
 	"github.com/octohelm/cuemod/pkg/extractor/core"
@@ -34,9 +33,9 @@ func (Extractor) Name() string {
 }
 
 func (Extractor) Detect(ctx context.Context, src string) (bool, map[string]string) {
-	f, err := os.Lstat(filepath.Join(src, "go.mod"))
+	goFiles, err := filepath.Glob(filepath.Join(src, "*.go"))
 	if err == nil {
-		return !f.IsDir(), nil
+		return len(goFiles) > 0, nil
 	}
 	return false, nil
 }

@@ -40,7 +40,7 @@ type ModFile struct {
 
 type ReplaceTarget struct {
 	PathMayWithVersion
-	Gen string
+	Import string
 }
 
 func (m *ModFile) String() string {
@@ -124,8 +124,8 @@ require: %s
 				}
 			}
 
-			if replaceTarget.Gen != "" {
-				f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("gen", replaceTarget.Gen)})
+			if replaceTarget.Import != "" {
+				f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("gen", replaceTarget.Import)})
 			}
 
 			fields = append(fields, f)

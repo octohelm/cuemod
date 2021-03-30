@@ -113,14 +113,14 @@ func (r *Runtime) Eval(ctx context.Context, filename string, encoding Encoding) 
 	if err != nil {
 		return nil, err
 	}
-	return results, r.SyncFilesWhenSuccess(nil)
+	return results, nil
 }
 
 func (r *Runtime) Get(ctx context.Context, i string) error {
 	if i[0] == '.' {
-		return r.SyncFilesWhenSuccess(r.autoImport(ctx, i))
+		return r.autoImport(ctx, i)
 	}
-	return r.SyncFilesWhenSuccess(r.download(ctx, i))
+	return r.download(ctx, i)
 }
 
 func (r *Runtime) Resolve(ctx context.Context, importPath string, importedAt string) (string, error) {
@@ -150,18 +150,16 @@ func (r *Runtime) setRequireFromImportPath(ctx context.Context, p *Path, indirec
 		modVersion = mv
 	}
 
-	if err := p.SymlinkOrGen(ctx, r.mod.Dir); err != nil {
+	if err := p.SymlinkOrImport(ctx, r.mod.Dir); err != nil {
 		return err
 	}
 
 	r.mod.SetRequire(p.Repo, modVersion, indirect)
-	return nil
+
+	return r.syncFiles()
 }
 
-func (r *Runtime) SyncFilesWhenSuccess(err error) error {
-	if err != nil {
-		return err
-	}
+func (r *Runtime) syncFiles() error {
 	if err := writeFile(filepath.Join(r.mod.Dir, modfile.ModFilename), r.mod.ModFile.Bytes()); err != nil {
 		return nil
 	}

@@ -95,8 +95,8 @@ require: {
 replace: {
     // version lock 
     "github.com/rancher/local-path-provisioner": "@v0.0.19"
-    // declare gen method for special import path
-    "github.com/rancher/local-path-provisioner/deploy/chart": "" @gen("helm")
+    // declare import method for special import path
+    "github.com/rancher/local-path-provisioner/deploy/chart": "" @import("helm")
     // local replace
     "github.com/x/a": "../a"
 }

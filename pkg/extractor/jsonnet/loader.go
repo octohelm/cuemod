@@ -128,10 +128,11 @@ func (l *loader) Extract() (files []*cueast.File, err error) {
 				filename := filepath.Base(importPath)
 
 				pkgName := core.SafeIdentifierFromImportPath(dirname)
+				alias := core.SafeIdentifierFromImportPath(strings.ReplaceAll(filepath.Dir(importPath), "/", "_"))
 
-				deps[fmt.Sprintf("%s:%s", dirname, pkgName)] = pkgName
+				deps[fmt.Sprintf("%s:%s", dirname, pkgName)] = alias
 
-				f.Value = &cueast.IndexExpr{X: cueast.NewIdent(pkgName), Index: cueast.NewString(filename)}
+				f.Value = &cueast.IndexExpr{X: cueast.NewIdent(alias), Index: cueast.NewString(filename)}
 			}
 
 			imports = append(imports, f)
@@ -159,6 +160,7 @@ func (l *loader) Extract() (files []*cueast.File, err error) {
 
 			for _, importPath := range importPaths {
 				importDecl.Specs = append(importDecl.Specs, &cueast.ImportSpec{
+					Name: cueast.NewIdent(deps[importPath]),
 					Path: cueast.NewString(importPath),
 				})
 			}
@@ -265,5 +267,8 @@ func (l *loader) walk(ctx context.Context, node gojsonnetast.Node, importedAt st
 }
 
 var stubs = map[string]string{
-	"k.libsonnet": "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet",
+	"k.libsonnet":                                    "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet",
+	"ksonnet.beta.4/k.libsonnet":                     "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet",
+	"ksonnet/ksonnet.beta.4/k.libsonnet":             "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet",
+	"ksonnet/ksonnet-lib/ksonnet.beta.4/k.libsonnet": "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet",
 }

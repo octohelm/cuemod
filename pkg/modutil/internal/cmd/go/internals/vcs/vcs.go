@@ -980,7 +980,7 @@ func repoRootForImportDynamic(importPath string, mod ModuleMode, security web.Se
 		log.Printf("get %q: found meta tag %#v at %s", importPath, mmi, url)
 	}
 	// If the import was "uni.edu/bob/project", which said the
-	// prefix was "uni.edu" and the Repo was "evilroot.com",
+	// prefix was "uni.edu" and the RepoRoot was "evilroot.com",
 	// make sure we don't trust Bob and check out evilroot.com to
 	// "uni.edu" yet (possibly overwriting/preempting another
 	// non-evil student). Instead, first verify the root and see

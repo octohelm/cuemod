@@ -130,10 +130,12 @@ func (m *Mod) ResolveImportPath(ctx context.Context, cache *cache, importPath st
 		if replaceTarget.Version != "" {
 			fixVersion = nil
 		}
+
 		mod, err := cache.Get(ctxWithUpgradeDisabled, replacedImportPath, replaceTarget.Version, fixVersion)
 		if err != nil {
 			return nil, err
 		}
+
 		return PathFor(mod, replacedImportPath).WithReplace(matched.Path, replaceTarget), nil
 	}
 
@@ -148,6 +150,9 @@ func (m *Mod) ResolveImportPath(ctx context.Context, cache *cache, importPath st
 func (m *Mod) fixVersion(repo string, version string) string {
 	if m.Require != nil {
 		if r, ok := m.Require[repo]; ok {
+			if r.VcsVersion != "" && r.Version == "v0.0.0" {
+				return r.VcsVersion
+			}
 			return r.Version
 		}
 	}
