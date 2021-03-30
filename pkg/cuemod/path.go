@@ -39,7 +39,7 @@ func (i Path) WithReplace(from string, replaceTarget modfile.ReplaceTarget) *Pat
 	return &i
 }
 
-func (i *Path) SymlinkOrGen(ctx context.Context, root string) error {
+func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 	pkgRoot := "cue.mod/pkg"
 
 	if root == i.Dir {
@@ -53,8 +53,8 @@ func (i *Path) SymlinkOrGen(ctx context.Context, root string) error {
 		gen = i.Lang
 	}
 
-	if i.Replace != nil && i.Replace.Gen != "" {
-		gen = i.Replace.Gen
+	if i.Replace != nil && i.Replace.Import != "" {
+		gen = i.Replace.Import
 	}
 
 	if gen != "" {

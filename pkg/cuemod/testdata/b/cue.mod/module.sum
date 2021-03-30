@@ -1,8 +1,9 @@
+github.com/grafana/jsonnet-libs v0.0.0-20210325193505-6d85fad33ddc h1:WeeunffPj5RlbT+l/5g5fZIfLSm5+Cl+H3Eb2D0xExQ=
 github.com/grafana/jsonnet-libs v0.0.0-20210324143903-a96bb40fb14c h1:LwpdYqK56ZCCVtlPkk5A3H8emrBzbcTukmMvNw5w5qY=
-github.com/grafana/jsonnet-libs v0.0.0-20210324143903-a96bb40fb14c h1:LwpdYqK56ZCCVtlPkk5A3H8emrBzbcTukmMvNw5w5qY=
+github.com/grafana/jsonnet-libs v0.0.0-20210325193505-6d85fad33ddc h1:WeeunffPj5RlbT+l/5g5fZIfLSm5+Cl+H3Eb2D0xExQ=
 github.com/grafana/jsonnet-libs/grafana v0.0.0-20210324143903-a96bb40fb14c h1:LwpdYqK56ZCCVtlPkk5A3H8emrBzbcTukmMvNw5w5qY=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210324143903-a96bb40fb14c h1:LwpdYqK56ZCCVtlPkk5A3H8emrBzbcTukmMvNw5w5qY=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210324143903-a96bb40fb14c h1:LwpdYqK56ZCCVtlPkk5A3H8emrBzbcTukmMvNw5w5qY=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210325193505-6d85fad33ddc h1:WeeunffPj5RlbT+l/5g5fZIfLSm5+Cl+H3Eb2D0xExQ=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210325193505-6d85fad33ddc h1:WeeunffPj5RlbT+l/5g5fZIfLSm5+Cl+H3Eb2D0xExQ=
 github.com/istio/istio v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/istio/istio/manifests/charts/istio-operator v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/jsonnet-libs/k8s-alpha v0.0.0-20210118111845-5e0d0738721f h1:NF/3uC4WED0AlzmpA/ptp3diu5AfX8S4zcFSVEFyGWU=
@@ -11,4 +12,11 @@ github.com/rancher/local-path-provisioner v0.0.19 h1:00V0xb78U9YXGSwodyZJYm2T/5i
 github.com/rancher/local-path-provisioner/deploy/chart v0.0.19 h1:00V0xb78U9YXGSwodyZJYm2T/5iAuodrutpvy43DiVA=
 github.com/x/a v0.0.0 
 k8s.io/api v0.20.5 h1:zsMTffV0Le2EiI0aKvlTHEnXGxk1HiqGRhJcCPiI7JI=
+k8s.io/api/core/v1 v0.20.5 h1:zsMTffV0Le2EiI0aKvlTHEnXGxk1HiqGRhJcCPiI7JI=
 k8s.io/apimachinery v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/api/resource v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/apis/meta/v1 v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/runtime v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/types v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/util/intstr v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=
+k8s.io/apimachinery/pkg/watch v0.20.5 h1:wO/FxMVRn223rAKxnBbwCyuN96bS9MFTIvP0e/V7cps=

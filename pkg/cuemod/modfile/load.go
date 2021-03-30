@@ -82,9 +82,9 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 											k, v := subField.Attrs[i].Split()
 
 											switch k {
-											case "gen":
+											case "import":
 												value, _ := strconv.Unquote(v)
-												replaceTarget.Gen = value
+												replaceTarget.Import = value
 											}
 										}
 

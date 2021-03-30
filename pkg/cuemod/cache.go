@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/go-courier/logr"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/octohelm/cuemod/pkg/modutil"
 	"github.com/pkg/errors"
 	"golang.org/x/mod/module"
-	"golang.org/x/tools/go/vcs"
 )
 
 func newCache() *cache {
@@ -153,6 +154,15 @@ const versionUpgrade = "upgrade"
 func (c *cache) get(ctx context.Context, repo string, requestedVersion string, importPath string) (*Mod, error) {
 	version := requestedVersion
 
+	// fix /v2
+	sub, _ := subPath(repo, importPath)
+	if parts := strings.Split(sub, "/"); len(parts[0]) > 0 && parts[0][0] == 'v' {
+		i, _ := strconv.ParseInt(parts[0][1:], 10, 64)
+		if i >= 2 {
+			repo = repo + "/v" + strconv.FormatInt(i, 10)
+		}
+	}
+
 	if version == "" {
 		version = versionUpgrade
 	}
@@ -169,7 +179,7 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 	} else {
 		// use the resolved version, when already resolved.
 		if mv, ok := c.repoVersions[repo]; ok {
-			if mv.VcsVersion != "" && mv.Version != "" && mv.VcsVersion == requestedVersion {
+			if mv.VcsVersion != "" && mv.Version != "" && mv.Version != "v0.0.0" && mv.VcsVersion == requestedVersion {
 				version = mv.Version
 			}
 		}
@@ -261,7 +271,7 @@ func (c *cache) repoRoot(ctx context.Context, importPath string) (string, error)
 
 	logr.FromContext(ctx).Debug(fmt.Sprintf("resolve %s", importPath))
 
-	r, err := vcs.RepoRootForImportPath(importPath, true)
+	r, err := modutil.RepoRootForImportPath(importPath)
 	if err != nil {
 		return "", errors.Wrapf(err, "resolve `%s` failed", importPath)
 	}

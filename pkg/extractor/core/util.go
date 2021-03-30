@@ -4,6 +4,7 @@ import (
 	encodingjson "encoding/json"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -28,9 +29,15 @@ func SafeIdentifierFromImportPath(s string) string {
 
 		last := parts[lastIdx]
 
-		// use parent when v1 v2
-		if len(last) > 2 && last[0] == 'v' && unicode.IsNumber(rune(last[1])) {
-			continue
+		// drop version in path
+		last = strings.Split(last, "@")[0]
+
+		// use parent when /v2
+		if len(last) > 2 && last[0] == 'v' {
+			// v2
+			if i, err := strconv.ParseInt(last[0:], 10, 64); err == nil && i > 1 {
+				continue
+			}
 		}
 
 		// use parent when number only

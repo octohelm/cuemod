@@ -7,12 +7,11 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
 	github.com/fatih/color v1.10.0
 	github.com/go-courier/logr v0.0.2
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.1 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-jsonnet v0.17.0
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
@@ -31,9 +30,9 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/mod v0.4.2
-	golang.org/x/net v0.0.0-20210324051636-2c4c8ecb7826 // indirect
+	golang.org/x/net v0.0.0-20210329181859-df645c7b52b1 // indirect
 	golang.org/x/oauth2 v0.0.0-20210323180902-22b0adad7558 // indirect
-	golang.org/x/sys v0.0.0-20210324051608-47abb6519492 // indirect
+	golang.org/x/sys v0.0.0-20210326220804-49726bf1d181 // indirect
 	golang.org/x/term v0.0.0-20210317153231-de623e64d2a6
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
@@ -41,7 +40,7 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	helm.sh/helm/v3 v3.5.1
-	k8s.io/apiextensions-apiserver v0.20.5 // indirect
+	k8s.io/apiextensions-apiserver v0.20.5
 	k8s.io/apimachinery v0.20.5
 	k8s.io/klog/v2 v2.8.0 // indirect
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10 // indirect
