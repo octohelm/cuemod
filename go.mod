@@ -3,7 +3,7 @@ module github.com/octohelm/cuemod
 go 1.16
 
 require (
-	cuelang.org/go v0.3.0-beta.7
+	cuelang.org/go v0.3.0-beta.8
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
@@ -30,9 +30,8 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/mod v0.4.2
-	golang.org/x/net v0.0.0-20210329181859-df645c7b52b1 // indirect
+	golang.org/x/net v0.0.0-20210331060903-cb1fcc7394e5 // indirect
 	golang.org/x/oauth2 v0.0.0-20210323180902-22b0adad7558 // indirect
-	golang.org/x/sys v0.0.0-20210326220804-49726bf1d181 // indirect
 	golang.org/x/term v0.0.0-20210317153231-de623e64d2a6
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
