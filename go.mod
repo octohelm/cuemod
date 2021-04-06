@@ -3,7 +3,7 @@ module github.com/octohelm/cuemod
 go 1.16
 
 require (
-	cuelang.org/go v0.3.0-beta.8
+	cuelang.org/go v0.3.0
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
@@ -21,7 +21,7 @@ require (
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/mitchellh/copystructure v1.1.1 // indirect
 	github.com/onsi/gomega v1.11.0
-	github.com/pelletier/go-toml v1.8.1
+	github.com/pelletier/go-toml v1.9.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
@@ -30,10 +30,11 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/mod v0.4.2
-	golang.org/x/net v0.0.0-20210331060903-cb1fcc7394e5 // indirect
-	golang.org/x/oauth2 v0.0.0-20210323180902-22b0adad7558 // indirect
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
+	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602 // indirect
+	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
 	golang.org/x/term v0.0.0-20210317153231-de623e64d2a6
-	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.1.0
 	google.golang.org/appengine v1.6.7 // indirect
@@ -43,8 +44,8 @@ require (
 	k8s.io/apimachinery v0.20.5
 	k8s.io/klog/v2 v2.8.0 // indirect
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.1.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.1.1 // indirect
 	sigs.k8s.io/yaml v1.2.0
 )
 
-//replace helm.sh/helm/v3 => helm.sh/helm/v3 v3.5.1
+replace helm.sh/helm/v3 => helm.sh/helm/v3 v3.5.1

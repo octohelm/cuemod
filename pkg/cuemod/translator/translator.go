@@ -15,27 +15,31 @@ type Translator interface {
 type Translators map[string]Translator
 
 func (m Translators) translateIfNeeds(v cue.Value) (b []byte, err error) {
-	attr := v.Attribute("translate")
-	if attr.Err() == nil {
-		name, err := attr.String(0)
-		if err != nil {
-			return nil, err
-		}
+	attrs := v.Attributes(cue.ValueAttr)
+	if len(attrs) > 0 {
+		for _, attr := range attrs {
+			if attr.Name() == "translate" {
+				name, err := attr.String(0)
+				if err != nil {
+					return nil, err
+				}
 
-		if renderer, ok := m[name]; ok {
-			data, err := renderer.MarshalCueValue(v)
-			if err != nil {
-				return nil, err
-			}
-			switch v.Kind() {
-			// string as string
-			case cue.StringKind:
-				return json.Marshal(string(data))
-			// bytes as bytes
-			case cue.BytesKind:
-				return json.Marshal(data)
-			default:
-				return data, nil
+				if renderer, ok := m[name]; ok {
+					data, err := renderer.MarshalCueValue(v)
+					if err != nil {
+						return nil, err
+					}
+					switch v.Kind() {
+					// string as string
+					case cue.StringKind:
+						return json.Marshal(string(data))
+					// bytes as bytes
+					case cue.BytesKind:
+						return json.Marshal(data)
+					default:
+						return data, nil
+					}
+				}
 			}
 		}
 	}
