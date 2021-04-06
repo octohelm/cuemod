@@ -3,15 +3,15 @@
 package src
 
 import (
-	"github.com/grafana/jsonnet-libs/grafana/example:example"
-	"github.com/grafana/jsonnet-libs/grafana:grafana"
+	grafana_example "github.com/grafana/jsonnet-libs/grafana/example:example"
+	grafana "github.com/grafana/jsonnet-libs/grafana:grafana"
 )
 
 _files
 _files: {
 	"dashboard.jsonnet": {
 		imports: {
-			"grafana/example/dashboard-simple.libsonnet": example["dashboard-simple.libsonnet"], "grafana/grafana.libsonnet": grafana["grafana.libsonnet"]
+			"grafana/example/dashboard-simple.libsonnet": grafana_example["dashboard-simple.libsonnet"], "grafana/grafana.libsonnet": grafana["grafana.libsonnet"]
 		}
 		data: '''
 			local grafana = import 'grafana/grafana.libsonnet';
