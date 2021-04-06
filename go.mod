@@ -39,7 +39,7 @@ require (
 	golang.org/x/tools v0.1.0
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	helm.sh/helm/v3 v3.5.1
+	helm.sh/helm/v3 v3.5.3
 	k8s.io/apiextensions-apiserver v0.20.5
 	k8s.io/apimachinery v0.20.5
 	k8s.io/klog/v2 v2.8.0 // indirect
