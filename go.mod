@@ -3,7 +3,7 @@ module github.com/octohelm/cuemod
 go 1.16
 
 require (
-	cuelang.org/go v0.3.1
+	cuelang.org/go v0.3.2
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
