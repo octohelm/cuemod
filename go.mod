@@ -15,7 +15,7 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/googleapis/gnostic v0.5.4 // indirect
-	github.com/grafana/tanka v0.15.0
+	github.com/grafana/tanka v0.15.1
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/mitchellh/copystructure v1.1.2 // indirect
