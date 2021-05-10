@@ -19,7 +19,7 @@ require (
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/onsi/gomega v1.11.0
+	github.com/onsi/gomega v1.12.0
 	github.com/pelletier/go-toml v1.9.0
 	github.com/pkg/errors v0.9.1
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20210430143850-408574485efa // indirect
