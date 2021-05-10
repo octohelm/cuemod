@@ -3,6 +3,8 @@ package cuemod
 import (
 	"fmt"
 
+	"cuelang.org/go/cue/cuecontext"
+
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/build"
 	"sigs.k8s.io/yaml"
@@ -18,12 +20,12 @@ const (
 	YAML = build.YAML
 )
 
-func Eval(instance *cue.Instance, encoding Encoding) ([]byte, error) {
+func Eval(instance *build.Instance, encoding Encoding) ([]byte, error) {
 	if encoding == "" {
 		encoding = build.JSON
 	}
 
-	v := instance.Value()
+	v := cuecontext.New().BuildInstance(instance)
 
 	if err := v.Validate(cue.Final()); err != nil {
 		return nil, err

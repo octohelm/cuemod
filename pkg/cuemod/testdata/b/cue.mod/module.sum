@@ -1,11 +1,8 @@
-github.com/grafana/jsonnet-libs v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
-github.com/grafana/jsonnet-libs v0.0.0-20210330091124-8fa7669cc7b1 h1:iztsF8Kt96xcqp5FFy13h4cBfWDUFNhwtiNUF9aKQOk=
-github.com/grafana/jsonnet-libs v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210330091124-8fa7669cc7b1 h1:iztsF8Kt96xcqp5FFy13h4cBfWDUFNhwtiNUF9aKQOk=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210406153955-89299b1c5e93 h1:ktJV457qgFgCFvtpJmdcHxGpd4VBSMxJF2SmgKk4KHU=
+github.com/grafana/jsonnet-libs v0.0.0-20210506152003-188bf1e03f0c h1:BzW8n1sXgC3iBG1UiShpiqQ25WFTAkk4dwwknpBgMeA=
+github.com/grafana/jsonnet-libs v0.0.0-20210506152003-188bf1e03f0c h1:BzW8n1sXgC3iBG1UiShpiqQ25WFTAkk4dwwknpBgMeA=
+github.com/grafana/jsonnet-libs/grafana v0.0.0-20210506152003-188bf1e03f0c h1:BzW8n1sXgC3iBG1UiShpiqQ25WFTAkk4dwwknpBgMeA=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210506152003-188bf1e03f0c h1:BzW8n1sXgC3iBG1UiShpiqQ25WFTAkk4dwwknpBgMeA=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210506152003-188bf1e03f0c h1:BzW8n1sXgC3iBG1UiShpiqQ25WFTAkk4dwwknpBgMeA=
 github.com/istio/istio v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/istio/istio/manifests/charts/istio-operator v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/jsonnet-libs/k8s-alpha v0.0.0-20210118111845-5e0d0738721f h1:NF/3uC4WED0AlzmpA/ptp3diu5AfX8S4zcFSVEFyGWU=

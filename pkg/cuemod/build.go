@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"cuelang.org/go/cue"
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/load"
@@ -53,7 +52,7 @@ func OptImportFunc(importFunc ImportFunc) OptionFunc {
 	}
 }
 
-type Instance = cue.Instance
+type Instance = build.Instance
 
 func Build(path string, optionFns ...OptionFunc) *Instance {
 	c := &load.Config{}
@@ -61,6 +60,5 @@ func Build(path string, optionFns ...OptionFunc) *Instance {
 		optionFns[i](c)
 	}
 	rel, _ := filepath.Rel(c.Dir, path)
-	inst := load.Instances([]string{"./" + rel}, c)[0]
-	return cue.Build([]*build.Instance{inst})[0]
+	return load.Instances([]string{"./" + rel}, c)[0]
 }

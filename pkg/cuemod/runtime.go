@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"cuelang.org/go/cue"
+	"cuelang.org/go/cue/build"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
 )
@@ -171,7 +171,7 @@ pkg/
 `))
 }
 
-func (r *Runtime) build(ctx context.Context, filename string) *cue.Instance {
+func (r *Runtime) build(ctx context.Context, filename string) *build.Instance {
 	return Build(filename, OptRoot(r.mod.Dir), OptImportFunc(func(importPath string, importedAt string) (resolvedDir string, err error) {
 		return r.Resolve(ctx, importPath, importedAt)
 	}))

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/build"
+	cueparser "cuelang.org/go/cue/parser"
 	"github.com/octohelm/cuemod/pkg/cuemod"
 )
 
@@ -20,9 +20,10 @@ name: test: """
 	fmt.Println(string(data), err)
 }
 
-func instance(src []byte) *cue.Instance {
+func instance(src []byte) *build.Instance {
 	p := build.NewContext().NewInstance("dir", nil)
-	_ = p.AddFile("main.cue", src)
+	f, _ := cueparser.ParseFile("main.cue", src)
+	_ = p.AddSyntax(f)
 	_ = p.Complete()
-	return cue.Build([]*build.Instance{p})[0]
+	return p
 }
