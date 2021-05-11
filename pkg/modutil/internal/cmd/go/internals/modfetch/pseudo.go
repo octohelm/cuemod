@@ -84,7 +84,7 @@ func ZeroPseudoVersion(major string) string {
 
 // incDecimal returns the decimal string incremented by 1.
 func incDecimal(decimal string) string {
-	// Scan right to left turning 9s to 0s until you find a digit to increment.
+	// Walk right to left turning 9s to 0s until you find a digit to increment.
 	digits := []byte(decimal)
 	i := len(digits) - 1
 	for ; i >= 0 && digits[i] == '9'; i-- {
@@ -103,7 +103,7 @@ func incDecimal(decimal string) string {
 // decDecimal returns the decimal string decremented by 1, or the empty string
 // if the decimal is all zeroes.
 func decDecimal(decimal string) string {
-	// Scan right to left turning 0s to 9s until you find a digit to decrement.
+	// Walk right to left turning 0s to 9s until you find a digit to decrement.
 	digits := []byte(decimal)
 	i := len(digits) - 1
 	for ; i >= 0 && digits[i] == '0'; i-- {

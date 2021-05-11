@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/octohelm/cuemod/internal/version"
+
 	"golang.org/x/mod/sumdb/dirhash"
 
 	cueast "cuelang.org/go/cue/ast"
@@ -18,7 +20,7 @@ type Extractor interface {
 	// Extractor name
 	// used in mod.cue @import("")
 	Name() string
-	// check dir should use extractor.
+	// Detect check dir should use extractor.
 	// if matched, return deps <repo>:<version> too.
 	Detect(ctx context.Context, src string) (bool, map[string]string)
 	// Extract convert dir to cue codes
@@ -63,7 +65,7 @@ func (Extractors) do(ctx context.Context, extractor Extractor, src string, gen s
 		src = origin
 	}
 
-	dirSum, err := dirhash.HashDir(src, "", dirhash.DefaultHash)
+	dirSum, err := dirhash.HashDir(src, "cuem-"+version.Version, dirhash.DefaultHash)
 	if err != nil {
 		return err
 	}

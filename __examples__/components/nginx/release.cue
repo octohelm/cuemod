@@ -17,7 +17,7 @@ release.#Release & {
 				volume: configMap: name: "\(#name)-html"
 			}
 
-			#containers: "web": {
+			#containers: web: {
 				image:           "\(#values.image.repository):\(#values.image.tag)"
 				imagePullPolicy: "\(#values.image.pullPolicy)"
 

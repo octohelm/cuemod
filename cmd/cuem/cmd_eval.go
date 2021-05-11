@@ -20,7 +20,8 @@ func init() {
 }
 
 type BuildOpts struct {
-	Output string `name:"output,o" usage:"output filename"`
+	Output string `name:"output,o" usage:"output filename and fmt"`
+	Write  bool   `name:"write,w" usage:"write"`
 }
 
 func cmdEval() *cobra.Command {
@@ -39,13 +40,26 @@ func cmdEval() *cobra.Command {
 		cwd, _ := os.Getwd()
 		path := filepath.Join(cwd, args[0])
 
-		results, err := runtime.Eval(ctx, path, cuemod.YAML)
+		format := cuemod.YAML
+
+		switch v := filepath.Ext(opts.Output); v {
+		case ".yaml":
+			format = cuemod.YAML
+		case ".json":
+			format = cuemod.JSON
+		case ".cue":
+			format = cuemod.CUE
+		default:
+			panic(fmt.Errorf("unsupport output format %s", v))
+		}
+
+		results, err := runtime.Eval(ctx, path, format)
 		if err != nil {
 			return err
 		}
 
-		if o := opts.Output; o != "" {
-			if err := writeFile(o, results); err != nil {
+		if opts.Output != "" && opts.Write {
+			if err := writeFile(opts.Output, results); err != nil {
 				return err
 			}
 		} else {

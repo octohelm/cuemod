@@ -16,8 +16,11 @@ cuem.k.export:
 	rm -rf ./_output
 	$(CUEM) k show -o ./_output ./__examples__/clusters/demo/*.cue
 
-cuem.eval: cuem.fmt
-	$(CUEM) eval ./__examples__/components/nginx
+cuem.eval:
+	$(CUEM) eval -w -o _output/nginx.cue ./__examples__/components/nginx
+	$(CUEM) eval -o nginx.yaml ./__examples__/components/nginx
+	cue eval _output/nginx.cue
+	$(CUEM) eval -o nginx.yaml _output/nginx.cue
 
 cuem.fmt:
 	$(CUEM) fmt -l -w ./...

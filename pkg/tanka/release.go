@@ -13,7 +13,7 @@ func ProcessResources(r *releasev1alpha.Release, exprs process.Matchers) (manife
 		return manifest.List{}, nil
 	}
 
-	// Scan for everything that looks like a Kubernetes object
+	// Walk for everything that looks like a Kubernetes object
 	extracted, err := process.Extract(raw)
 	if err != nil {
 		return nil, err

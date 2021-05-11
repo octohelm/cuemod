@@ -211,7 +211,6 @@ func (e *pkgExtractor) extractGoFile(ctx context.Context, filename string, f *as
 										),
 									)
 								}
-
 							}
 						}
 					}
@@ -612,16 +611,16 @@ func (e *pkgExtractor) sel(ctx context.Context, name string, pkgName string, imp
 	if std.IsStd(importPath) {
 		// only builtin pkg can be select
 		if builtin.IsBuiltIn(importPath) {
-			importPathsFromContext(ctx).add(importPath, pkgName)
+			pkgNameAlias := importPathsFromContext(ctx).add(importPath)
 			// std & builtin pkg don't use #prefix
-			return &cueast.SelectorExpr{X: e.ident(pkgName, false), Sel: e.ident(name, false)}
+			return &cueast.SelectorExpr{X: e.ident(pkgNameAlias, false), Sel: e.ident(name, false)}
 		}
 		return nil
 	}
 
-	sel := &cueast.SelectorExpr{X: e.ident(pkgName, false), Sel: e.ident(name, true)}
+	pkgNameAlias := importPathsFromContext(ctx).add(importPath)
 
-	importPathsFromContext(ctx).add(importPath, pkgName)
+	sel := &cueast.SelectorExpr{X: e.ident(pkgNameAlias, false), Sel: e.ident(name, true)}
 
 	if gvk := groupVersionKindFromContext(ctx); gvk != nil {
 		if importPath == "k8s.io/apimachinery/pkg/apis/meta/v1" && name == "TypeMeta" {

@@ -7,11 +7,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/octohelm/cuemod/pkg/cuemod/format"
-
-	. "github.com/onsi/gomega"
-
 	"github.com/go-courier/logr"
+	"github.com/octohelm/cuemod/pkg/cuemod/format"
+	. "github.com/onsi/gomega"
 )
 
 func TestRuntime(t *testing.T) {
@@ -26,10 +24,28 @@ func TestRuntime(t *testing.T) {
 		_ = r.Cleanup()
 
 		t.Run("Eval", func(t *testing.T) {
-			data, err := r.Eval(ctx, "./main.cue", YAML)
+			data, err := r.Eval(ctx, ".", JSON)
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
 			NewWithT(t).Expect(r.mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
+		})
+
+		t.Run("Eval from exported single file", func(t *testing.T) {
+			data, err := r.Eval(ctx, ".", CUE)
+			NewWithT(t).Expect(err).To(BeNil())
+			//fmt.Println(string(data))
+
+			_ = os.WriteFile("../../_output/debug.cue", data, os.ModePerm)
+
+			//f, err := cueparser.ParseFile("main.cue", data)
+			//NewWithT(t).Expect(err).To(BeNil())
+
+			//inst := build.NewContext().NewInstance(".", nil)
+			//_ = inst.AddSyntax(f)
+			//
+			//ret, err := Eval(inst, JSON)
+			//NewWithT(t).Expect(err).To(BeNil())
+			//fmt.Println(string(ret))
 		})
 	})
 

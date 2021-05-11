@@ -48,8 +48,11 @@ deployment: nginx: spec: template: spec: {
 }
 EOT
  
-cuem eval ./kube.cue
+cuem eval -o kube.yaml ./kube.cue
 # build, will automately install deps if not exists or generator if needed.
+
+cuem eval -o ./kube.single-file.cue ./kube.cue
+# will bundle to one single cue file
 ```
 
 ### Dependency management

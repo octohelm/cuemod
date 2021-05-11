@@ -3,10 +3,10 @@ package cuemod
 import (
 	"fmt"
 
-	"cuelang.org/go/cue/cuecontext"
-
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/build"
+	"cuelang.org/go/cue/cuecontext"
+	"github.com/octohelm/cuemod/pkg/cuemod/bundle"
 	"sigs.k8s.io/yaml"
 
 	"github.com/octohelm/cuemod/pkg/cuemod/translator"
@@ -18,6 +18,7 @@ type Encoding = build.Encoding
 const (
 	JSON = build.JSON
 	YAML = build.YAML
+	CUE  = build.CUE
 )
 
 func Eval(instance *build.Instance, encoding Encoding) ([]byte, error) {
@@ -31,7 +32,7 @@ func Eval(instance *build.Instance, encoding Encoding) ([]byte, error) {
 		return nil, err
 	}
 
-	data, err := encode(v, encoding)
+	data, err := encode(instance, v, encoding)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +40,10 @@ func Eval(instance *build.Instance, encoding Encoding) ([]byte, error) {
 	return data, nil
 }
 
-func encode(v cue.Value, encoding Encoding) ([]byte, error) {
+func encode(inst *build.Instance, v cue.Value, encoding Encoding) ([]byte, error) {
 	switch encoding {
+	case CUE:
+		return bundle.ToRaw(inst)
 	case JSON:
 		return translator.MarshalCueValue(v)
 	case YAML:

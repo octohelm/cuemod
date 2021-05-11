@@ -2,6 +2,7 @@ package golang
 
 import (
 	"context"
+	"regexp"
 
 	cueast "cuelang.org/go/cue/ast"
 )
@@ -18,8 +19,11 @@ func (i importPaths) toImportDecl() *cueast.ImportDecl {
 	return importDecl
 }
 
-func (i importPaths) add(importPath string, pkgName string) {
-	i[importPath] = pkgName
+var invalidToken = regexp.MustCompile(`[^A-Za-z0-9_]`)
+
+func (i importPaths) add(importPath string) string {
+	i[importPath] = "pkg_" + invalidToken.ReplaceAllString(importPath, "_")
+	return i[importPath]
 }
 
 type contextImportPaths struct {
