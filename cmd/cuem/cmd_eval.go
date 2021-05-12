@@ -8,9 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/pkg/cuemod"
-
 	"github.com/spf13/cobra"
+
+	"github.com/octohelm/cuemod/pkg/cuex"
 )
 
 func init() {
@@ -40,15 +40,15 @@ func cmdEval() *cobra.Command {
 		cwd, _ := os.Getwd()
 		path := filepath.Join(cwd, args[0])
 
-		format := cuemod.YAML
+		format := cuex.YAML
 
 		switch v := filepath.Ext(opts.Output); v {
 		case ".yaml":
-			format = cuemod.YAML
+			format = cuex.YAML
 		case ".json":
-			format = cuemod.JSON
+			format = cuex.JSON
 		case ".cue":
-			format = cuemod.CUE
+			format = cuex.CUE
 		default:
 			panic(fmt.Errorf("unsupport output format %s", v))
 		}

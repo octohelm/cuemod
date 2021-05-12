@@ -24,7 +24,7 @@ go install github.com/octohelm/cuemod/cmd/cuem@latest
 
 ### Quick Start
 
-```shell 
+```bash 
 mkdir -p ./demo && cd ./demo
 
 cat << EOT > kube.cue
@@ -57,7 +57,7 @@ cuem eval -o ./kube.single-file.cue ./kube.cue
 
 ### Dependency management
 
-```
+```bash
 # auto added deps
 cuem get ./...
 

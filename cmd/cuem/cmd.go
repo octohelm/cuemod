@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	runtime     *cuemod.Runtime
+	runtime     *cuemod.Context
 	rootCmd     = cmdRoot()
 	log         = logr.StdLogger()
 	projectOpts = &ProjectOpts{}
@@ -29,7 +29,7 @@ func cmdRoot() *cobra.Command {
 	}
 
 	return setupPersistentPreRun(cmd, projectOpts, func(ctx context.Context, args []string) error {
-		runtime = cuemod.RuntimeFor(projectOpts.Root)
+		runtime = cuemod.ContextFor(projectOpts.Root)
 
 		if projectOpts.Verbose {
 			log.(interface{ SetLevel(lvl logr.Level) }).SetLevel(logr.TraceLevel)

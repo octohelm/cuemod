@@ -2,7 +2,7 @@ package toml
 
 import (
 	"cuelang.org/go/cue"
-	"github.com/octohelm/cuemod/pkg/cuemod/translator"
+	"github.com/octohelm/cuemod/pkg/cuex/translator"
 	"github.com/pelletier/go-toml"
 	"sigs.k8s.io/yaml"
 )

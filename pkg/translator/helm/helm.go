@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"cuelang.org/go/cue"
-	"github.com/octohelm/cuemod/pkg/cuemod/translator"
 	"github.com/pkg/errors"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/engine"
 	"k8s.io/apimachinery/pkg/util/yaml"
+
+	"github.com/octohelm/cuemod/pkg/cuex/translator"
 )
 
 func init() {

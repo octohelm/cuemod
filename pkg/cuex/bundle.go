@@ -1,4 +1,4 @@
-package bundle
+package cuex
 
 import (
 	"fmt"
@@ -10,28 +10,34 @@ import (
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/format"
-	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
+
+	"github.com/octohelm/cuemod/pkg/cuex/builtin"
 )
 
-// ToRaw bundle instance to single cue file
-func ToRaw(inst *build.Instance) ([]byte, error) {
-	sf := &singleFile{Stds: map[string]*cueast.ImportSpec{}, Pkgs: map[string]*cueast.Field{}}
+// BundleToRaw bundle instance to single cue file
+func BundleToRaw(inst *build.Instance) ([]byte, error) {
+	sf := &bundler{
+		stds: map[string]*cueast.ImportSpec{},
+		pkgs: map[string]*cueast.Field{},
+	}
+
 	f, err := sf.Export(inst)
 	if err != nil {
 		return nil, err
 	}
+
 	return format.Node(f, format.Simplify())
 }
 
-type singleFile struct {
-	Stds map[string]*cueast.ImportSpec
-	Pkgs map[string]*cueast.Field
+type bundler struct {
+	stds map[string]*cueast.ImportSpec
+	pkgs map[string]*cueast.Field
 }
 
-func (sf *singleFile) importDecl() *cueast.ImportDecl {
+func (sf *bundler) importDecl() *cueast.ImportDecl {
 	stds := make([]string, 0)
 
-	for i := range sf.Stds {
+	for i := range sf.stds {
 		stds = append(stds, i)
 	}
 
@@ -46,16 +52,16 @@ func (sf *singleFile) importDecl() *cueast.ImportDecl {
 	d.Specs = make([]*cueast.ImportSpec, len(stds))
 
 	for i, importPath := range stds {
-		d.Specs[i] = sf.Stds[importPath]
+		d.Specs[i] = sf.stds[importPath]
 	}
 
 	return d
 }
 
-func (sf *singleFile) importAliases() []cueast.Decl {
+func (sf *bundler) importAliases() []cueast.Decl {
 	pkgAliases := make([]string, 0)
 
-	for i := range sf.Pkgs {
+	for i := range sf.pkgs {
 		pkgAliases = append(pkgAliases, i)
 	}
 
@@ -68,13 +74,13 @@ func (sf *singleFile) importAliases() []cueast.Decl {
 	decls := make([]cueast.Decl, 0)
 
 	for _, importPath := range pkgAliases {
-		decls = append(decls, sf.Pkgs[importPath])
+		decls = append(decls, sf.pkgs[importPath])
 	}
 
 	return decls
 }
 
-func (sf *singleFile) Export(inst *build.Instance) (*cueast.File, error) {
+func (sf *bundler) Export(inst *build.Instance) (*cueast.File, error) {
 	f, err := sf.Walk(inst)
 	if err != nil {
 		return nil, err
@@ -97,7 +103,7 @@ func (sf *singleFile) Export(inst *build.Instance) (*cueast.File, error) {
 	return f, nil
 }
 
-func (sf *singleFile) Walk(inst *build.Instance) (*cueast.File, error) {
+func (sf *bundler) Walk(inst *build.Instance) (*cueast.File, error) {
 	f := &cueast.File{
 		Filename: fmt.Sprintf("%s/%s.cue", inst.ImportPath, inst.PkgName),
 	}
@@ -121,7 +127,7 @@ func (sf *singleFile) Walk(inst *build.Instance) (*cueast.File, error) {
 						if spec.Name != nil {
 							id = cueast.NewIdent(spec.Name.Name)
 						}
-						sf.Stds[importPath] = cueast.NewImport(id, importPath)
+						sf.stds[importPath] = cueast.NewImport(id, importPath)
 					} else {
 						for _, dep := range inst.Imports {
 							if dep.ImportPath == importPath {
@@ -132,14 +138,14 @@ func (sf *singleFile) Walk(inst *build.Instance) (*cueast.File, error) {
 
 								id := cueast.NewIdent(toSafeID(importPath))
 
-								sf.Pkgs[importPath] = &cueast.Field{
+								sf.pkgs[importPath] = &cueast.Field{
 									Label: id,
 									Value: &cueast.StructLit{
 										Elts: f.Decls,
 									},
 								}
 
-								cueast.AddComment(sf.Pkgs[importPath], &cueast.CommentGroup{
+								cueast.AddComment(sf.pkgs[importPath], &cueast.CommentGroup{
 									Doc: true,
 									List: []*cueast.Comment{{
 										Text: "// " + importPath,

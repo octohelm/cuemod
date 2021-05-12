@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/pkg/cuemod"
+	"github.com/octohelm/cuemod/pkg/cuex"
 
 	"github.com/grafana/tanka/pkg/process"
 	"github.com/octohelm/cuemod/pkg/tanka"
@@ -150,7 +150,7 @@ func load(ctx context.Context, filename string, opts *tanka.FilterOpts) (*tanka.
 	cwd, _ := os.Getwd()
 	path := filepath.Join(cwd, filename)
 
-	jsonRaw, err := runtime.Eval(ctx, path, cuemod.JSON)
+	jsonRaw, err := runtime.Eval(ctx, path, cuex.JSON)
 	if err != nil {
 		return nil, err
 	}

@@ -8,11 +8,13 @@ import (
 	"testing"
 
 	"github.com/go-courier/logr"
-	"github.com/octohelm/cuemod/pkg/cuemod/format"
+	"github.com/octohelm/cuemod/pkg/cuex"
+	"github.com/octohelm/cuemod/pkg/cuex/format"
+
 	. "github.com/onsi/gomega"
 )
 
-func TestRuntime(t *testing.T) {
+func TestContext(t *testing.T) {
 	cwd, _ := os.Getwd()
 
 	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
@@ -20,38 +22,33 @@ func TestRuntime(t *testing.T) {
 	ctx = WithOpts(ctx, OptVerbose(true))
 
 	t.Run("mod a", func(t *testing.T) {
-		r := RuntimeFor(filepath.Join(cwd, "./testdata/a"))
-		_ = r.Cleanup()
+		r := ContextFor(filepath.Join(cwd, "./testdata/a"))
+		//_ = r.Cleanup()
 
 		t.Run("Eval", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", JSON)
+			data, err := r.Eval(ctx, ".", cuex.JSON)
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
 			NewWithT(t).Expect(r.mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
 		})
 
 		t.Run("Eval from exported single file", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", CUE)
+			data, err := r.Eval(ctx, ".", cuex.CUE)
 			NewWithT(t).Expect(err).To(BeNil())
 			//fmt.Println(string(data))
 
 			_ = os.WriteFile("../../_output/debug.cue", data, os.ModePerm)
 
-			//f, err := cueparser.ParseFile("main.cue", data)
-			//NewWithT(t).Expect(err).To(BeNil())
-
-			//inst := build.NewContext().NewInstance(".", nil)
-			//_ = inst.AddSyntax(f)
-			//
-			//ret, err := Eval(inst, JSON)
-			//NewWithT(t).Expect(err).To(BeNil())
-			//fmt.Println(string(ret))
+			inst, _ := cuex.InstanceFromRaw(data)
+			ret, err := cuex.Eval(inst, cuex.JSON)
+			NewWithT(t).Expect(err).To(BeNil())
+			fmt.Println(string(ret))
 		})
 	})
 
 	t.Run("mod b", func(t *testing.T) {
-		r := RuntimeFor(filepath.Join(cwd, "./testdata/b"))
-		_ = r.Cleanup()
+		r := ContextFor(filepath.Join(cwd, "./testdata/b"))
+		//_ = r.Cleanup()
 
 		t.Run("ListCue", func(t *testing.T) {
 			t.Run("one dir", func(t *testing.T) {
@@ -83,7 +80,7 @@ func TestRuntime(t *testing.T) {
 		})
 
 		t.Run("Eval", func(t *testing.T) {
-			ret, err := r.Eval(ctx, "./main.cue", YAML)
+			ret, err := r.Eval(ctx, "./main.cue", cuex.YAML)
 			NewWithT(t).Expect(err).To(BeNil())
 			t.Log(string(ret))
 		})

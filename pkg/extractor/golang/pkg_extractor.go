@@ -16,14 +16,14 @@ import (
 	"strings"
 	"unicode"
 
-	"k8s.io/apimachinery/pkg/runtime/schema"
-
 	cueast "cuelang.org/go/cue/ast"
 	cuetoken "cuelang.org/go/cue/token"
 	"github.com/go-courier/logr"
-	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
-	"github.com/octohelm/cuemod/pkg/extractor/golang/std"
 	"github.com/pkg/errors"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"github.com/octohelm/cuemod/pkg/cuex/builtin"
+	"github.com/octohelm/cuemod/pkg/extractor/golang/std"
 )
 
 type pkgExtractor struct {

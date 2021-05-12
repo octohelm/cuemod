@@ -9,7 +9,7 @@ import (
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/load"
 	"cuelang.org/go/cue/parser"
-	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
+	"github.com/octohelm/cuemod/pkg/cuex/builtin"
 )
 
 type OptionFunc = func(c *load.Config)

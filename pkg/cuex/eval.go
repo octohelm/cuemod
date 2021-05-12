@@ -1,4 +1,4 @@
-package cuemod
+package cuex
 
 import (
 	"fmt"
@@ -6,10 +6,9 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/cuecontext"
-	"github.com/octohelm/cuemod/pkg/cuemod/bundle"
 	"sigs.k8s.io/yaml"
 
-	"github.com/octohelm/cuemod/pkg/cuemod/translator"
+	"github.com/octohelm/cuemod/pkg/cuex/translator"
 	_ "github.com/octohelm/cuemod/pkg/translator"
 )
 
@@ -43,7 +42,7 @@ func Eval(instance *build.Instance, encoding Encoding) ([]byte, error) {
 func encode(inst *build.Instance, v cue.Value, encoding Encoding) ([]byte, error) {
 	switch encoding {
 	case CUE:
-		return bundle.ToRaw(inst)
+		return BundleToRaw(inst)
 	case JSON:
 		return translator.MarshalCueValue(v)
 	case YAML:

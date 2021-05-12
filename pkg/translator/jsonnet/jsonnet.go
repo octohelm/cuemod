@@ -6,10 +6,9 @@ import (
 	"path/filepath"
 
 	"cuelang.org/go/cue"
-	"github.com/octohelm/cuemod/pkg/cuemod/translator"
-
 	"github.com/google/go-jsonnet"
 	tankanative "github.com/grafana/tanka/pkg/jsonnet/native"
+	"github.com/octohelm/cuemod/pkg/cuex/translator"
 )
 
 func init() {

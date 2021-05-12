@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/octohelm/cuemod/pkg/cuemod/format"
+	"github.com/octohelm/cuemod/pkg/cuex/format"
 	"github.com/spf13/cobra"
 )
 
