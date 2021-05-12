@@ -199,7 +199,6 @@ replace: {
 
 like [Tanka](https://tanka.dev), but for cuelang.
 
-* need kubectl instead
 * make sure the cue file return an object as struct below:
 
 ```cue

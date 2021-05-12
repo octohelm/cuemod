@@ -3,9 +3,17 @@ dist: ./bin
 before:
   hooks:
     - go mod download -x
+changelog:
+  filters:
+    exclude:
+      - '^docs'
+      - '^chore'
 builds:
-  - dir: ./cmd/cuem
+  - &_build
+    id: cuem
+    dir: ./cmd/cuem
     binary: cuem
+
     env:
       - CGO_ENABLED=0
     goos:
@@ -20,10 +28,12 @@ builds:
     ldflags:
       - -s -w -X github.com/octohelm/cuemod/internal/version.Version={{ .Version }}+sha.{{ .FullCommit }}
     mod_timestamp: '{{ .CommitTimestamp }}'
-checksum:
-  name_template: '{{ .ProjectName }}_checksums.txt'
-changelog:
-  filters:
-    exclude:
-      - '^docs'
-      - '^chore'
+
+
+  - <<: *_build
+
+    id: cuem-operator
+    binary: cuem-operator
+    dir: ./cmd/cuem-operator
+    goos:
+      - linux

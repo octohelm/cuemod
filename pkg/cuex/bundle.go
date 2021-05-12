@@ -17,8 +17,8 @@ import (
 // BundleToRaw bundle instance to single cue file
 func BundleToRaw(inst *build.Instance) ([]byte, error) {
 	sf := &bundler{
-		stds: map[string]*cueast.ImportSpec{},
-		pkgs: map[string]*cueast.Field{},
+		stds:    map[string]*cueast.ImportSpec{},
+		imports: map[string]*cueast.Field{},
 	}
 
 	f, err := sf.Export(inst)
@@ -31,7 +31,24 @@ func BundleToRaw(inst *build.Instance) ([]byte, error) {
 
 type bundler struct {
 	stds map[string]*cueast.ImportSpec
-	pkgs map[string]*cueast.Field
+
+	imports      map[string]*cueast.Field
+	importOrders []string
+}
+
+func (sf *bundler) importPkg(importPath string, f *cueast.Field) {
+	if _, ok := sf.imports[importPath]; !ok {
+		sf.imports[importPath] = f
+
+		cueast.AddComment(f, &cueast.CommentGroup{
+			Doc: true,
+			List: []*cueast.Comment{{
+				Text: "// " + importPath,
+			}},
+		})
+
+		sf.importOrders = append([]string{importPath}, sf.importOrders...)
+	}
 }
 
 func (sf *bundler) importDecl() *cueast.ImportDecl {
@@ -59,22 +76,10 @@ func (sf *bundler) importDecl() *cueast.ImportDecl {
 }
 
 func (sf *bundler) importAliases() []cueast.Decl {
-	pkgAliases := make([]string, 0)
-
-	for i := range sf.pkgs {
-		pkgAliases = append(pkgAliases, i)
-	}
-
-	if len(pkgAliases) == 0 {
-		return nil
-	}
-
-	sort.Strings(pkgAliases)
-
 	decls := make([]cueast.Decl, 0)
 
-	for _, importPath := range pkgAliases {
-		decls = append(decls, sf.pkgs[importPath])
+	for _, importPath := range sf.importOrders {
+		decls = append(decls, sf.imports[importPath])
 	}
 
 	return decls
@@ -138,18 +143,11 @@ func (sf *bundler) Walk(inst *build.Instance) (*cueast.File, error) {
 
 								id := cueast.NewIdent(toSafeID(importPath))
 
-								sf.pkgs[importPath] = &cueast.Field{
+								sf.importPkg(importPath, &cueast.Field{
 									Label: id,
 									Value: &cueast.StructLit{
 										Elts: f.Decls,
 									},
-								}
-
-								cueast.AddComment(sf.pkgs[importPath], &cueast.CommentGroup{
-									Doc: true,
-									List: []*cueast.Comment{{
-										Text: "// " + importPath,
-									}},
 								})
 
 								n := cueast.NewIdent(dep.PkgName)
@@ -178,19 +176,15 @@ func (sf *bundler) Walk(inst *build.Instance) (*cueast.File, error) {
 		cueast.Walk(
 			stmt,
 			func(node cueast.Node) bool {
-				if selectExpr, ok := node.(*cueast.SelectorExpr); ok {
-					// xx.XX
-					if id, ok := selectExpr.X.(*cueast.Ident); ok {
+				if id, ok := node.(*cueast.Ident); ok && id.Node != nil {
+					if _, ok := id.Node.(*cueast.ImportSpec); ok {
 						for n, uniqPkgName := range importAliases {
 							if n == id.Name {
 								id.Name = uniqPkgName
 							}
 						}
-
-						return false
 					}
 				}
-
 				return true
 			},
 			nil,

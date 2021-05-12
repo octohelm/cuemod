@@ -1,7 +1,8 @@
 import (
-	"github.com/x/examples/components/nginx"
+	spec "github.com/x/examples/components/nginx"
 )
 
-nginx & {
+spec & {
 	#context: "hw-dev"
+	spec: {}
 }

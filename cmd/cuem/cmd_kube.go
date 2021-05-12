@@ -6,11 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/pkg/cuex"
+	"github.com/octohelm/cuemod/pkg/cuemoperator"
 
-	"github.com/grafana/tanka/pkg/process"
-	"github.com/octohelm/cuemod/pkg/tanka"
 	"github.com/spf13/cobra"
+
+	"github.com/octohelm/cuemod/pkg/cuex"
+	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
+	"github.com/octohelm/cuemod/pkg/plugins/kube"
 )
 
 func init() {
@@ -25,7 +27,7 @@ func cmdKube() *cobra.Command {
 		Aliases: []string{"k"},
 	}
 
-	filters := &tanka.FilterOpts{
+	filters := &kube.Opts{
 		Targets: []string{},
 	}
 
@@ -41,12 +43,12 @@ func cmdKube() *cobra.Command {
 	return cmd
 }
 
-func cmdKubeShow(filters *tanka.FilterOpts) *cobra.Command {
+func cmdKubeShow(filters *kube.Opts) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "show <input>",
 	}
 
-	opts := tanka.ShowOpts{}
+	opts := kube.ShowOpts{}
 
 	return setupRun(cmd, &opts, func(ctx context.Context, args []string) error {
 		if len(args) == 0 {
@@ -74,14 +76,12 @@ func cmdKubeShow(filters *tanka.FilterOpts) *cobra.Command {
 	})
 }
 
-func cmdKubeApply(filters *tanka.FilterOpts) *cobra.Command {
+func cmdKubeApply(filters *kube.Opts) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "apply <input>",
 	}
 
-	opts := tanka.ApplyOpts{
-		Validate: true,
-	}
+	opts := kube.ApplyOpts{}
 
 	return setupRun(cmd, &opts, func(ctx context.Context, args []string) error {
 		if len(args) == 0 {
@@ -97,14 +97,12 @@ func cmdKubeApply(filters *tanka.FilterOpts) *cobra.Command {
 	})
 }
 
-func cmdKubeDelete(filters *tanka.FilterOpts) *cobra.Command {
+func cmdKubeDelete(filters *kube.Opts) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "delete <input>",
 	}
 
-	opts := tanka.DeleteOpts{
-		Validate: true,
-	}
+	opts := kube.DeleteOpts{}
 
 	return setupRun(cmd, &opts, func(ctx context.Context, args []string) error {
 		if len(args) == 0 {
@@ -120,12 +118,12 @@ func cmdKubeDelete(filters *tanka.FilterOpts) *cobra.Command {
 	})
 }
 
-func cmdKubePrune(filters *tanka.FilterOpts) *cobra.Command {
+func cmdKubePrune(filters *kube.Opts) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "prune <input>",
 	}
 
-	opts := tanka.PruneOpts{}
+	opts := kube.PruneOpts{}
 
 	return setupRun(cmd, &opts, func(ctx context.Context, args []string) error {
 		if len(args) == 0 {
@@ -141,12 +139,7 @@ func cmdKubePrune(filters *tanka.FilterOpts) *cobra.Command {
 	})
 }
 
-func load(ctx context.Context, filename string, opts *tanka.FilterOpts) (*tanka.LoadResult, error) {
-	filters, err := process.StrExps(opts.Targets...)
-	if err != nil {
-		return nil, err
-	}
-
+func load(ctx context.Context, filename string, opts *kube.Opts) (*kube.LoadResult, error) {
 	cwd, _ := os.Getwd()
 	path := filepath.Join(cwd, filename)
 
@@ -155,5 +148,29 @@ func load(ctx context.Context, filename string, opts *tanka.FilterOpts) (*tanka.
 		return nil, err
 	}
 
-	return tanka.Process(jsonRaw, filters)
+	release, err := kube.ReleaseFromJSONRaw(jsonRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	filters, err := manifest.StrExps(opts.Targets...)
+	if err != nil {
+		return nil, err
+	}
+
+	if opts.AsTemplate {
+		cueTemplate, err := runtime.Eval(ctx, path, cuex.CUE)
+		if err != nil {
+			return nil, err
+		}
+
+		s := cuemoperator.NewReleaseTemplate(release.Namespace, release.Name, cueTemplate)
+
+		return &kube.LoadResult{
+			Release:   release,
+			Resources: []manifest.Object{s},
+		}, nil
+	}
+
+	return kube.Process(release, filters)
 }
