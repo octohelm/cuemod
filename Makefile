@@ -1,10 +1,17 @@
 CUEM = go run ./cmd/cuem -v -p ./__examples__
 
+up.operator:
+	WATCH_NAMESPACE=default \
+		go run ./cmd/cuem-operator/main.go
+
 cuem.k.show:
 	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.apply:
 	$(CUEM) k apply ./__examples__/clusters/demo/nginx.cue
+
+cuem.k.apply-as-release-template:
+	$(CUEM) k apply --as-template ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.prune:
 	$(CUEM) k prune ./__examples__/clusters/demo/nginx.cue
@@ -17,10 +24,10 @@ cuem.k.export:
 	$(CUEM) k show -o ./_output ./__examples__/clusters/demo/*.cue
 
 cuem.eval:
-	$(CUEM) eval -w -o _output/nginx.cue ./__examples__/components/nginx
-	$(CUEM) eval -o nginx.yaml ./__examples__/components/nginx
+	$(CUEM) eval -w -o _output/nginx.cue ./__examples__/clusters/demo/nginx.cue
+	$(CUEM) eval -o nginx.yaml ./__examples__/clusters/demo/nginx.cue
 	cue eval _output/nginx.cue
-	$(CUEM) eval -o nginx.yaml _output/nginx.cue
+	$(CUEM) eval -o nginx.json _output/nginx.cue
 
 cuem.fmt:
 	$(CUEM) fmt -l -w ./...

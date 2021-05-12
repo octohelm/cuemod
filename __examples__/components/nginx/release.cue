@@ -9,7 +9,7 @@ release.#Release & {
 	#namespace: "default"
 
 	spec: {
-		configMaps: "\(#name)-html": data: "index.html": _indexHTML
+		configMaps: "\(#name)-html": data: "index.html": #values.index
 
 		deployments: "\(#name)": {
 			#volumes: html: {
