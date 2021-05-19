@@ -10,8 +10,8 @@ require (
 	github.com/emicklei/proto v1.9.0 // indirect
 	github.com/fatih/color v1.11.0
 	github.com/go-courier/logr v0.0.2
-	github.com/go-courier/ptr v1.0.1 // indirect
-	github.com/go-logr/logr v0.3.0 // indirect
+	github.com/go-courier/ptr v1.0.1
+	github.com/go-logr/logr v0.4.0
 	github.com/golang/glog v0.0.0-20210429001901-424d2337a529 // indirect
 	github.com/google/go-jsonnet v0.17.0
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -41,7 +41,7 @@ require (
 	helm.sh/helm/v3 v3.5.1
 	k8s.io/api v0.20.5
 	k8s.io/apiextensions-apiserver v0.20.5
-	k8s.io/apimachinery v0.20.5
+	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.20.5
 	k8s.io/kube-openapi v0.0.0-20210421082810-95288971da7e // indirect
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10 // indirect
