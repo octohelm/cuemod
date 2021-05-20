@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func NewReleaseTemplate(namespace string, name string, data []byte) *releasev1alpha1.Release {
+func NewReleaseTemplate(namespace string, name string, template []byte) *releasev1alpha1.Release {
 	s := &releasev1alpha1.Release{}
 
 	s.SetGroupVersionKind(releasev1alpha1.SchemeGroupVersion.WithKind("Release"))
@@ -19,7 +19,7 @@ func NewReleaseTemplate(namespace string, name string, data []byte) *releasev1al
 	s.Name = name
 
 	t := &releasev1alpha1.ReleaseTemplate{
-		Data: string(data),
+		Template: string(template),
 	}
 
 	t.SetGroupVersionKind(releasev1alpha1.SchemeGroupVersion.WithKind("ReleaseTemplate"))

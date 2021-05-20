@@ -3,6 +3,8 @@ package cuemoperator
 import (
 	"context"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	releasev1alpha1 "github.com/octohelm/cuemod/pkg/apis/release/v1alpha1"
 
 	"github.com/octohelm/cuemod/pkg/kubernetes"
@@ -83,16 +85,22 @@ func (r *ReleaseReconciler) Reconcile(ctx context.Context, request reconcile.Req
 			return reconcile.Result{}, nil
 		}
 
-		release.Status.Resources = append(release.Status.Resources, releasev1alpha1.Resource{
-			GroupVersionKind: o.GetObjectKind().GroupVersionKind(),
-			Namespace:        o.GetNamespace(),
-			Name:             o.GetName(),
-		})
+		gvk := o.GetObjectKind().GroupVersionKind()
 
-		if err := r.Client.Status().Update(ctx, release); err != nil {
-			r.Log.Error(err, "update status err")
-			return reconcile.Result{}, nil
-		}
+		release.Status.Resources = append(release.Status.Resources, releasev1alpha1.Resource{
+			GroupVersionKind: metav1.GroupVersionKind{
+				Group:   gvk.Group,
+				Version: gvk.Version,
+				Kind:    gvk.Kind,
+			},
+			Namespace: o.GetNamespace(),
+			Name:      o.GetName(),
+		})
+	}
+
+	if err := r.Client.Status().Update(ctx, release); err != nil {
+		r.Log.Error(err, "update status err")
+		return reconcile.Result{}, nil
 	}
 
 	return reconcile.Result{}, nil

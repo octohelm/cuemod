@@ -16,3 +16,28 @@ func InstanceFromRaw(src []byte) (*build.Instance, error) {
 	}
 	return inst, nil
 }
+
+func InstanceFromTemplateAndOverwrites(template []byte, overwrites []byte) (*build.Instance, error) {
+	t, err := InstanceFromRaw(template)
+	if err != nil {
+		return nil, err
+	}
+
+	if overwrites == nil {
+		overwrites = []byte(`
+import t "t"
+t & {}
+`)
+	}
+
+	m, err := InstanceFromRaw(overwrites)
+	if err != nil {
+		return nil, err
+	}
+
+	t.ImportPath = "t"
+
+	m.Imports = append(m.Imports, t)
+
+	return m, nil
+}

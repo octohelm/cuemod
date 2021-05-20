@@ -119,7 +119,6 @@ func (in *ReleaseStatus) DeepCopy() *ReleaseStatus {
 func (in *ReleaseTemplate) DeepCopyInto(out *ReleaseTemplate) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
 	return
 }
 

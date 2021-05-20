@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func init() {
@@ -22,11 +21,10 @@ type Release struct {
 }
 
 type ReleaseTemplate struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
+	metav1.TypeMeta `json:",inline"`
 	// cue codes witch could return nested kube resources
-	Data string `json:"data,omitempty"`
+	Template   string `json:"template,omitempty"`
+	Overwrites string `json:"overwrites,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -54,7 +52,7 @@ type ReleaseStatus struct {
 }
 
 type Resource struct {
-	schema.GroupVersionKind
+	metav1.GroupVersionKind
 	Namespace string `json:"namespace"`
 	Name      string `json:"name"`
 }

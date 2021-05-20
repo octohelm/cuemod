@@ -70,14 +70,11 @@ debug:
 	#tree ./pkg/cuemod/testdata/b/cue.mod
 
 
-gen-deepcopy: install-deepcopy-gen
+gen-deepcopy:
 	deepcopy-gen \
 		--output-file-base zz_generated.deepcopy \
 		--go-header-file ./hack/boilerplate.go.txt \
 		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
-
-install-deepcopy-gen:
-	go install k8s.io/code-generator/cmd/deepcopy-gen
 
 build:
 	goreleaser build --snapshot --rm-dist

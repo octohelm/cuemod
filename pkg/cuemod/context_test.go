@@ -35,7 +35,6 @@ func TestContext(t *testing.T) {
 		t.Run("Eval from exported single file", func(t *testing.T) {
 			data, err := r.Eval(ctx, ".", cuex.CUE)
 			NewWithT(t).Expect(err).To(BeNil())
-			//fmt.Println(string(data))
 
 			_ = os.WriteFile("../../_output/debug.cue", data, os.ModePerm)
 
