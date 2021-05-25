@@ -8,7 +8,7 @@ require (
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1
 	github.com/emicklei/proto v1.9.0 // indirect
-	github.com/fatih/color v1.11.0
+	github.com/fatih/color v1.12.0
 	github.com/go-courier/logr v0.0.2
 	github.com/go-courier/ptr v1.0.1
 	github.com/go-logr/logr v0.4.0
