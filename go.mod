@@ -45,7 +45,7 @@ require (
 	golang.org/x/tools v0.1.2
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
-	helm.sh/helm/v3 v3.5.1
+	helm.sh/helm/v3 v3.5.4
 	k8s.io/api v0.21.1
 	k8s.io/apiextensions-apiserver v0.21.1
 	k8s.io/apimachinery v0.21.1
