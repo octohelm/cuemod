@@ -36,7 +36,7 @@ cuem.fmt:
 cuem.get:
 	$(CUEM) get ./...
 
-build: download
+build:
 	goreleaser build --snapshot --rm-dist
 
 fmt:
@@ -56,9 +56,6 @@ dep:
 	go get -u ./...
 	go mod tidy
 
-download:
-	go mod download -x
-
 setup:
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -75,9 +72,6 @@ gen-deepcopy:
 		--output-file-base zz_generated.deepcopy \
 		--go-header-file ./hack/boilerplate.go.txt \
 		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
-
-build:
-	goreleaser build --snapshot --rm-dist
 
 dockerx: build
 	$(foreach target,$(TARGETS),\

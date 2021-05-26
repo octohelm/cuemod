@@ -1,7 +1,7 @@
 module: "github.com/x/b"
 
 require: {
-	"github.com/grafana/jsonnet-libs":           "v0.0.0-20210518121334-289940e590c5" @vcs("master")
+	"github.com/grafana/jsonnet-libs":           "v0.0.0-20210525192040-04c6f9d72da5" @vcs("master")
 	"github.com/istio/istio":                    "v0.0.0-20210315064903-f88f93ff2b81"
 	"github.com/jsonnet-libs/k8s-alpha":         "v0.0.0-20210118111845-5e0d0738721f" @indirect()
 	"github.com/rancher/local-path-provisioner": "v0.0.19"

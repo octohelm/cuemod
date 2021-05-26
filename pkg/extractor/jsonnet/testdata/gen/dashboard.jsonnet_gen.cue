@@ -3,8 +3,8 @@
 package src
 
 import (
-	grafana_example "github.com/grafana/jsonnet-libs/grafana/example:example"
 	grafana "github.com/grafana/jsonnet-libs/grafana:grafana"
+	grafana_example "github.com/grafana/jsonnet-libs/grafana/example:example"
 )
 
 _files
