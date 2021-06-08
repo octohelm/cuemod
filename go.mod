@@ -28,13 +28,12 @@ require (
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/onsi/gomega v1.12.0
+	github.com/onsi/gomega v1.13.0
 	github.com/opencontainers/runtime-tools v0.0.0-20181011054405-1d69bd0f9c39 // indirect
-	github.com/pelletier/go-toml v1.9.1
+	github.com/pelletier/go-toml v1.9.2
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/prometheus/client_golang v1.10.0 // indirect
-	github.com/prometheus/common v0.25.0 // indirect
+	github.com/prometheus/common v0.28.0 // indirect
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20210430143850-408574485efa // indirect
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
@@ -47,7 +46,7 @@ require (
 	golang.org/x/mod v0.4.2
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
-	golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea // indirect
+	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56
 	golang.org/x/tools v0.1.2
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
@@ -63,7 +62,7 @@ require (
 	k8s.io/kube-openapi v0.0.0-20210527164424-3c818078ee3d // indirect
 	k8s.io/kubernetes v1.13.0 // indirect
 	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b // indirect
-	sigs.k8s.io/controller-runtime v0.9.0-beta.5
+	sigs.k8s.io/controller-runtime v0.9.0
 	sigs.k8s.io/kustomize v2.0.3+incompatible // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.1 // indirect
 	sigs.k8s.io/yaml v1.2.0
