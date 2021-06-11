@@ -23,6 +23,13 @@ func ProcessResources(r *releasev1alpha1.Release, exprs Matchers) (List, error) 
 
 	out = ProcessManifests(out,
 		WithReleaseName(r.Name),
+		func(m Object) Object {
+			// TODO filter all cluster resource
+			if m.GetObjectKind().GroupVersionKind().Kind != "Namespace" {
+				m.SetNamespace(r.Namespace)
+			}
+			return m
+		},
 	)
 
 	if len(exprs) > 0 {

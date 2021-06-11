@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
+	pkgerrors "github.com/pkg/errors"
 	"github.com/pmezard/go-difflib/difflib"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -22,21 +23,21 @@ func (c *KubeClient) Diff(ctx context.Context, objs []manifest.Object) ([]byte, 
 
 		live, err := manifest.NewForGroupVersionKind(gvk)
 		if err != nil {
-			return nil, err
+			return nil, pkgerrors.Wrapf(err, "create gvk failed: %s", obj.GetName())
 		}
 
 		toCreated := false
 
 		if err := c.Get(ctx, client.ObjectKeyFromObject(obj), live); err != nil {
 			if !apierrors.IsNotFound(err) {
-				return nil, err
+				return nil, pkgerrors.Wrapf(err, "get failed: %s", obj.GetName())
 			} else {
 				toCreated = true
 			}
 		}
 
 		if err := ApplyOne(ctx, c.Client, obj, true); err != nil {
-			return nil, err
+			return nil, pkgerrors.Wrapf(err, "apply failed: %s", obj.GetName())
 		}
 
 		// ignore managedFields
@@ -45,7 +46,7 @@ func (c *KubeClient) Diff(ctx context.Context, objs []manifest.Object) ([]byte, 
 
 		liveManifest, err := yaml.Marshal(live)
 		if err != nil {
-			return nil, err
+			return nil, pkgerrors.Wrapf(err, "marshal living failed: %s", obj.GetName())
 		}
 
 		if toCreated {
@@ -55,7 +56,7 @@ func (c *KubeClient) Diff(ctx context.Context, objs []manifest.Object) ([]byte, 
 
 		mergedManifest, err := yaml.Marshal(obj)
 		if err != nil {
-			return nil, err
+			return nil, pkgerrors.Wrapf(err, "marshal merged failed: %s", obj.GetName())
 		}
 
 		_ = difflib.WriteUnifiedDiff(buf, difflib.UnifiedDiff{
