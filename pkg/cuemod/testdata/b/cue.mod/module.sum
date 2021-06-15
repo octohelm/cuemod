@@ -1,11 +1,11 @@
+github.com/grafana/jsonnet-libs v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/grafana/jsonnet-libs v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
-github.com/grafana/jsonnet-libs v0.0.0-20210527094404-0aa89c4cf131 h1:kz4SbWDOErPoOGl8yUl9MkYyzphC/uMQkYsUbjNVSTI=
-github.com/grafana/jsonnet-libs v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
+github.com/grafana/jsonnet-libs v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
+github.com/grafana/jsonnet-libs/grafana v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/grafana/jsonnet-libs/grafana v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210527094404-0aa89c4cf131 h1:kz4SbWDOErPoOGl8yUl9MkYyzphC/uMQkYsUbjNVSTI=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
-github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
+github.com/grafana/jsonnet-libs/grafana v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
+github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/istio/istio v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/istio/istio/manifests/charts/istio-operator v0.0.0-20210315064903-f88f93ff2b81 h1:wNf82z8/ahSxQ5vWIjn2vaOrRVyeV31FnnvwXyYjSTw=
 github.com/jsonnet-libs/k8s-alpha v0.0.0-20210118111845-5e0d0738721f h1:NF/3uC4WED0AlzmpA/ptp3diu5AfX8S4zcFSVEFyGWU=

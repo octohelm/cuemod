@@ -7,6 +7,7 @@ package modload
 import (
 	"context"
 	"fmt"
+	"go/build"
 	"os"
 	"strings"
 
@@ -15,7 +16,9 @@ import (
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/imports"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/mvs"
 
+	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/module"
+	"golang.org/x/mod/semver"
 )
 
 // buildList is the list of modules to use for building packages.
@@ -225,6 +228,33 @@ func ReloadBuildList() []module.Version {
 		allClosesOverTests: index.allPatternClosesOverTests(), // but doesn't matter because the root list is empty.
 	})
 	return capVersionSlice(buildList)
+}
+
+// CheckTidyVersion reports an error to stderr if the Go version indicated by
+// the go.mod file is not supported by this version of the 'go' command.
+//
+// If allowError is false, such an error terminates the program.
+func CheckTidyVersion(ctx context.Context, allowError bool) {
+	LoadModFile(ctx)
+	if index.goVersionV == "" {
+		return
+	}
+
+	tags := build.Default.ReleaseTags
+	maxGo := tags[len(tags)-1]
+	if !strings.HasPrefix(maxGo, "go") || !modfile.GoVersionRE.MatchString(maxGo[2:]) {
+		base.Fatalf("go: unrecognized go version %q", maxGo)
+	}
+	max := maxGo[2:]
+
+	if semver.Compare(index.goVersionV, "v"+max) > 0 {
+		have := index.goVersionV[1:]
+		if allowError {
+			fmt.Fprintf(os.Stderr, "go mod tidy: go.mod file indicates go %s, but maximum supported version is %s\n", have, max)
+		} else {
+			base.Fatalf("go mod tidy: go.mod file indicates go %s, but maximum supported version is %s\n", have, max)
+		}
+	}
 }
 
 // TidyBuildList trims the build list to the minimal requirements needed to

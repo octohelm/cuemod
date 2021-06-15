@@ -26,9 +26,9 @@ type Match struct {
 	Pkgs    []string // matching packages (import paths)
 	Errs    []error  // errors matching the patterns to packages, NOT errors loading those packages
 
-	// Errs may be non-empty even if len(pkgs) > 0, indicating that some matching
+	// Errs may be non-empty even if len(Pkgs) > 0, indicating that some matching
 	// packages could be located but results may be incomplete.
-	// If len(pkgs) == 0 && len(Errs) == 0, the pattern is well-formed but did not
+	// If len(Pkgs) == 0 && len(Errs) == 0, the pattern is well-formed but did not
 	// match any packages.
 }
 
@@ -88,7 +88,7 @@ func (e *MatchError) Unwrap() error {
 	return e.Err
 }
 
-// MatchPackages sets m.pkgs to a non-nil slice containing all the packages that
+// MatchPackages sets m.Pkgs to a non-nil slice containing all the packages that
 // can be found under the $GOPATH directories and $GOROOT that match the
 // pattern. The pattern must be either "all" (all packages), "std" (standard
 // packages), "cmd" (standard commands), or a path including "...".
