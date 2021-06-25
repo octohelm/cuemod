@@ -23,7 +23,7 @@ func TestContext(t *testing.T) {
 
 	t.Run("mod a", func(t *testing.T) {
 		r := ContextFor(filepath.Join(cwd, "./testdata/a"))
-		//_ = r.Cleanup()
+		_ = r.Cleanup()
 
 		t.Run("Eval", func(t *testing.T) {
 			data, err := r.Eval(ctx, ".", cuex.JSON)
@@ -47,7 +47,7 @@ func TestContext(t *testing.T) {
 
 	t.Run("mod b", func(t *testing.T) {
 		r := ContextFor(filepath.Join(cwd, "./testdata/b"))
-		//_ = r.Cleanup()
+		_ = r.Cleanup()
 
 		t.Run("ListCue", func(t *testing.T) {
 			t.Run("one dir", func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestContext(t *testing.T) {
 		})
 
 		t.Run("Eval", func(t *testing.T) {
-			ret, err := r.Eval(ctx, "./main.cue", cuex.YAML)
+			ret, err := r.Eval(ctx, "./jsonnet_demo/jsonnet.cue", cuex.YAML)
 			NewWithT(t).Expect(err).To(BeNil())
 			t.Log(string(ret))
 		})

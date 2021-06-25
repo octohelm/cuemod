@@ -1,8 +1,6 @@
 github.com/grafana/jsonnet-libs v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
-github.com/grafana/jsonnet-libs v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
 github.com/grafana/jsonnet-libs v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/grafana/jsonnet-libs/grafana v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
-github.com/grafana/jsonnet-libs/grafana v0.0.0-20210607183858-cfe660724139 h1:AtmrtQk0n9l43RlThkhsYp229ky19AU+WMo+N3Ze5K8=
 github.com/grafana/jsonnet-libs/grafana v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
 github.com/grafana/jsonnet-libs/ksonnet-util v0.0.0-20210610154641-1e36fec2a1b4 h1:cZVeJHyJrtrpUNEzeufwB8qAg/5g9lRz9ZUV9bn4k/A=
