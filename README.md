@@ -199,7 +199,7 @@ replace: {
 
 like [Tanka](https://tanka.dev), but for cuelang.
 
-* make sure the cue file return an object as struct below:
+* make sure the cue file return an object as struct below ([full template](https://github.com/octohelm/cuem/blob/main/release/release.cue)):
 
 ```cue
 apiVersion: "octohelm.tech/v1alpha"
