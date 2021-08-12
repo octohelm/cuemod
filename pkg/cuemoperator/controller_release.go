@@ -80,7 +80,7 @@ func (r *ReleaseReconciler) Reconcile(ctx context.Context, request reconcile.Req
 			return reconcile.Result{}, nil
 		}
 
-		if err := kubernetes.ApplyOne(ctx, r.Client, o, false); err != nil {
+		if err := kubernetes.ApplyOne(ctx, ClientWithoutCache(r.Client, r.APIReader), o, false); err != nil {
 			r.Log.Error(err, "apply template failed")
 			return reconcile.Result{}, nil
 		}

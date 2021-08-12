@@ -17,12 +17,14 @@ jobs:
         run: |
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s -
           kubectl version
+        env:
+          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
       - run: make cover
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v2
         with:
           file: ./coverage.txt
           fail_ci_if_error: true
