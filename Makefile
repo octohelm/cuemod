@@ -41,7 +41,6 @@ build:
 
 fmt:
 	goimports -l -w .
-	gofmt -l -w .
 
 test:
 	go test -v ./pkg/...
@@ -73,7 +72,7 @@ gen-deepcopy:
 		--go-header-file ./hack/boilerplate.go.txt \
 		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
 
-dockerx: build
+dockerx:
 	$(foreach target,$(TARGETS),\
 		$(DOCKER_BUILDX_BUILD) \
 		--build-arg=VERSION=$(VERSION) \

@@ -44,7 +44,13 @@ func ApplyOne(ctx context.Context, c client.Client, obj manifest.Object, dryRun 
 		return err
 	}
 
-	if err := kubeC.Patch(ctx, obj, client.Merge); err != nil {
+	// set meta to avoid generate patch json
+	obj.SetResourceVersion(live.GetResourceVersion())
+	obj.SetUID(live.GetUID())
+	obj.SetCreationTimestamp(live.GetCreationTimestamp())
+	obj.SetManagedFields(live.GetManagedFields())
+
+	if err := kubeC.Patch(ctx, obj, client.MergeFrom(live)); err != nil {
 		return err
 	}
 	if !dryRun {

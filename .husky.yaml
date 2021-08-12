@@ -12,4 +12,3 @@ lint-staged:
 #    - cue fmt
   "{pkg/,cmd/}{**/}*.go":
     - goimports -l -w
-    - gofmt -l -w
