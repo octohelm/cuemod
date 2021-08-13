@@ -3,6 +3,10 @@ package kubernetes
 import (
 	"context"
 
+	"github.com/stretchr/objx"
+	"gopkg.in/square/go-jose.v2/json"
+	"k8s.io/apimachinery/pkg/types"
+
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
@@ -51,7 +55,7 @@ func ApplyOne(ctx context.Context, c client.Client, obj manifest.Object, dryRun 
 		return err
 	}
 
-	if err := kubeC.Patch(ctx, obj, PatchFor(gvk, live)); err != nil {
+	if err := kubeC.Patch(ctx, obj, AutoMergePath(gvk, live)); err != nil {
 		return err
 	}
 	if !dryRun {
@@ -62,19 +66,83 @@ func ApplyOne(ctx context.Context, c client.Client, obj manifest.Object, dryRun 
 	return nil
 }
 
-func PatchFor(gvk schema.GroupVersionKind, live client.Object) client.Patch {
-	if gvk.Group == corev1.GroupName && (gvk.Kind == "Service" || gvk.Kind == "PersistentVolumeClaim") {
-		return client.Merge
+func AutoMergePath(gvk schema.GroupVersionKind, live client.Object) client.Patch {
+	return &autoMergePath{
+		gvk:  gvk,
+		live: live,
+	}
+}
+
+type autoMergePath struct {
+	gvk  schema.GroupVersionKind
+	live client.Object
+}
+
+func (a *autoMergePath) CanMergeStrategic() bool {
+	if a.gvk.Group == corev1.GroupName || (a.gvk.Kind == "Service" || a.gvk.Kind == "PersistentVolumeClaim") {
+		return false
 	}
 
-	if _, ok := live.(*unstructured.Unstructured); ok {
-		return client.MergeFromWithOptions(live, client.MergeFromWithOptimisticLock{})
+	if a.gvk.Group == corev1.GroupName || a.gvk.Group == appsv1.GroupName {
+		return true
 	}
 
-	// TODO handle more
-	if gvk.Group == corev1.GroupName || gvk.Group == appsv1.GroupName {
-		return client.StrategicMergeFrom(live)
+	return false
+}
+
+func (a *autoMergePath) Type() types.PatchType {
+	if a.CanMergeStrategic() {
+		return types.StrategicMergePatchType
+	}
+	return types.MergePatchType
+}
+
+var deletableMaps = []string{
+	"metadata.labels",
+	"metadata.annotations",
+
+	// QService
+	"spec.envs",
+}
+
+func (a *autoMergePath) Data(obj client.Object) ([]byte, error) {
+	if a.CanMergeStrategic() {
+		if _, ok := obj.(*unstructured.Unstructured); ok {
+			return client.MergeFromWithOptions(a.live, client.MergeFromWithOptimisticLock{}).Data(obj)
+		}
+		return client.StrategicMergeFrom(a.live, client.MergeFromWithOptimisticLock{}).Data(obj)
 	}
 
-	return client.MergeFromWithOptions(live, client.MergeFromWithOptimisticLock{})
+	liveData, _ := json.Marshal(a.live)
+	objData, _ := json.Marshal(obj)
+
+	live := &unstructured.Unstructured{}
+	merged := &unstructured.Unstructured{}
+
+	_, _, _ = unstructured.UnstructuredJSONScheme.Decode(liveData, &a.gvk, live)
+	_, _, _ = unstructured.UnstructuredJSONScheme.Decode(objData, &a.gvk, merged)
+
+	merged.SetResourceVersion(live.GetResourceVersion())
+	merged.SetUID(live.GetUID())
+
+	l := objx.Map(live.Object)
+	m := objx.Map(merged.Object)
+
+	for _, path := range deletableMaps {
+		if cur := l.Get(path); cur.IsObjxMap() {
+			if target := m.Get(path); target.IsObjxMap() {
+				c := cur.MustObjxMap()
+				t := target.MustObjxMap()
+
+				for k := range c {
+					if _, ok := t[k]; !ok {
+						// set nil for delete
+						t[k] = nil
+					}
+				}
+			}
+		}
+	}
+
+	return json.Marshal(merged)
 }
