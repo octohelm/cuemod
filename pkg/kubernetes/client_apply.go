@@ -3,13 +3,12 @@ package kubernetes
 import (
 	"context"
 
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
+	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-
-	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -64,12 +63,12 @@ func ApplyOne(ctx context.Context, c client.Client, obj manifest.Object, dryRun 
 }
 
 func PatchFor(gvk schema.GroupVersionKind, live client.Object) client.Patch {
-	if _, ok := live.(*unstructured.Unstructured); ok {
-		return client.MergeFromWithOptions(live, client.MergeFromWithOptimisticLock{})
+	if gvk.Group == corev1.GroupName && (gvk.Kind == "Service" || gvk.Kind == "PersistentVolumeClaim") {
+		return client.Merge
 	}
 
-	if gvk.Group == corev1.GroupName && gvk.Kind == "Service" {
-		return client.Merge
+	if _, ok := live.(*unstructured.Unstructured); ok {
+		return client.MergeFromWithOptions(live, client.MergeFromWithOptimisticLock{})
 	}
 
 	// TODO handle more

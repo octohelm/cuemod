@@ -6,15 +6,13 @@ import (
 	"strings"
 
 	releasev1alpha1 "github.com/octohelm/cuemod/pkg/apis/release/v1alpha1"
-	"k8s.io/apimachinery/pkg/runtime"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-
 	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-
 	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/discovery"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
