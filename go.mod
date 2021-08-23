@@ -2,7 +2,6 @@ module github.com/octohelm/cuemod
 
 go 1.17
 
-
 replace (
 	github.com/go-logr/logr => github.com/go-logr/logr v0.4.0
 	github.com/go-logr/zapr => github.com/go-logr/zapr v0.4.0
@@ -17,7 +16,7 @@ require (
 	github.com/go-logr/logr v0.4.0
 	github.com/google/go-jsonnet v0.17.0
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
-	github.com/onsi/gomega v1.15.0
+	github.com/onsi/gomega v1.16.0
 	github.com/pelletier/go-toml v1.9.3
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
