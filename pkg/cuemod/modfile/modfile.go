@@ -3,6 +3,7 @@ package modfile
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"sort"
 	"strconv"
 
@@ -47,6 +48,45 @@ func (m *ModFile) String() string {
 	return string(m.Bytes())
 }
 
+func (m *ModFile) writeRequires(w io.Writer, modules []string, filter func(r *Require) bool) {
+	fields := make([]interface{}, 0)
+
+	// direct require
+	for _, module := range modules {
+		r := m.Require[module]
+
+		if !filter(&r) {
+			continue
+		}
+
+		f := &ast.Field{Label: ast.NewString(module)}
+		f.Value = ast.NewString(r.Version)
+
+		if r.VcsVersion != "" && r.VcsVersion != r.Version {
+			f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("vcs", r.VcsVersion)})
+		}
+
+		if r.Indirect {
+			f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("indirect")})
+		}
+
+		if cg, ok := m.comments["require://"+module]; ok {
+			for i := range cg {
+				f.AddComment(cg[i])
+			}
+		}
+
+		fields = append(fields, f)
+	}
+
+	if len(fields) > 0 {
+		data, _ := format.Node(ast.NewStruct(fields...))
+		_, _ = fmt.Fprintf(w, `
+require: %s
+`, string(data))
+	}
+}
+
 func (m *ModFile) Bytes() []byte {
 	buf := bytes.NewBuffer(nil)
 
@@ -61,35 +101,13 @@ func (m *ModFile) Bytes() []byte {
 
 		sort.Strings(modules)
 
-		fields := make([]interface{}, 0)
+		m.writeRequires(buf, modules, func(r *Require) bool {
+			return !r.Indirect
+		})
 
-		for _, module := range modules {
-			r := m.Require[module]
-
-			f := &ast.Field{Label: ast.NewString(module)}
-			f.Value = ast.NewString(r.Version)
-
-			if r.VcsVersion != "" && r.VcsVersion != r.Version {
-				f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("vcs", r.VcsVersion)})
-			}
-
-			if r.Indirect {
-				f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("indirect")})
-			}
-
-			if cg, ok := m.comments["require://"+module]; ok {
-				for i := range cg {
-					f.AddComment(cg[i])
-				}
-			}
-
-			fields = append(fields, f)
-		}
-
-		data, _ := format.Node(ast.NewStruct(fields...))
-		_, _ = fmt.Fprintf(buf, `
-require: %s
-`, string(data))
+		m.writeRequires(buf, modules, func(r *Require) bool {
+			return r.Indirect
+		})
 	}
 
 	if len(m.Replace) > 0 {
@@ -138,7 +156,7 @@ replace: %s
 `, string(data))
 	}
 
-	data, err := format.Source(buf.Bytes(), format.Simplify())
+	data, err := format.Source(buf.Bytes())
 	if err != nil {
 		panic(err)
 	}
