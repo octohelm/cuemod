@@ -29,7 +29,10 @@ func Get(ctx context.Context, path string, version string, verbose bool) *Module
 	modload.ForceUseModules = true
 	cfg.BuildX = verbose
 
-	found := modload.ListModules(ctx, []string{path + "@" + version}, false, false, false)
+	found, err := modload.ListModules(ctx, []string{path + "@" + version}, modload.ListVersions)
+	if err != nil {
+		panic(err)
+	}
 	if len(found) > 0 {
 		info := found[0]
 

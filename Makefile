@@ -36,7 +36,10 @@ cuem.fmt:
 cuem.get:
 	$(CUEM) get ./...
 
-build:
+gen.modutil:
+	go generate ./pkg/modutil/internal
+
+build: gen.modutil
 	goreleaser build --snapshot --rm-dist
 
 fmt:
