@@ -25,15 +25,15 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/objx v0.3.0
 	golang.org/x/mod v0.5.0
-	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
-	golang.org/x/tools v0.1.5
+	golang.org/x/term v0.0.0-20210916214954-140adaaadfaf
+	golang.org/x/tools v0.1.6
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	helm.sh/helm/v3 v3.7.0
-	k8s.io/api v0.22.1
-	k8s.io/apiextensions-apiserver v0.22.1
-	k8s.io/apimachinery v0.22.1
-	k8s.io/client-go v0.22.1
+	k8s.io/api v0.22.2
+	k8s.io/apiextensions-apiserver v0.22.2
+	k8s.io/apimachinery v0.22.2
+	k8s.io/client-go v0.22.2
 	sigs.k8s.io/controller-runtime v0.10.0
 	sigs.k8s.io/yaml v1.2.0
 )
@@ -87,9 +87,9 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272 // indirect
-	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
+	golang.org/x/net v0.0.0-20210917221730-978cfadd31cf // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
+	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
@@ -98,7 +98,7 @@ require (
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/component-base v0.22.1 // indirect
+	k8s.io/component-base v0.22.2 // indirect
 	k8s.io/klog/v2 v2.10.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20210915024840-94424faaec1f // indirect
 	k8s.io/utils v0.0.0-20210820185131-d34e5cb4466e // indirect
