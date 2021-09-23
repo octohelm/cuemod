@@ -24,7 +24,7 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/objx v0.3.0
-	golang.org/x/mod v0.5.0
+	golang.org/x/mod v0.5.1
 	golang.org/x/term v0.0.0-20210916214954-140adaaadfaf
 	golang.org/x/tools v0.1.6
 	gopkg.in/square/go-jose.v2 v2.6.0
