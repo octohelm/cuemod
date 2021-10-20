@@ -1,5 +1,8 @@
 PKG = $(shell cat go.mod | grep "^module " | sed -e "s/module //g")
+VERSION = $(shell cat internal/version/version)
 CUEM = go run ./cmd/cuem -v -p ./__examples__
+COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
+TAG ?= $(VERSION)
 
 up.operator:
 	WATCH_NAMESPACE=default \
@@ -75,7 +78,22 @@ gen-deepcopy:
 		--go-header-file ./hack/boilerplate.go.txt \
 		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
 
-dockerx:
+
+PUSH ?= true
+NAMESPACES ?= docker.io/octohelm
+TARGETS ?= cuem
+
+DOCKER_BUILDX_BUILD = docker buildx build \
+	--label=org.opencontainers.image.source=https://github.com/octohelm/cuemod \
+	--label=org.opencontainers.image.revision=$(COMMIT_SHA) \
+	--platform=linux/arm64,linux/amd64
+
+ifeq ($(PUSH),true)
+	DOCKER_BUILDX_BUILD := $(DOCKER_BUILDX_BUILD) --push
+endif
+
+
+dockerx: build
 	$(foreach target,$(TARGETS),\
 		$(DOCKER_BUILDX_BUILD) \
 		--build-arg=VERSION=$(VERSION) \
