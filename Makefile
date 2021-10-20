@@ -39,7 +39,7 @@ cuem.get:
 gen.modutil:
 	go generate ./pkg/modutil/internal
 
-build: gen.modutil
+build:
 	goreleaser build --snapshot --rm-dist
 
 fmt:

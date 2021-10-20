@@ -9,8 +9,7 @@ changelog:
       - '^docs'
       - '^chore'
 builds:
-  - &_build
-    id: cuem
+  - id: cuem
     dir: ./cmd/cuem
     binary: cuem
 
@@ -29,11 +28,16 @@ builds:
       - -s -w -X github.com/octohelm/cuemod/internal/version.Version={{ .Version }}+sha.{{ .FullCommit }}
     mod_timestamp: '{{ .CommitTimestamp }}'
 
-
-  - <<: *_build
-
-    id: cuem-operator
-    binary: cuem-operator
-    dir: ./cmd/cuem-operator
-    goos:
-      - linux
+dockers:
+  - use: buildx
+    image_templates:
+      - "docker.io/octohelm/cuem:latest"
+      - "docker.io/octohelm/cuem:{{ .Tag }}"
+    dockerfile: ./cmd/cuem/Dockerfile
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/arm64,linux/amd64"
