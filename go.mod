@@ -17,7 +17,7 @@ require (
 	github.com/go-logr/logr v0.4.0
 	github.com/google/go-jsonnet v0.17.0
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
-	github.com/onsi/gomega v1.16.0
+	github.com/onsi/gomega v1.17.0
 	github.com/pelletier/go-toml v1.9.4
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
