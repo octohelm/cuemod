@@ -149,7 +149,7 @@ func (c *cache) Get(ctx context.Context, pkgImportPath string, version string, f
 	return c.get(ctx, repo, version, pkgImportPath)
 }
 
-const versionUpgrade = "upgrade"
+const versionUpgrade = "latest"
 
 func (c *cache) get(ctx context.Context, repo string, requestedVersion string, importPath string) (*Mod, error) {
 	version := requestedVersion
