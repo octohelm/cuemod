@@ -1,0 +1,16 @@
+version-file = "internal/version/version"
+
+[hooks]
+
+pre-commit = [
+    "golangci-lint run",
+    "husky lint-staged"
+]
+
+commit-msg = [
+    "husky lint-commit"
+]
+
+[lint-staged]
+
+"{pkg/,cmd/}{**/}*.go" = ["goimports -l -w"]

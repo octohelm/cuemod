@@ -25,10 +25,10 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("should get sub go mod", func(t *testing.T) {
-		mod, err := m.Get(ctx, "github.com/prometheus/node_exporter/docs/node-mixin", "master", nil)
+		mod, err := m.Get(ctx, "github.com/open-telemetry/opentelemetry-go/exporters/prometheus", "main", nil)
 		NewWithT(t).Expect(err).To(BeNil())
 
-		NewWithT(t).Expect(mod.Module).To(Equal("github.com/prometheus/node_exporter/docs/node-mixin"))
-		NewWithT(t).Expect(mod.Repo).To(Equal("github.com/prometheus/node_exporter/docs/node-mixin"))
+		NewWithT(t).Expect(mod.Module).To(Equal("github.com/open-telemetry/opentelemetry-go/exporters/prometheus"))
+		NewWithT(t).Expect(mod.Repo).To(Equal("github.com/open-telemetry/opentelemetry-go/exporters/prometheus"))
 	})
 }

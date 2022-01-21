@@ -3,7 +3,7 @@ package toml
 import (
 	"cuelang.org/go/cue"
 	"github.com/octohelm/cuemod/pkg/cuex/translator/core"
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 	"sigs.k8s.io/yaml"
 )
 
