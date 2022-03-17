@@ -8,7 +8,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/go-courier/logr v0.0.2
 	github.com/go-courier/ptr v1.0.1
-	github.com/go-logr/logr v1.2.2
+	github.com/go-logr/logr v1.2.3
 	github.com/google/go-jsonnet v0.18.0
 	github.com/jsonnet-bundler/jsonnet-bundler v0.4.0
 	github.com/onsi/gomega v1.18.1
