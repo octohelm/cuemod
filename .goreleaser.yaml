@@ -2,7 +2,7 @@ project_name: cuemod
 dist: ./bin
 before:
   hooks:
-    - go mod download -x
+    - go mod tidy
 changelog:
   filters:
     exclude:

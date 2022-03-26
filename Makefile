@@ -57,20 +57,15 @@ cover:
 install: build
 	mv ./bin/cuem_$(shell go env GOOS)_$(shell go env GOARCH)/cuem ${GOPATH}/bin/cuem
 
-dep:
-	go get -u ./...
+tidy:
 	go mod tidy
 
-setup:
-	go install golang.org/x/tools/cmd/goimports@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	go install github.com/go-courier/husky/cmd/husky@latest
-	#go install github.com/goreleaser/goreleaser/cmd@latest
+dep:
+	go get -u ./...
 
 debug:
 	go test -v ./pkg/cuemod
 	#tree ./pkg/cuemod/testdata/b/cue.mod
-
 
 gen-deepcopy:
 	deepcopy-gen \

@@ -9,7 +9,7 @@ import (
 
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/cfg"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/fsys"
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/str"
+	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/internals/quoted"
 )
 
 // A StringsFlag is a command-line flag that interprets its argument
@@ -18,7 +18,7 @@ type StringsFlag []string
 
 func (v *StringsFlag) Set(s string) error {
 	var err error
-	*v, err = str.SplitQuotedFields(s)
+	*v, err = quoted.Split(s)
 	if *v == nil {
 		*v = []string{}
 	}
