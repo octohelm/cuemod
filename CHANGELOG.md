@@ -5,7 +5,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.1.0](https://github.com/octohelm/cuemod/compare/v0.0.4...v0.1.0)
+
+### Features
+
+* **feat** show -o with .yaml ext will generate to one single manifest file ([5b47606](https://github.com/octohelm/cuemod/commit/5b476060deb1c4035050b02f068b9326ed014d54))
+
+
+
 # [0.0.4](https://github.com/octohelm/cuemod/compare/v0.0.3...v0.0.4)
+
 
 
 # [0.0.3](https://github.com/octohelm/cuemod/compare/v0.0.2...v0.0.3)
