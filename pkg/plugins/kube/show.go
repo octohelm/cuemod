@@ -20,8 +20,28 @@ type ShowOpts struct {
 	Output string `name:"output,o" usage:"output base dir"`
 }
 
-func (l *LoadResult) Show(opts ShowOpts) error {
-	buf := bytes.NewBuffer(nil)
+func (l *LoadResult) Show(opts ShowOpts) (err error) {
+	var w io.Writer
+
+	writeToFiles := opts.Output != ""
+	writeToSingleFile := strings.HasSuffix(opts.Output, ".yaml")
+
+	if writeToSingleFile {
+		if err := os.MkdirAll(filepath.Dir(opts.Output), os.ModePerm); err != nil {
+			return err
+		}
+		file, _ := os.Create(opts.Output)
+		defer file.Close()
+		w = file
+	} else if !writeToFiles {
+		buf := bytes.NewBuffer(nil)
+		defer func() {
+			if buf.Len() > 0 {
+				err = pageln(buf.String())
+			}
+		}()
+		w = buf
+	}
 
 	for i := range l.Resources {
 		r := l.Resources[i]
@@ -37,20 +57,18 @@ func (l *LoadResult) Show(opts ShowOpts) error {
 
 		data, _ := yaml.Marshal(r)
 
-		if opts.Output != "" {
+		if writeToFiles && !writeToSingleFile {
 			if err := writeFile(filepath.Join(opts.Output, filename), data); err != nil {
 				return err
 			}
 		} else {
-			buf.Write(data)
+			_, _ = io.WriteString(w, "---\n")
+			_, _ = io.WriteString(w, "# "+filename+"\n")
+			_, _ = w.Write(data)
 		}
 	}
 
-	if buf.Len() == 0 {
-		return nil
-	}
-
-	return pageln(buf.String())
+	return nil
 }
 
 func pageln(i ...interface{}) error {

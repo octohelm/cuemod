@@ -5,6 +5,7 @@ COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
 TAG ?= $(VERSION)
 
 cuem.k.show:
+	$(CUEM) k show -o _output/nginx.yaml ./__examples__/clusters/demo/nginx.cue
 	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.apply:
