@@ -24,7 +24,7 @@ jobs:
         env:
           KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           file: ./coverage.txt
           fail_ci_if_error: true

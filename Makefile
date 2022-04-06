@@ -4,10 +4,6 @@ CUEM = go run ./cmd/cuem -v -p ./__examples__
 COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
 TAG ?= $(VERSION)
 
-up.operator:
-	WATCH_NAMESPACE=default \
-		go run ./cmd/cuem-operator/main.go
-
 cuem.k.show:
 	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
 
