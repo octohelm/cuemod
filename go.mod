@@ -25,7 +25,7 @@ require (
 	golang.org/x/tools v0.1.10
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
-	helm.sh/helm/v3 v3.8.1
+	helm.sh/helm/v3 v3.8.2
 	k8s.io/api v0.23.5
 	k8s.io/apiextensions-apiserver v0.23.5
 	k8s.io/apimachinery v0.23.5
