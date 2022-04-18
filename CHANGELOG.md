@@ -5,7 +5,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.2.0](https://github.com/octohelm/cuemod/compare/v0.1.1...v0.2.0)
+
+### Features
+
+* **feat** added support to overwrites from cli ([31ff716](https://github.com/octohelm/cuemod/commit/31ff716c606f30a09a8bc4e83b43656e2f3ca880))
+* **feat** using server-apply ([3870d92](https://github.com/octohelm/cuemod/commit/3870d92ba5dfdfa1a721c0a3540b843774059d62))
+
+
+
 # [0.1.1](https://github.com/octohelm/cuemod/compare/v0.1.0...v0.1.1)
+
 
 
 # [0.1.0](https://github.com/octohelm/cuemod/compare/v0.0.4...v0.1.0)
