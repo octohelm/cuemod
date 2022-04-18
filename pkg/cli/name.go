@@ -55,6 +55,7 @@ func (as ValidArgs) Validate(args []string) error {
 		if len(args) < len(as) {
 			return fmt.Errorf("requires at least %d arg(s), only received %d", len(as), len(args))
 		}
+		return nil
 	}
 	if len(as) != len(args) {
 		return fmt.Errorf("accepts %d arg(s), received %d", len(as), len(args))

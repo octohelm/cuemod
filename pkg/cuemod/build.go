@@ -20,11 +20,17 @@ func OptRoot(dir string) OptionFunc {
 	}
 }
 
+func OptOverlay(overlay map[string]load.Source) OptionFunc {
+	return func(c *load.Config) {
+		c.Overlay = overlay
+	}
+}
+
 type ImportFunc = func(importPath string, importedAt string) (resolvedDir string, err error)
 
 func OptImportFunc(importFunc ImportFunc) OptionFunc {
 	return func(c *load.Config) {
-		c.ParseFile = func(filename string, src interface{}) (*cueast.File, error) {
+		c.ParseFile = func(filename string, src any) (*cueast.File, error) {
 			f, err := parser.ParseFile(filename, src)
 			if err != nil {
 				return nil, err
@@ -32,6 +38,15 @@ func OptImportFunc(importFunc ImportFunc) OptionFunc {
 
 			for i := range f.Imports {
 				importPath, _ := strconv.Unquote(f.Imports[i].Path.Value)
+
+				// skip abs path and rel path
+				if filepath.IsAbs(importPath) {
+					continue
+				}
+
+				if IsFileImport(importPath) {
+					continue
+				}
 
 				// "xxx/xxxx:xxx"
 				importPath = strings.Split(importPath, ":")[0]
@@ -61,4 +76,15 @@ func Build(path string, optionFns ...OptionFunc) *Instance {
 	}
 	rel, _ := filepath.Rel(c.Dir, path)
 	return load.Instances([]string{"./" + rel}, c)[0]
+}
+
+func IsFileImport(p string) bool {
+	return strings.HasPrefix(p, "file/")
+}
+
+func FixFileImport(p string) string {
+	if filepath.IsAbs(p) {
+		return "file" + p + ":cue"
+	}
+	return p
 }

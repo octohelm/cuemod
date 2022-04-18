@@ -33,40 +33,30 @@ func (o *K) Run(ctx context.Context, args []string) error {
 }
 
 type Show struct {
-	cli.Name `args:"INPUT" desc:"show rendered kube manifests"`
+	cli.Name `args:"INPUT_AND_PATCHES..." desc:"show rendered kube manifests"`
 	kube.Opts
 	kube.ShowOpts
 }
 
 func (o *Show) Run(ctx context.Context, args []string) error {
-	show := func(input string) error {
-		lr, err := load(ctx, input, &o.Opts)
+	show := func(args []string) error {
+		lr, err := load(ctx, args, &o.Opts)
 		if err != nil {
 			return err
 		}
 		return lr.Show(o.ShowOpts)
 	}
-
-	if o.Output != "" {
-		for _, arg := range args {
-			if err := show(arg); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-
-	return show(args[0])
+	return show(args)
 }
 
 type Apply struct {
-	cli.Name `args:"INPUT" desc:"apply kube manifests"`
+	cli.Name `args:"INPUT_AND_PATCHES..." desc:"apply kube manifests"`
 	kube.Opts
 	kube.ApplyOpts
 }
 
 func (o *Apply) Run(ctx context.Context, args []string) error {
-	lr, err := load(ctx, args[0], &o.Opts)
+	lr, err := load(ctx, args, &o.Opts)
 	if err != nil {
 		return err
 	}
@@ -74,13 +64,13 @@ func (o *Apply) Run(ctx context.Context, args []string) error {
 }
 
 type Delete struct {
-	cli.Name `args:"INPUT" desc:"delete kube manifests"`
+	cli.Name `args:"INPUT_AND_PATCHES..." desc:"delete kube manifests"`
 	kube.Opts
 	kube.DeleteOpts
 }
 
 func (o *Delete) Run(ctx context.Context, args []string) error {
-	lr, err := load(ctx, args[0], &o.Opts)
+	lr, err := load(ctx, args, &o.Opts)
 	if err != nil {
 		return err
 	}
@@ -88,25 +78,30 @@ func (o *Delete) Run(ctx context.Context, args []string) error {
 }
 
 type Prune struct {
-	cli.Name `args:"INPUT" desc:"prune kube manifests"`
+	cli.Name `args:"INPUT_AND_PATCHES..." desc:"prune kube manifests"`
 	kube.Opts
 	kube.PruneOpts
 }
 
 func (o *Prune) Run(ctx context.Context, args []string) error {
-	lr, err := load(ctx, args[0], &o.Opts)
+	lr, err := load(ctx, args, &o.Opts)
 	if err != nil {
 		return err
 	}
 	return lr.Prune(o.PruneOpts)
 }
 
-func load(ctx context.Context, filename string, opts *kube.Opts) (*kube.LoadResult, error) {
-	cwd, _ := os.Getwd()
-	path := filepath.Join(cwd, filename)
+func load(ctx context.Context, fileOrPatches []string, opts *kube.Opts) (*kube.LoadResult, error) {
 	runtime := cuemod.FromContext(ctx)
 
-	jsonRaw, err := runtime.Eval(ctx, path, cuex.JSON)
+	cwd, _ := os.Getwd()
+	for i := range fileOrPatches {
+		if fileOrPatches[i][0] == '.' {
+			fileOrPatches[i] = filepath.Join(cwd, fileOrPatches[i])
+		}
+	}
+
+	jsonRaw, err := runtime.EvalFromMulti(ctx, cuex.JSON, fileOrPatches)
 	if err != nil {
 		return nil, err
 	}

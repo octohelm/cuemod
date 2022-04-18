@@ -8,7 +8,8 @@ cuem.k.show.pager:
 	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.show:
-	$(CUEM) k show -o _output/nginx.yaml ./__examples__/clusters/demo/nginx.cue
+	$(CUEM) k show -o _output/nginx0.yaml ./__examples__/clusters/demo/nginx.cue
+	$(CUEM) k show -o _output/nginx1.yaml ./__examples__/components/nginx '{ #values: image: tag: "latest", #context: "crpe-test" }'
 
 cuem.k.apply:
 	$(CUEM) k apply ./__examples__/clusters/demo/nginx.cue

@@ -199,7 +199,9 @@ replace: {
 
 like [Tanka](https://tanka.dev), but for cuelang.
 
-* make sure the cue file return an object as struct below ([full template](https://github.com/octohelm/cuem/blob/main/release/release.cue)):
+* only k3s/k8s which support `server-apply`
+* make sure the cue file return an object as struct
+  below ([full template](https://github.com/octohelm/cuem/blob/main/release/release.cue)):
 
 ```cue
 apiVersion: "octohelm.tech/v1alpha"
@@ -218,9 +220,11 @@ metadata: labels: context: "\(#context)"
 spec: {} 
 ```
 
-```
+```shell
 cd ./__examples__
 cuem k show ./clusters/demo/nginx.cue
+# patch
+cuem k show ./clusters/demo/nginx.cue '{ #values: image: tag: "latest" }'
 cuem k apply ./clusters/demo/nginx.cue
 cuem k prune ./clusters/demo/nginx.cue
 cuem k delete ./clusters/demo/nginx.cue
