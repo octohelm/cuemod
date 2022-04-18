@@ -15,8 +15,7 @@ import (
 )
 
 type Opts struct {
-	AsTemplate bool     `name:"as-template"  usage:"As release secret"`
-	Targets    []string `name:"target,t"  usage:"Regex filter on '<kind>/<name>'. See https://tanka.dev/output-filtering"`
+	Targets []string `flag:"target,t"  desc:"Regex filter on '<kind>/<name>'. See https://tanka.dev/output-filtering"`
 }
 
 func ReleaseFromJSONRaw(data []byte) (*releasev1alpha1.Release, error) {

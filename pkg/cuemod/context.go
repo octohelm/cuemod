@@ -13,6 +13,16 @@ import (
 	"github.com/pkg/errors"
 )
 
+type cuemodKey struct{}
+
+func FromContext(c context.Context) *Context {
+	return c.Value(cuemodKey{}).(*Context)
+}
+
+func InjectContext(c context.Context, cc *Context) context.Context {
+	return context.WithValue(c, cuemodKey{}, cc)
+}
+
 func ContextFor(root string) *Context {
 	vm := &Context{
 		cache: newCache(),

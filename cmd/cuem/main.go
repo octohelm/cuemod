@@ -2,16 +2,12 @@ package main
 
 import (
 	"context"
-	"os"
 
-	"github.com/go-courier/logr"
+	"github.com/octohelm/cuemod/cmd/cuem/cmd"
 )
 
 func main() {
-	ctx := logr.WithLogger(context.Background(), log)
-
-	if err := rootCmd.ExecuteContext(ctx); err != nil {
-		log.Error(err)
-		os.Exit(1)
+	if err := cmd.Run(context.Background()); err != nil {
+		panic(err)
 	}
 }

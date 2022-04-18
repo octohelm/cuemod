@@ -8,7 +8,7 @@ import (
 )
 
 type DeleteOpts struct {
-	AutoApprove bool `name:"auto-approve" usage:"skips the interactive approval"`
+	AutoApprove bool `flag:"auto-approve" desc:"skips the interactive approval"`
 }
 
 func (l *LoadResult) Delete(opts DeleteOpts) error {

@@ -1,18 +1,17 @@
 PKG = $(shell cat go.mod | grep "^module " | sed -e "s/module //g")
 VERSION = $(shell cat internal/version/version)
-CUEM = go run ./cmd/cuem -v -p ./__examples__
+CUEM = go run ./cmd/cuem -v 1 -p ./__examples__
 COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
 TAG ?= $(VERSION)
 
+cuem.k.show.pager:
+	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
+
 cuem.k.show:
 	$(CUEM) k show -o _output/nginx.yaml ./__examples__/clusters/demo/nginx.cue
-	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.apply:
 	$(CUEM) k apply ./__examples__/clusters/demo/nginx.cue
-
-cuem.k.apply-as-release-template:
-	$(CUEM) k apply --as-template ./__examples__/clusters/demo/nginx.cue
 
 cuem.k.prune:
 	$(CUEM) k prune ./__examples__/clusters/demo/nginx.cue
@@ -58,7 +57,7 @@ tidy:
 	go mod tidy
 
 dep:
-	go get -u ./...
+	go get -u -t ./...
 
 debug:
 	go test -v ./pkg/cuemod
@@ -69,7 +68,6 @@ gen-deepcopy:
 		--output-file-base zz_generated.deepcopy \
 		--go-header-file ./hack/boilerplate.go.txt \
 		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
-
 
 PUSH ?= true
 NAMESPACES ?= docker.io/octohelm

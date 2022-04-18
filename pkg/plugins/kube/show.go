@@ -17,7 +17,7 @@ import (
 var interactive = term.IsTerminal(int(os.Stdout.Fd()))
 
 type ShowOpts struct {
-	Output string `name:"output,o" usage:"output base dir"`
+	Output string `flag:"output,o" desc:"output base dir"`
 }
 
 func (l *LoadResult) Show(opts ShowOpts) (err error) {

@@ -9,7 +9,7 @@ import (
 )
 
 type ApplyOpts struct {
-	AutoApprove bool `name:"auto-approve" usage:"skips the interactive approval"`
+	AutoApprove bool `flag:"auto-approve" desc:"skips the interactive approval"`
 }
 
 func (l *LoadResult) Apply(opts ApplyOpts) error {
