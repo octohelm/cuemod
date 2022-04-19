@@ -6,7 +6,7 @@ import (
 
 release.#Release & {
 	#name:      "web"
-	#namespace: "default"
+	#namespace: string | *"default"
 
 	spec: {
 		configMaps: "\(#name)-html": data: "index.html": #values.index

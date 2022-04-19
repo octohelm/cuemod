@@ -3,6 +3,5 @@ import (
 )
 
 spec & {
-	#context: "crpe-test"
 	spec: {}
 }

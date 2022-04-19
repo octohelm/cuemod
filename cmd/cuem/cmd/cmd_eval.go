@@ -18,8 +18,8 @@ func init() {
 }
 
 type EvalFlags struct {
-	Output string `name:"output,o" desc:"output filename and fmt"`
-	Write  bool   `name:"write,w" desc:"write"`
+	Output string `flag:"output,o" desc:"output filename and fmt"`
+	Write  bool   `flag:"write,w" desc:"write"`
 }
 
 type Eval struct {

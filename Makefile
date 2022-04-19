@@ -83,7 +83,6 @@ ifeq ($(PUSH),true)
 	DOCKER_BUILDX_BUILD := $(DOCKER_BUILDX_BUILD) --push
 endif
 
-
 dockerx: build
 	$(foreach target,$(TARGETS),\
 		$(DOCKER_BUILDX_BUILD) \

@@ -58,7 +58,7 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 	}
 
 	if gen != "" {
-		pkgRoot = "cue.mod/gen/_src"
+		pkgRoot = "cue.mod/gen/vendor"
 	}
 
 	importPath := i.ImportPath()
