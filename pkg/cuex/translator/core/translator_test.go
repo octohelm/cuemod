@@ -14,6 +14,6 @@ name: test: """
 """ @translate("toml")
 `))
 
-	data, err := cuex.Eval(inst, cuex.YAML)
+	data, err := cuex.Eval(inst, cuex.WithEncoding(cuex.YAML))
 	fmt.Println(string(data), err)
 }

@@ -2,14 +2,8 @@ package manifest
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"sort"
-
-	"github.com/octohelm/cuemod/pkg/cuex"
-
-	releasev1alpha1 "github.com/octohelm/cuemod/pkg/apis/release/v1alpha1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/objx"
@@ -38,41 +32,6 @@ func walk(v interface{}, extracted map[string]Object, path path) error {
 
 func walkObj(obj objx.Map, extracted map[string]Object, p path) error {
 	if isKubernetesManifest(obj) {
-		gv, _ := schema.ParseGroupVersion(obj.Get("apiVersion").Str())
-
-		if gv.Group == releasev1alpha1.SchemeGroupVersion.Group {
-			switch obj.Get("kind").Str() {
-			case "ReleaseTemplate":
-				if obj.Get("template").IsStr() {
-					var overwrites []byte
-
-					if obj.Get("overwrites").IsStr() {
-						overwrites = []byte(obj.Get("overwrites").Str())
-					}
-
-					i, err := cuex.InstanceFromTemplateAndOverwrites([]byte(obj.Get("template").Str()), overwrites)
-					if err != nil {
-						return err
-					}
-					jsonraw, err := cuex.Eval(i, cuex.JSON)
-					if err != nil {
-						return err
-					}
-					next := map[string]interface{}{}
-					if err := json.NewDecoder(bytes.NewBuffer(jsonraw)).Decode(&next); err != nil {
-						return err
-					}
-					if err := walkObj(next, extracted, p); err != nil {
-						return err
-					}
-				}
-			case "Release":
-				if err := walk(obj.Get("spec").Data(), extracted, p); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
 		co, err := ObjectFromRuntimeObject(&unstructured.Unstructured{Object: obj})
 		if err != nil {
 			return err

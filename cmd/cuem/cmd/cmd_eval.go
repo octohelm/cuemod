@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -23,32 +22,12 @@ type EvalFlags struct {
 }
 
 type Eval struct {
-	cli.Name `args:"CUE_FILES..." desc:"eval files"`
+	cli.Name `args:"CUE_FILES..." desc:"evalWithPatches files"`
 	EvalFlags
 }
 
 func (opts *Eval) Run(ctx context.Context, args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("missing input")
-	}
-
-	cwd, _ := os.Getwd()
-	path := filepath.Join(cwd, args[0])
-
-	format := cuex.YAML
-
-	switch v := filepath.Ext(opts.Output); v {
-	case ".yaml":
-		format = cuex.YAML
-	case ".json":
-		format = cuex.JSON
-	case ".cue":
-		format = cuex.CUE
-	default:
-		panic(fmt.Errorf("unsupport output format %s", v))
-	}
-
-	results, err := cuemod.FromContext(ctx).Eval(ctx, path, format)
+	results, err := evalWithPatches(ctx, args, cuex.WithEncodingFromFileExt(filepath.Ext(opts.Output)))
 	if err != nil {
 		return err
 	}
@@ -62,6 +41,19 @@ func (opts *Eval) Run(ctx context.Context, args []string) error {
 	}
 
 	return nil
+}
+
+func evalWithPatches(ctx context.Context, fileOrPatches []string, options ...cuex.EvalOptionFunc) ([]byte, error) {
+	runtime := cuemod.FromContext(ctx)
+
+	cwd, _ := os.Getwd()
+	for i := range fileOrPatches {
+		if fileOrPatches[i][0] == '.' {
+			fileOrPatches[i] = filepath.Join(cwd, fileOrPatches[i])
+		}
+	}
+
+	return runtime.EvalWithPatches(ctx, fileOrPatches, options...)
 }
 
 func writeFile(filename string, data []byte) error {

@@ -171,7 +171,7 @@ pkg/
 `)))
 }
 
-func (r *Context) EvalFromMulti(ctx context.Context, encoding cuex.Encoding, inputs []string) ([]byte, error) {
+func (r *Context) EvalWithPatches(ctx context.Context, inputs []string, options ...cuex.EvalOptionFunc) ([]byte, error) {
 	imports := make([]string, 0)
 	b := strings.Builder{}
 
@@ -221,17 +221,17 @@ func (r *Context) EvalFromMulti(ctx context.Context, encoding cuex.Encoding, inp
 		inst.Imports = append(inst.Imports, i)
 	}
 
-	results, err := cuex.Eval(inst, encoding)
+	results, err := cuex.Eval(inst, options...)
 	if err != nil {
 		return nil, err
 	}
 	return results, nil
 }
 
-func (r *Context) Eval(ctx context.Context, filename string, encoding cuex.Encoding) ([]byte, error) {
+func (r *Context) Eval(ctx context.Context, filename string, options ...cuex.EvalOptionFunc) ([]byte, error) {
 	filename = r.completePath(filename)
 	inst := r.Build(ctx, filename)
-	results, err := cuex.Eval(inst, encoding)
+	results, err := cuex.Eval(inst, options...)
 	if err != nil {
 		return nil, err
 	}

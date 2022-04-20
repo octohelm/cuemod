@@ -15,9 +15,9 @@ t & {
 	name: test: "2222"
 }
 `))
-	data, err := Eval(inst, CUE)
+	data, err := Eval(inst, WithEncoding(CUE))
 	fmt.Println(string(data), err)
 
-	data2, err2 := Eval(inst, YAML)
+	data2, err2 := Eval(inst, WithEncoding(YAML))
 	fmt.Println(string(data2), err2)
 }

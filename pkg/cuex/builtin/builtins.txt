@@ -1,3 +1,4 @@
+crypto/ed25519
 crypto/hmac
 crypto/md5
 crypto/sha1

@@ -26,20 +26,20 @@ func TestContext(t *testing.T) {
 		_ = r.Cleanup()
 
 		t.Run("Eval", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", cuex.JSON)
+			data, err := r.Eval(ctx, ".", cuex.WithEncoding(cuex.JSON))
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
 			NewWithT(t).Expect(r.mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
 		})
 
 		t.Run("Eval from exported single file", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", cuex.CUE)
+			data, err := r.Eval(ctx, ".", cuex.WithEncoding(cuex.CUE))
 			NewWithT(t).Expect(err).To(BeNil())
 
 			_ = os.WriteFile("../../_output/debug.cue", data, os.ModePerm)
 
 			inst, _ := cuex.InstanceFromRaw(data)
-			ret, err := cuex.Eval(inst, cuex.JSON)
+			ret, err := cuex.Eval(inst, cuex.WithEncoding(cuex.JSON))
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(ret))
 		})
@@ -79,7 +79,7 @@ func TestContext(t *testing.T) {
 		})
 
 		t.Run("Eval", func(t *testing.T) {
-			ret, err := r.Eval(ctx, "./jsonnet_demo/jsonnet.cue", cuex.YAML)
+			ret, err := r.Eval(ctx, "./jsonnet_demo/jsonnet.cue", cuex.WithEncoding(cuex.YAML))
 			NewWithT(t).Expect(err).To(BeNil())
 			t.Log(string(ret))
 		})

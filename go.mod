@@ -6,7 +6,7 @@ go 1.18
 replace k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65
 
 require (
-	cuelang.org/go v0.4.2
+	cuelang.org/go v0.4.3-beta.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.13.0
 	github.com/go-courier/logr v0.0.2

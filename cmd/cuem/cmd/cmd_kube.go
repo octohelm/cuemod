@@ -2,11 +2,8 @@ package cmd
 
 import (
 	"context"
-	"os"
-	"path/filepath"
 
 	"github.com/octohelm/cuemod/pkg/cli"
-	"github.com/octohelm/cuemod/pkg/cuemod"
 	"github.com/octohelm/cuemod/pkg/cuex"
 	"github.com/octohelm/cuemod/pkg/kubernetes/manifest"
 	"github.com/octohelm/cuemod/pkg/plugins/kube"
@@ -92,16 +89,7 @@ func (o *Prune) Run(ctx context.Context, args []string) error {
 }
 
 func load(ctx context.Context, fileOrPatches []string, opts *kube.Opts) (*kube.LoadResult, error) {
-	runtime := cuemod.FromContext(ctx)
-
-	cwd, _ := os.Getwd()
-	for i := range fileOrPatches {
-		if fileOrPatches[i][0] == '.' {
-			fileOrPatches[i] = filepath.Join(cwd, fileOrPatches[i])
-		}
-	}
-
-	jsonRaw, err := runtime.EvalFromMulti(ctx, cuex.JSON, fileOrPatches)
+	jsonRaw, err := evalWithPatches(ctx, fileOrPatches, cuex.WithEncoding(cuex.JSON))
 	if err != nil {
 		return nil, err
 	}
