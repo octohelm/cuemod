@@ -29,7 +29,7 @@ func subPath(pkg string, importPath string) (string, error) {
 		}
 		return "", nil
 	}
-	return "", fmt.Errorf("%s is not sub completePath of %s", importPath, pkg)
+	return "", fmt.Errorf("%s is not sub CompletePath of %s", importPath, pkg)
 }
 
 func replaceImportPath(to string, from string, importPath string) string {

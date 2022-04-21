@@ -9,7 +9,7 @@ import (
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/load"
 	"cuelang.org/go/cue/parser"
-	"github.com/octohelm/cuemod/pkg/cuex/builtin"
+	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
 )
 
 type OptionFunc = func(c *load.Config)
@@ -44,10 +44,6 @@ func OptImportFunc(importFunc ImportFunc) OptionFunc {
 					continue
 				}
 
-				if IsFileImport(importPath) {
-					continue
-				}
-
 				// "xxx/xxxx:xxx"
 				importPath = strings.Split(importPath, ":")[0]
 
@@ -69,22 +65,23 @@ func OptImportFunc(importFunc ImportFunc) OptionFunc {
 
 type Instance = build.Instance
 
-func Build(path string, optionFns ...OptionFunc) *Instance {
+func Build(inputs []string, optionFns ...OptionFunc) *Instance {
 	c := &load.Config{}
 	for i := range optionFns {
 		optionFns[i](c)
 	}
-	rel, _ := filepath.Rel(c.Dir, path)
-	return load.Instances([]string{"./" + rel}, c)[0]
-}
 
-func IsFileImport(p string) bool {
-	return strings.HasPrefix(p, "file/")
-}
+	// load only support related path
+	files := make([]string, len(inputs))
 
-func FixFileImport(p string) string {
-	if filepath.IsAbs(p) {
-		return "file" + p + ":cue"
+	for i, f := range inputs {
+		if filepath.IsAbs(f) {
+			rel, _ := filepath.Rel(c.Dir, f)
+			files[i] = "./" + rel
+		} else {
+			files[i] = f
+		}
 	}
-	return p
+
+	return load.Instances(files, c)[0]
 }

@@ -16,15 +16,17 @@ import (
 	"golang.org/x/mod/module"
 )
 
-func newCache() *cache {
-	return &cache{
+func newModResolver() *modResolver {
+	return &modResolver{
 		replace:      map[modfile.PathMayWithVersion]replaceTargetWithMod{},
 		mods:         map[module.Version]*Mod{},
 		repoVersions: map[string]modfile.ModVersion{},
 	}
 }
 
-type cache struct {
+type modResolver struct {
+	root *Mod
+
 	replace map[modfile.PathMayWithVersion]replaceTargetWithMod
 	// { [<module>@<version>]: *Mod }
 	mods map[module.Version]*Mod
@@ -34,19 +36,19 @@ type cache struct {
 
 const ModSumFilename = "cue.mod/module.sum"
 
-func (c *cache) ModuleSum() []byte {
+func (r *modResolver) ModuleSum() []byte {
 	buf := bytes.NewBuffer(nil)
 
 	moduleVersions := make([]module.Version, 0)
 
-	for moduleVersion := range c.mods {
+	for moduleVersion := range r.mods {
 		moduleVersions = append(moduleVersions, moduleVersion)
 	}
 
 	module.Sort(moduleVersions)
 
 	for _, n := range moduleVersions {
-		m := c.mods[n]
+		m := r.mods[n]
 
 		if m.Version != "" {
 			_, _ = fmt.Fprintf(buf, "%s %s %s\n", m.Module, m.Version, m.Sum)
@@ -61,39 +63,101 @@ type replaceTargetWithMod struct {
 	mod *Mod
 }
 
-func (c *cache) LookupReplace(importPath string) (matched modfile.PathMayWithVersion, replace modfile.ReplaceTarget, exists bool) {
+func (r *modResolver) ResolveImportPath(ctx context.Context, root *Mod, importPath string, version string) (*Path, error) {
+	// self import '<root.module>/dir/to/sub'
+	if isSubDirFor(importPath, root.Module) {
+		return PathFor(root, importPath), nil
+	}
+
+	if matched, replaceTarget, ok := r.LookupReplace(importPath); ok {
+		// xxx => ../xxx
+		// only works for root
+		if replaceTarget.IsLocalReplace() {
+			mod := &Mod{Dir: filepath.Join(root.Dir, replaceTarget.Path)}
+
+			mod.Version = "v0.0.0"
+			if _, err := mod.LoadInfo(ctx); err != nil {
+				return nil, err
+			}
+
+			if mod.Module == "" {
+				mod.Module = filepath.Join(root.Module, replaceTarget.Path)
+			}
+
+			r.Collect(ctx, mod)
+			return PathFor(mod, importPath), nil
+		}
+
+		// a[@latest] => b@latest
+		// must strict version
+		replacedImportPath := replaceImportPath(replaceTarget.Path, matched.Path, importPath)
+
+		ctxWithUpgradeDisabled := WithOpts(ctx, OptUpgrade(false))
+
+		fixVersion := root.FixVersion
+
+		if replaceTarget.Version != "" {
+			fixVersion = nil
+		}
+
+		mod, err := r.Get(ctxWithUpgradeDisabled, replacedImportPath, replaceTarget.Version, fixVersion)
+		if err != nil {
+			return nil, err
+		}
+
+		return PathFor(mod, replacedImportPath).WithReplace(matched.Path, replaceTarget), nil
+	}
+
+	mod, err := r.Get(ctx, importPath, version, root.FixVersion)
+	if err != nil {
+		return nil, err
+	}
+
+	return PathFor(mod, importPath), nil
+}
+
+func (r *modResolver) LookupReplace(importPath string) (matched modfile.PathMayWithVersion, replace modfile.ReplaceTarget, exists bool) {
 	for _, path := range paths(importPath) {
 		p := modfile.PathMayWithVersion{Path: path}
-		if rp, ok := c.replace[p]; ok {
+		if rp, ok := r.replace[p]; ok {
 			return p, rp.ReplaceTarget, true
 		}
 	}
 	return modfile.PathMayWithVersion{}, modfile.ReplaceTarget{}, false
 }
 
-func (c *cache) Collect(ctx context.Context, mod *Mod) {
+func (r *modResolver) Collect(ctx context.Context, mod *Mod) {
+	if r.root == nil {
+		r.root = mod
+	}
+
 	moduleVersion := module.Version{Path: mod.Module, Version: mod.Version}
 
 	if mod.Repo == "" {
 		mod.Repo = mod.Module
 	}
 
-	c.mods[moduleVersion] = mod
+	r.mods[moduleVersion] = mod
 
 	// cached moduel@tag too
 	if mod.VcsVersion != "" {
-		c.mods[module.Version{Path: mod.Module, Version: mod.VcsVersion}] = mod
+		r.mods[module.Version{Path: mod.Module, Version: mod.VcsVersion}] = mod
 	}
 
-	c.SetRepoVersion(mod.Repo, mod.ModVersion)
+	r.SetRepoVersion(mod.Repo, mod.ModVersion)
 
-	for repo, r := range mod.Require {
-		c.SetRepoVersion(repo, r.ModVersion)
+	for repo, req := range mod.Require {
+		r.SetRepoVersion(repo, req.ModVersion)
 	}
 
 	for k, replaceTarget := range mod.Replace {
-		if currentReplaceTarget, ok := c.replace[k]; !ok {
-			c.replace[k] = replaceTargetWithMod{mod: mod, ReplaceTarget: replaceTarget}
+		// only work for root mod
+		if replaceTarget.IsLocalReplace() && mod != r.root {
+			return
+		}
+
+		if currentReplaceTarget, ok := r.replace[k]; !ok {
+			r.replace[k] = replaceTargetWithMod{mod: mod, ReplaceTarget: replaceTarget}
 		} else {
 			if replaceTarget.String() != currentReplaceTarget.PathMayWithVersion.String() {
 				fmt.Printf(`
@@ -110,25 +174,25 @@ func (c *cache) Collect(ctx context.Context, mod *Mod) {
 	}
 }
 
-func (c *cache) SetRepoVersion(module string, version modfile.ModVersion) {
-	if mv, ok := c.repoVersions[module]; ok {
+func (r *modResolver) SetRepoVersion(module string, version modfile.ModVersion) {
+	if mv, ok := r.repoVersions[module]; ok {
 		if mv.Version == "" {
-			c.repoVersions[module] = version
+			r.repoVersions[module] = version
 		} else if versionGreaterThan(version.Version, mv.Version) {
-			c.repoVersions[module] = version
+			r.repoVersions[module] = version
 		} else if version.Version == mv.Version && version.VcsVersion != "" {
 			// sync tag version
 			mv.VcsVersion = version.VcsVersion
-			c.repoVersions[module] = mv
+			r.repoVersions[module] = mv
 		}
 
 	} else {
-		c.repoVersions[module] = version
+		r.repoVersions[module] = version
 	}
 }
 
-func (c *cache) RepoVersion(repo string) modfile.ModVersion {
-	if v, ok := c.repoVersions[repo]; ok {
+func (r *modResolver) RepoVersion(repo string) modfile.ModVersion {
+	if v, ok := r.repoVersions[repo]; ok {
 		return v
 	}
 	return modfile.ModVersion{}
@@ -136,8 +200,8 @@ func (c *cache) RepoVersion(repo string) modfile.ModVersion {
 
 type VersionFixer = func(repo string, version string) string
 
-func (c *cache) Get(ctx context.Context, pkgImportPath string, version string, fixVersion VersionFixer) (*Mod, error) {
-	repo, err := c.repoRoot(ctx, pkgImportPath)
+func (r *modResolver) Get(ctx context.Context, pkgImportPath string, version string, fixVersion VersionFixer) (*Mod, error) {
+	repo, err := r.repoRoot(ctx, pkgImportPath)
 	if err != nil {
 		return nil, err
 	}
@@ -146,12 +210,12 @@ func (c *cache) Get(ctx context.Context, pkgImportPath string, version string, f
 		version = fixVersion(repo, version)
 	}
 
-	return c.get(ctx, repo, version, pkgImportPath)
+	return r.get(ctx, repo, version, pkgImportPath)
 }
 
 const versionUpgrade = "latest"
 
-func (c *cache) get(ctx context.Context, repo string, requestedVersion string, importPath string) (*Mod, error) {
+func (r *modResolver) get(ctx context.Context, repo string, requestedVersion string, importPath string) (*Mod, error) {
 	version := requestedVersion
 
 	// fix /v2
@@ -171,22 +235,22 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 		version = versionUpgrade
 
 		// when tag version exists, should upgrade with tag version
-		if mv, ok := c.repoVersions[repo]; ok {
+		if mv, ok := r.repoVersions[repo]; ok {
 			if mv.VcsVersion != "" {
 				version = mv.VcsVersion
 			}
 		}
 	} else {
 		// use the resolved version, when already resolved.
-		if mv, ok := c.repoVersions[repo]; ok {
+		if mv, ok := r.repoVersions[repo]; ok {
 			if mv.VcsVersion != "" && mv.Version != "" && mv.Version != "v0.0.0" && mv.VcsVersion == requestedVersion {
 				version = mv.Version
 			}
 		}
 	}
 
-	// mod@version replace
-	if r, ok := c.replace[modfile.PathMayWithVersion{Path: repo, Version: version}]; ok {
+	// Mod@version replace
+	if r, ok := r.replace[modfile.PathMayWithVersion{Path: repo, Version: version}]; ok {
 		repo, version = r.Path, r.Version
 	}
 
@@ -196,10 +260,10 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 
 	var root *Mod
 
-	if mod, ok := c.mods[module.Version{Path: repo, Version: version}]; ok && mod.Resolved() {
+	if mod, ok := r.mods[module.Version{Path: repo, Version: version}]; ok && mod.Resolved() {
 		root = mod
 	} else {
-		m, err := c.downloadIfNeed(ctx, repo, version)
+		m, err := r.downloadIfNeed(ctx, repo, version)
 		if err != nil {
 			return nil, err
 		}
@@ -214,11 +278,11 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 			return nil, err
 		}
 
-		c.Collect(ctx, root)
+		r.Collect(ctx, root)
 	}
 
 	if root != nil {
-		// sub dir may as mod.
+		// sub dir may as Mod.
 		importPaths := paths(importPath)
 
 		for _, m := range importPaths {
@@ -226,7 +290,7 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 				break
 			}
 
-			if mod, ok := c.mods[module.Version{Path: m, Version: version}]; ok && mod.Resolved() {
+			if mod, ok := r.mods[module.Version{Path: m, Version: version}]; ok && mod.Resolved() {
 				return mod, nil
 			} else {
 				rel, _ := subPath(root.Module, m)
@@ -242,15 +306,15 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 
 				ok, err := sub.LoadInfo(ctx)
 				if err != nil {
-					// if dir contains go.mod, will be empty
+					// if dir contains go.Mod, will be empty
 					if os.IsNotExist(errors.Unwrap(err)); err != nil {
-						return c.get(ctx, sub.Module, version, importPath)
+						return r.get(ctx, sub.Module, version, importPath)
 					}
 					return nil, err
 				}
 
 				if ok {
-					c.Collect(ctx, &sub)
+					r.Collect(ctx, &sub)
 					return &sub, nil
 				}
 			}
@@ -260,28 +324,28 @@ func (c *cache) get(ctx context.Context, repo string, requestedVersion string, i
 	return root, nil
 }
 
-func (c *cache) repoRoot(ctx context.Context, importPath string) (string, error) {
+func (r *modResolver) repoRoot(ctx context.Context, importPath string) (string, error) {
 	importPaths := paths(importPath)
 
 	for _, p := range importPaths {
-		if _, ok := c.repoVersions[p]; ok {
+		if _, ok := r.repoVersions[p]; ok {
 			return p, nil
 		}
 	}
 
 	logr.FromContext(ctx).Debug(fmt.Sprintf("resolve %s", importPath))
 
-	r, err := modutil.RepoRootForImportPath(importPath)
+	repo, err := modutil.RepoRootForImportPath(importPath)
 	if err != nil {
 		return "", errors.Wrapf(err, "resolve `%s` failed", importPath)
 	}
 
-	c.SetRepoVersion(r.Root, modfile.ModVersion{})
+	r.SetRepoVersion(repo.Root, modfile.ModVersion{})
 
-	return r.Root, nil
+	return repo.Root, nil
 }
 
-func (cache) downloadIfNeed(ctx context.Context, pkg string, version string) (*Mod, error) {
+func (modResolver) downloadIfNeed(ctx context.Context, pkg string, version string) (*Mod, error) {
 	info := modutil.Get(ctx, pkg, version, OptsFromContext(ctx).Verbose)
 	if info == nil {
 		return nil, fmt.Errorf("can't found %s@%s", pkg, version)

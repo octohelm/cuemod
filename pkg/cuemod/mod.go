@@ -3,7 +3,6 @@ package cuemod
 import (
 	"context"
 	"os"
-	"path/filepath"
 
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
@@ -18,8 +17,6 @@ type Mod struct {
 	Repo string
 	// Sum repo absolute dir sum
 	Sum string
-	// Lang if set, will trigger extractor like `go`
-	Lang string
 	// Dir module absolute dir
 	Dir string
 }
@@ -75,59 +72,7 @@ func (m *Mod) SetRequire(module string, modVersion modfile.ModVersion, indirect 
 	m.Require[module] = r
 }
 
-func (m *Mod) ResolveImportPath(ctx context.Context, cache *cache, importPath string, version string) (*Path, error) {
-	// self import '<mod.module>/dir/to/sub'
-	if isSubDirFor(importPath, m.Module) {
-		return PathFor(m, importPath), nil
-	}
-
-	if matched, replaceTarget, ok := cache.LookupReplace(importPath); ok {
-		// xxx => ../xxx
-		if replaceTarget.IsLocalReplace() {
-			mod := &Mod{Dir: filepath.Join(m.Dir, replaceTarget.Path)}
-
-			mod.Version = "v0.0.0"
-			if _, err := mod.LoadInfo(ctx); err != nil {
-				return nil, err
-			}
-
-			if mod.Module == "" {
-				mod.Module = filepath.Join(m.Module, replaceTarget.Path)
-			}
-
-			cache.Collect(ctx, mod)
-			return PathFor(mod, importPath), nil
-		}
-
-		// a[@latest] => b@latest
-		// must strict version
-		replacedImportPath := replaceImportPath(replaceTarget.Path, matched.Path, importPath)
-
-		ctxWithUpgradeDisabled := WithOpts(ctx, OptUpgrade(false))
-
-		fixVersion := m.fixVersion
-
-		if replaceTarget.Version != "" {
-			fixVersion = nil
-		}
-
-		mod, err := cache.Get(ctxWithUpgradeDisabled, replacedImportPath, replaceTarget.Version, fixVersion)
-		if err != nil {
-			return nil, err
-		}
-
-		return PathFor(mod, replacedImportPath).WithReplace(matched.Path, replaceTarget), nil
-	}
-
-	mod, err := cache.Get(ctx, importPath, version, m.fixVersion)
-	if err != nil {
-		return nil, err
-	}
-
-	return PathFor(mod, importPath), nil
-}
-
-func (m *Mod) fixVersion(repo string, version string) string {
+func (m *Mod) FixVersion(repo string, version string) string {
 	if m.Require != nil {
 		if r, ok := m.Require[repo]; ok {
 			if r.VcsVersion != "" && r.Version == "v0.0.0" {

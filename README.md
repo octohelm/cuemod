@@ -97,10 +97,11 @@ require: {
 
 replace: {
     // version lock 
-    "github.com/rancher/local-path-provisioner": "@v0.0.19"
+    "github.com/rancher/local-path-provisioner": "@v0.0.19" 
     // declare import method for special import path
     "github.com/rancher/local-path-provisioner/deploy/chart": "" @import("helm")
     // local replace
+    // **notice** only works for current mod
     "github.com/x/a": "../a"
 }
 ```

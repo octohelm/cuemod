@@ -12,9 +12,9 @@ func init() {
 }
 
 type Get struct {
-	cli.Name `args:"BASE_DIR..." desc:"download dependencies"`
+	cli.Name `args:"IMPORT_PATH..." desc:"download dependencies"`
 	Upgrade  bool   `flag:"upgrade,u" desc:"upgrade dependencies"`
-	Import   string `flag:"import,i" desc:"declare language for generate. crd | go | helm | jsonnet"`
+	Import   string `flag:"import,i" desc:"declare language for generate. support values: crd | go | helm | jsonnet"`
 }
 
 func (o *Get) Run(ctx context.Context, args []string) error {

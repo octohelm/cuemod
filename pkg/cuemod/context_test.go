@@ -1,4 +1,4 @@
-package cuemod
+package cuemod_test
 
 import (
 	"context"
@@ -8,9 +8,10 @@ import (
 	"testing"
 
 	"github.com/go-courier/logr"
+	"github.com/octohelm/cuemod/pkg/cuemod"
+	"github.com/octohelm/cuemod/pkg/cuemodx"
 	"github.com/octohelm/cuemod/pkg/cuex"
 	"github.com/octohelm/cuemod/pkg/cuex/format"
-
 	. "github.com/onsi/gomega"
 )
 
@@ -19,21 +20,21 @@ func TestContext(t *testing.T) {
 
 	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
 
-	ctx = WithOpts(ctx, OptVerbose(true))
+	ctx = cuemod.WithOpts(ctx, cuemod.OptVerbose(true))
 
 	t.Run("mod a", func(t *testing.T) {
-		r := ContextFor(filepath.Join(cwd, "./testdata/a"))
+		r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/a"))
 		_ = r.Cleanup()
 
-		t.Run("Eval", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", cuex.WithEncoding(cuex.JSON))
+		t.Run("EvalContext", func(t *testing.T) {
+			data, err := cuemodx.EvalContext(ctx, r, ".", cuex.WithEncoding(cuex.JSON))
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
-			NewWithT(t).Expect(r.mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
+			NewWithT(t).Expect(r.Mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
 		})
 
-		t.Run("Eval from exported single file", func(t *testing.T) {
-			data, err := r.Eval(ctx, ".", cuex.WithEncoding(cuex.CUE))
+		t.Run("EvalContext from exported single file", func(t *testing.T) {
+			data, err := cuemodx.EvalContext(ctx, r, ".", cuex.WithEncoding(cuex.CUE))
 			NewWithT(t).Expect(err).To(BeNil())
 
 			_ = os.WriteFile("../../_output/debug.cue", data, os.ModePerm)
@@ -46,7 +47,7 @@ func TestContext(t *testing.T) {
 	})
 
 	t.Run("mod b", func(t *testing.T) {
-		r := ContextFor(filepath.Join(cwd, "./testdata/b"))
+		r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/b"))
 		_ = r.Cleanup()
 
 		t.Run("ListCue", func(t *testing.T) {
@@ -78,8 +79,8 @@ func TestContext(t *testing.T) {
 			NewWithT(t).Expect(err).To(BeNil())
 		})
 
-		t.Run("Eval", func(t *testing.T) {
-			ret, err := r.Eval(ctx, "./jsonnet_demo/jsonnet.cue", cuex.WithEncoding(cuex.YAML))
+		t.Run("EvalContext", func(t *testing.T) {
+			ret, err := cuemodx.EvalContext(ctx, r, "./jsonnet_demo/jsonnet.cue", cuex.WithEncoding(cuex.YAML))
 			NewWithT(t).Expect(err).To(BeNil())
 			t.Log(string(ret))
 		})

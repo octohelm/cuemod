@@ -1,16 +1,10 @@
 package cuemod
 
 import (
-	"bytes"
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
-
-	"cuelang.org/go/cue/load"
-	"github.com/octohelm/cuemod/pkg/cuex"
 
 	"cuelang.org/go/cue/build"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
@@ -28,34 +22,33 @@ func InjectContext(c context.Context, cc *Context) context.Context {
 }
 
 func ContextFor(root string) *Context {
-	vm := &Context{
-		cache: newCache(),
-	}
+	vm := &Context{}
 
 	if !filepath.IsAbs(root) {
 		cwd, _ := os.Getwd()
 		root = filepath.Join(cwd, root)
 	}
 
-	mod := &Mod{}
-	mod.Dir = root
+	rootMod := &Mod{}
+	rootMod.Dir = root
+
+	vm.resolver = newModResolver()
 
 	ctx := context.Background()
 
-	if _, err := mod.LoadInfo(ctx); err != nil {
+	if _, err := rootMod.LoadInfo(ctx); err != nil {
 		panic(err)
 	}
 
-	vm.mod = mod
-
-	vm.cache.Collect(ctx, mod)
+	vm.Mod = rootMod
+	vm.resolver.Collect(ctx, rootMod)
 
 	return vm
 }
 
 type Context struct {
-	mod   *Mod
-	cache *cache
+	Mod      *Mod
+	resolver *modResolver
 }
 
 func (r *Context) Cleanup() error {
@@ -68,20 +61,27 @@ func (r *Context) Cleanup() error {
 	return nil
 }
 
-func (r *Context) completePath(p string) string {
+func (r *Context) CompletePath(p string) string {
 	if filepath.IsAbs(p) {
 		if filepath.Ext(p) == ".cue" {
 			return p
 		}
-		if !strings.HasPrefix(p, r.mod.Dir+"/") {
+		if !strings.HasPrefix(p, r.Mod.Dir+"/") {
 			return p
 		}
-		p, _ = filepath.Rel(r.mod.Dir, p)
+		p, _ = filepath.Rel(r.Mod.Dir, p)
+		if strings.HasPrefix(p, r.Mod.Repo+"/") || p == r.Mod.Repo {
+			return p
+		}
+		return filepath.Join(r.Mod.Repo, p)
 	}
-	if strings.HasPrefix(p, r.mod.Repo+"/") || p == r.mod.Repo {
+	if filepath.Ext(p) == ".cue" {
+		return filepath.Join(r.Mod.Dir, p)
+	}
+	if strings.HasPrefix(p, r.Mod.Repo+"/") || p == r.Mod.Repo {
 		return p
 	}
-	return filepath.Join(r.mod.Repo, p)
+	return filepath.Join(r.Mod.Repo, p)
 }
 
 func (r *Context) ListCue(fromPath string) ([]string, error) {
@@ -93,14 +93,14 @@ func (r *Context) ListCue(fromPath string) ([]string, error) {
 		fromPath = fromPath[0 : len(fromPath)-4]
 	}
 
-	start := filepath.Join(r.mod.Dir, fromPath)
+	start := filepath.Join(r.Mod.Dir, fromPath)
 
 	err := filepath.Walk(start, func(path string, info os.FileInfo, err error) error {
 		if path == start {
 			return nil
 		}
 
-		// skip cue.mod
+		// skip cue.Mod
 		if isSubDirFor(path, r.CueModRoot()) {
 			return filepath.SkipDir
 		}
@@ -139,30 +139,30 @@ func (r *Context) Get(ctx context.Context, i string) error {
 }
 
 func (r *Context) CueModRoot() string {
-	return filepath.Join(r.mod.Dir, "cue.mod")
+	return filepath.Join(r.Mod.Dir, "cue.Mod")
 }
 
 func (r *Context) setRequireFromImportPath(ctx context.Context, p *Path, indirect bool) error {
 	modVersion := p.ModVersion
 
-	if mv := r.cache.RepoVersion(p.Repo); mv.Version != "" {
+	if mv := r.resolver.RepoVersion(p.Repo); mv.Version != "" {
 		modVersion = mv
 	}
 
-	if err := p.SymlinkOrImport(ctx, r.mod.Dir); err != nil {
+	if err := p.SymlinkOrImport(ctx, r.Mod.Dir); err != nil {
 		return err
 	}
 
-	r.mod.SetRequire(p.Repo, modVersion, indirect)
+	r.Mod.SetRequire(p.Repo, modVersion, indirect)
 
 	return r.syncFiles()
 }
 
 func (r *Context) syncFiles() error {
-	if err := writeFile(filepath.Join(r.mod.Dir, modfile.ModFilename), r.mod.ModFile.Bytes()); err != nil {
+	if err := writeFile(filepath.Join(r.Mod.Dir, modfile.ModFilename), r.Mod.ModFile.Bytes()); err != nil {
 		return nil
 	}
-	if err := writeFile(filepath.Join(r.mod.Dir, ModSumFilename), r.cache.ModuleSum()); err != nil {
+	if err := writeFile(filepath.Join(r.Mod.Dir, ModSumFilename), r.resolver.ModuleSum()); err != nil {
 		return nil
 	}
 	return writeFile(filepath.Join(r.CueModRoot(), ".gitignore"), []byte(strings.TrimSpace(`
@@ -171,78 +171,11 @@ pkg/
 `)))
 }
 
-func (r *Context) EvalWithPatches(ctx context.Context, inputs []string, options ...cuex.EvalOptionFunc) ([]byte, error) {
-	imports := make([]string, 0)
-	b := strings.Builder{}
-
-	c := 0
-	for i := range inputs {
-		input := inputs[i]
-		if input == "" {
-			continue
-		}
-
-		if c > 0 {
-			b.WriteString(" & ")
-		}
-
-		if input[0] == '{' {
-			b.WriteString(input)
-		} else {
-			b.WriteString("i" + strconv.Itoa(len(imports)))
-			imports = append(imports, r.completePath(input))
-		}
-
-		c++
-	}
-
-	t := bytes.NewBuffer(nil)
-
-	for i := range imports {
-		path := r.completePath(imports[i])
-
-		t.WriteString(
-			fmt.Sprintf(`import i%d "%s"
-`, i, FixFileImport(path)),
-		)
-	}
-
-	t.WriteString(b.String())
-
-	// fake main file
-	mainCue := filepath.Join(r.mod.Dir, "./main.cue")
-	inst := r.Build(ctx, mainCue, OptOverlay(map[string]load.Source{
-		mainCue: load.FromBytes(t.Bytes()),
-	}))
-
-	for _, p := range imports {
-		i := r.Build(ctx, p)
-		i.ImportPath = FixFileImport(p)
-		inst.Imports = append(inst.Imports, i)
-	}
-
-	results, err := cuex.Eval(inst, options...)
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
-}
-
-func (r *Context) Eval(ctx context.Context, filename string, options ...cuex.EvalOptionFunc) ([]byte, error) {
-	filename = r.completePath(filename)
-	inst := r.Build(ctx, filename)
-	results, err := cuex.Eval(inst, options...)
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
-}
-
-func (r *Context) Build(ctx context.Context, filename string, options ...OptionFunc) *build.Instance {
+func (r *Context) Build(ctx context.Context, files []string, options ...OptionFunc) *build.Instance {
 	return Build(
-		filename,
+		files,
 		append([]OptionFunc{
-			OptRoot(r.mod.Dir),
+			OptRoot(r.Mod.Dir),
 			OptImportFunc(func(importPath string, importedAt string) (resolvedDir string, err error) {
 				return r.Resolve(ctx, importPath, importedAt)
 			}),
@@ -251,12 +184,12 @@ func (r *Context) Build(ctx context.Context, filename string, options ...OptionF
 }
 
 func (r *Context) Resolve(ctx context.Context, importPath string, importedAt string) (string, error) {
-	resolvedImportPath, err := r.mod.ResolveImportPath(ctx, r.cache, importPath, "")
+	resolvedImportPath, err := r.resolver.ResolveImportPath(ctx, r.Mod, importPath, "")
 	if err != nil {
 		return "", errors.Wrapf(err, "resolve import `%s` failed", importPath)
 	}
 
-	indirect := isSubDirFor(importedAt, r.CueModRoot()) && !isSubDirFor(importedAt, filepath.Join(r.CueModRoot(), "usr", r.mod.Module))
+	indirect := isSubDirFor(importedAt, r.CueModRoot()) && !isSubDirFor(importedAt, filepath.Join(r.CueModRoot(), "usr", r.Mod.Module))
 
 	if err := r.setRequireFromImportPath(ctx, resolvedImportPath, indirect); err != nil {
 		return "", err
@@ -273,7 +206,7 @@ func (r *Context) autoImport(ctx context.Context, fromPath string) error {
 	}
 
 	for i := range cueFiles {
-		_ = r.Build(ctx, cueFiles[i])
+		_ = r.Build(ctx, []string{cueFiles[i]})
 	}
 
 	return err
@@ -290,18 +223,18 @@ func (r *Context) download(ctx context.Context, importPath string) error {
 	if lang := OptsFromContext(ctx).Import; lang != "" {
 		p := modfile.PathMayWithVersion{Path: importPath}
 
-		if v, ok := r.mod.Replace[p]; ok {
+		if v, ok := r.Mod.Replace[p]; ok {
 			v.Import = lang
-			r.mod.Replace[p] = v
+			r.Mod.Replace[p] = v
 		} else {
-			r.mod.Replace[p] = modfile.ReplaceTarget{
+			r.Mod.Replace[p] = modfile.ReplaceTarget{
 				PathMayWithVersion: p,
 				Import:             lang,
 			}
 		}
 	}
 
-	p, err := r.mod.ResolveImportPath(ctx, r.cache, importPath, version)
+	p, err := r.resolver.ResolveImportPath(ctx, r.Mod, importPath, version)
 	if err != nil {
 		return err
 	}

@@ -10,8 +10,7 @@ import (
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/build"
 	"cuelang.org/go/cue/format"
-
-	"github.com/octohelm/cuemod/pkg/cuex/builtin"
+	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
 )
 
 // BundleToRaw bundle instance to single cue file

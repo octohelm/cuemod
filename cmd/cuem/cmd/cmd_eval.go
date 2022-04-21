@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/octohelm/cuemod/pkg/cuemodx"
+
 	"github.com/octohelm/cuemod/pkg/cli"
 	"github.com/octohelm/cuemod/pkg/cuemod"
 	"github.com/octohelm/cuemod/pkg/cuex"
@@ -44,7 +46,7 @@ func (opts *Eval) Run(ctx context.Context, args []string) error {
 }
 
 func evalWithPatches(ctx context.Context, fileOrPatches []string, options ...cuex.EvalOptionFunc) ([]byte, error) {
-	runtime := cuemod.FromContext(ctx)
+	cc := cuemod.FromContext(ctx)
 
 	cwd, _ := os.Getwd()
 	for i := range fileOrPatches {
@@ -53,7 +55,7 @@ func evalWithPatches(ctx context.Context, fileOrPatches []string, options ...cue
 		}
 	}
 
-	return runtime.EvalWithPatches(ctx, fileOrPatches, options...)
+	return cuemodx.EvalContextWithPatches(ctx, cc, fileOrPatches, options...)
 }
 
 func writeFile(filename string, data []byte) error {

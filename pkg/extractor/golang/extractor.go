@@ -5,9 +5,8 @@ import (
 	"go/build"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/pkg/extractor/core"
-
 	cueast "cuelang.org/go/cue/ast"
+	"github.com/octohelm/cuemod/pkg/extractor/core"
 )
 
 func init() {

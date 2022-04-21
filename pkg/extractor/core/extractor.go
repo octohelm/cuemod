@@ -6,13 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/internal/version"
-
-	"golang.org/x/mod/sumdb/dirhash"
-
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/format"
+	"github.com/octohelm/cuemod/internal/version"
 	"github.com/pkg/errors"
+	"golang.org/x/mod/sumdb/dirhash"
 )
 
 type Extractor interface {

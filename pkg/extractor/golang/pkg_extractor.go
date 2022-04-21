@@ -22,7 +22,7 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/octohelm/cuemod/pkg/cuex/builtin"
+	"github.com/octohelm/cuemod/pkg/cuemod/builtin"
 	"github.com/octohelm/cuemod/pkg/extractor/golang/std"
 )
 

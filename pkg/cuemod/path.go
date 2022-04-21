@@ -40,7 +40,7 @@ func (i Path) WithReplace(from string, replaceTarget modfile.ReplaceTarget) *Pat
 }
 
 func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
-	pkgRoot := "cue.mod/pkg"
+	pkgRoot := "cue.Mod/pkg"
 
 	if root == i.Dir {
 		// skip root dir
@@ -49,16 +49,12 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 
 	gen := ""
 
-	if i.Lang != "" {
-		gen = i.Lang
-	}
-
 	if i.Replace != nil && i.Replace.Import != "" {
 		gen = i.Replace.Import
 	}
 
 	if gen != "" {
-		pkgRoot = "cue.mod/gen/vendor"
+		pkgRoot = "cue.Mod/gen/vendor"
 	}
 
 	importPath := i.ImportPath()
