@@ -282,7 +282,6 @@ func (c *cache) repoRoot(ctx context.Context, importPath string) (string, error)
 }
 
 func (cache) downloadIfNeed(ctx context.Context, pkg string, version string) (*Mod, error) {
-
 	info := modutil.Get(ctx, pkg, version, OptsFromContext(ctx).Verbose)
 	if info == nil {
 		return nil, fmt.Errorf("can't found %s@%s", pkg, version)

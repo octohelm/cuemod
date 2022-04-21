@@ -12,14 +12,26 @@ func init() {
 }
 
 type Get struct {
-	cli.Name `args:"BASE_DIR" desc:"download dependencies"`
-	Upgrade  bool `flag:"upgrade,u" desc:"upgrade dependencies"`
+	cli.Name `args:"BASE_DIR..." desc:"download dependencies"`
+	Upgrade  bool   `flag:"upgrade,u" desc:"upgrade dependencies"`
+	Import   string `flag:"import,i" desc:"declare language for generate. crd | go | helm | jsonnet"`
 }
 
 func (o *Get) Run(ctx context.Context, args []string) error {
-	importPath := "."
-	if len(args) > 0 {
-		importPath = args[0]
+	cc := cuemod.FromContext(ctx)
+
+	for i := range args {
+		p := args[i]
+		err := cc.Get(
+			cuemod.WithOpts(ctx,
+				cuemod.OptUpgrade(o.Upgrade),
+				cuemod.OptImport(o.Import),
+				cuemod.OptVerbose(true),
+			), p,
+		)
+		if err != nil {
+			return err
+		}
 	}
-	return cuemod.FromContext(ctx).Get(cuemod.WithOpts(ctx, cuemod.OptUpgrade(o.Upgrade)), importPath)
+	return nil
 }

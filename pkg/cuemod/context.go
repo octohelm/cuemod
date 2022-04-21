@@ -287,6 +287,20 @@ func (r *Context) download(ctx context.Context, importPath string) error {
 		version = importPathAndVersion[1]
 	}
 
+	if lang := OptsFromContext(ctx).Import; lang != "" {
+		p := modfile.PathMayWithVersion{Path: importPath}
+
+		if v, ok := r.mod.Replace[p]; ok {
+			v.Import = lang
+			r.mod.Replace[p] = v
+		} else {
+			r.mod.Replace[p] = modfile.ReplaceTarget{
+				PathMayWithVersion: p,
+				Import:             lang,
+			}
+		}
+	}
+
 	p, err := r.mod.ResolveImportPath(ctx, r.cache, importPath, version)
 	if err != nil {
 		return err

@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/octohelm/cuemod/pkg/extractor"
-
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
 )
@@ -41,24 +39,6 @@ func (m *Mod) LoadInfo(ctx context.Context) (bool, error) {
 	modfileExists, err := modfile.LoadModFile(m.Dir, &m.ModFile)
 	if err != nil {
 		return false, err
-	}
-
-	// auto detect
-	lang, deps := extractor.Detect(ctx, m.Dir)
-
-	if lang != "" {
-		m.Lang = lang
-		modfileExists = true
-
-		for repo, version := range deps {
-			if m.Replace == nil {
-				m.Replace = map[modfile.PathMayWithVersion]modfile.ReplaceTarget{}
-			}
-
-			m.Replace[modfile.PathMayWithVersion{Path: repo}] = modfile.ReplaceTarget{
-				PathMayWithVersion: modfile.PathMayWithVersion{Path: repo, Version: version},
-			}
-		}
 	}
 
 	return modfileExists, nil

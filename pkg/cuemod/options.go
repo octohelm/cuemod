@@ -3,8 +3,9 @@ package cuemod
 import "context"
 
 type Opts struct {
-	Upgrade bool `name:"upgrade,u" usage:"need upgrade dependencies"`
-	Verbose bool `name:"verbose,v" usage:"verbose"`
+	Upgrade bool
+	Verbose bool
+	Import  string
 }
 
 type OptFn = func(o *Opts)
@@ -12,6 +13,12 @@ type OptFn = func(o *Opts)
 func OptUpgrade(b bool) OptFn {
 	return func(o *Opts) {
 		o.Upgrade = b
+	}
+}
+
+func OptImport(b string) OptFn {
+	return func(o *Opts) {
+		o.Import = b
 	}
 }
 

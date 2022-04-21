@@ -34,6 +34,7 @@ cuem.fmt:
 	$(CUEM) fmt -l -w ./...
 
 cuem.get:
+	$(CUEM) get -i=go k8s.io/api k8s.io/apimachinery
 	$(CUEM) get ./...
 
 INTERNAL_FORK = go run ./tool/internalfork
