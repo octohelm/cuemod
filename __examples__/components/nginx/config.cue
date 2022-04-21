@@ -1,7 +1,5 @@
 package nginx
 
-#values: {
-	index: """
-		<div> hello </div>
-		"""
-}
+#values: index: """
+	<div> hello </div>
+	"""

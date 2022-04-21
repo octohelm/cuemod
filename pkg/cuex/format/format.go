@@ -15,9 +15,9 @@ import (
 // FormatOpts
 type FormatOpts struct {
 	// ReplaceFile when enabled, will write formatted code to same file
-	ReplaceFile bool `name:"write,w" usage:"write result to (source) file instead of stdout"`
+	ReplaceFile bool `flag:"write,w" desc:"write result to (source) file instead of stdout"`
 	// PrintNames when enabled, will print formatted result of each file
-	PrintNames bool `name:"list,l" `
+	PrintNames bool `flag:"list,l" `
 }
 
 // FormatFiles format jsonnet files

@@ -15,6 +15,7 @@ func init() {
 
 type Fmt struct {
 	cli.Name `args:"BASE_DIR" desc:"base dir for files fmt"`
+	format.FormatOpts
 }
 
 func (opts *Fmt) Run(ctx context.Context, args []string) error {
@@ -28,5 +29,5 @@ func (opts *Fmt) Run(ctx context.Context, args []string) error {
 		return err
 	}
 
-	return format.FormatFiles(ctx, files, format.FormatOpts{})
+	return format.FormatFiles(ctx, files, opts.FormatOpts)
 }
