@@ -36,8 +36,14 @@ cuem.fmt:
 cuem.get:
 	$(CUEM) get ./...
 
-gen.modutil:
-	go generate ./pkg/modutil/internal
+INTERNAL_FORK = go run ./tool/internalfork
+
+fork.go.internal:
+	$(INTERNAL_FORK) \
+		-p cmd/go/internal/modload \
+		-p cmd/go/internal/modfetch \
+		-p internal/execabs \
+		./pkg/modutil/internal
 
 build:
 	goreleaser build --snapshot --rm-dist

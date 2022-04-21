@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"go/ast"
 	"go/build"
@@ -19,15 +20,30 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func main() {
-	importPaths := os.Args[1:]
+type Packages []string
 
-	cwd, _ := os.Getwd()
-	if !(strings.HasSuffix(cwd, "internal/third_party") || strings.HasSuffix(cwd, "internal")) {
-		panic(cwd)
+func (i *Packages) String() string {
+	return "go packages"
+}
+
+func (i *Packages) Set(value string) error {
+	*i = append(*i, strings.TrimSpace(value))
+	return nil
+}
+
+var importPaths = Packages{}
+
+func main() {
+	flag.Var(&importPaths, "p", "import path")
+	flag.Parse()
+
+	output := flag.Args()[0]
+
+	if !(strings.HasSuffix(output, "internal")) {
+		panic(fmt.Errorf("output should be '*/internal', but got `%s`", output))
 	}
 
-	if err := cleanup(cwd); err != nil {
+	if err := cleanup(output); err != nil {
 		panic(err)
 	}
 
@@ -37,7 +53,7 @@ func main() {
 		prefixes[strings.Split(importPath, "/")[0]] = true
 	}
 
-	task, err := TaskFor("./", prefixes)
+	task, err := TaskFor(output, prefixes)
 	if err != nil {
 		panic(err)
 	}
@@ -53,8 +69,8 @@ func main() {
 	}
 }
 
-func cleanup(cwd string) error {
-	list, err := filepath.Glob(filepath.Join(cwd, "./*"))
+func cleanup(output string) error {
+	list, err := filepath.Glob(filepath.Join(output, "./*"))
 	if err != nil {
 		return err
 	}
@@ -80,8 +96,8 @@ func cleanup(cwd string) error {
 
 func TaskFor(dir string, prefixes map[string]bool) (*Task, error) {
 	if !filepath.IsAbs(dir) {
-		cwd, _ := os.Getwd()
-		dir = path.Join(cwd, dir)
+		output, _ := os.Getwd()
+		dir = path.Join(output, dir)
 	}
 
 	d := dir
@@ -97,11 +113,14 @@ func TaskFor(dir string, prefixes map[string]bool) (*Task, error) {
 			f, _ := modfile.Parse(gmodfile, data, nil)
 
 			rel, _ := filepath.Rel(d, dir)
-			return &Task{
-				PkgPath:  filepath.Join(f.Module.Mod.Path, rel),
+
+			t := &Task{
 				Dir:      filepath.Join(d, rel),
+				PkgPath:  filepath.Join(f.Module.Mod.Path, rel),
 				Prefixes: prefixes,
-			}, nil
+			}
+
+			return t, nil
 		}
 
 		d = filepath.Join(d, "../")
@@ -153,6 +172,8 @@ func (t *Task) Sync() error {
 				importPath, _ := strconv.Unquote(i.Path.Value)
 
 				if needToForks[importPath] {
+					fmt.Println(filepath.Join(t.PkgPath, t.replaceInternal(importPath)))
+
 					_ = astutil.RewriteImport(
 						f.fset, astFile,
 						importPath,
@@ -190,7 +211,7 @@ func (t *Task) Scan(importPath string) error {
 		return err
 	}
 
-	log.Printf("scaned %s", importPath)
+	log.Printf("SCANED %s", importPath)
 
 	return nil
 }
@@ -312,7 +333,8 @@ func (t *Task) replaceInternal(p string) string {
 		p,
 		"internal/",
 		"internals/",
-		-1)
+		-1,
+	)
 }
 
 func writeFile(filename string, data []byte) error {
