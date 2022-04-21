@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.3.1](https://github.com/octohelm/cuemod/compare/v0.3.0...v0.3.1)
+
+### Bug Fixes
+
+* **fix(cuemod):** local path replace only work for root mod ([3e8cb5a](https://github.com/octohelm/cuemod/commit/3e8cb5a9b214a874961b0f7200444fa6e9950e22))
+
+
+
 # [0.3.0](https://github.com/octohelm/cuemod/compare/v0.2.2...v0.3.0)
 
 ### Features
