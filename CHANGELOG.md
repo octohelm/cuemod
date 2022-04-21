@@ -5,7 +5,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.3.0](https://github.com/octohelm/cuemod/compare/v0.2.2...v0.3.0)
+
+### Features
+
+* **feat** remove auto delect for extracting to cue ([a0c88d2](https://github.com/octohelm/cuemod/commit/a0c88d2abda93056393307cb4f3ddc9f30829bbc))
+
+
+
 # [0.2.2](https://github.com/octohelm/cuemod/compare/v0.2.1...v0.2.2)
+
 
 
 # [0.2.1](https://github.com/octohelm/cuemod/compare/v0.2.0...v0.2.1)
