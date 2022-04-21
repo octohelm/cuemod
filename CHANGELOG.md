@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.3.2](https://github.com/octohelm/cuemod/compare/v0.3.1...v0.3.2)
+
+### Bug Fixes
+
+* **fix** flags fix cuem fmt ([ceba578](https://github.com/octohelm/cuemod/commit/ceba57888cad488c8396ae1e4686d4c2a280dbb0))
+
+
+
 # [0.3.1](https://github.com/octohelm/cuemod/compare/v0.3.0...v0.3.1)
 
 ### Bug Fixes
