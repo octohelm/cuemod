@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.3.3](https://github.com/octohelm/cuemod/compare/v0.3.2...v0.3.3)
+
+### Bug Fixes
+
+* **fix** typo fix ([dbab1e7](https://github.com/octohelm/cuemod/commit/dbab1e75c608ec5e27c70d80404dd737283780a4))
+
+
+
 # [0.3.2](https://github.com/octohelm/cuemod/compare/v0.3.1...v0.3.2)
 
 ### Bug Fixes
