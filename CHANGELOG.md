@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.3.4](https://github.com/octohelm/cuemod/compare/v0.3.3...v0.3.4)
+
+### Bug Fixes
+
+* **fix** symlink fix when conflict ([d183eb6](https://github.com/octohelm/cuemod/commit/d183eb6104935ed77ac86cb3a00e12a65d4e16e3))
+
+
+
 # [0.3.3](https://github.com/octohelm/cuemod/compare/v0.3.2...v0.3.3)
 
 ### Bug Fixes
