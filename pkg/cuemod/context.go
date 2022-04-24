@@ -100,7 +100,7 @@ func (r *Context) ListCue(fromPath string) ([]string, error) {
 			return nil
 		}
 
-		// skip cue.Mod
+		// skip cue.mod
 		if isSubDirFor(path, r.CueModRoot()) {
 			return filepath.SkipDir
 		}
@@ -139,7 +139,7 @@ func (r *Context) Get(ctx context.Context, i string) error {
 }
 
 func (r *Context) CueModRoot() string {
-	return filepath.Join(r.Mod.Dir, "cue.Mod")
+	return filepath.Join(r.Mod.Dir, "cue.mod")
 }
 
 func (r *Context) setRequireFromImportPath(ctx context.Context, p *Path, indirect bool) error {
