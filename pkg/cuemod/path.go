@@ -2,8 +2,10 @@ package cuemod
 
 import (
 	"context"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/octohelm/cuemod/pkg/extractor"
@@ -89,17 +91,67 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 }
 
 func (i *Path) symlink(ctx context.Context, from string, to string) error {
+	return filepath.Walk(from, func(subFrom string, info fs.FileInfo, err error) error {
+		rel, _ := filepath.Rel(from, subFrom)
+		subTo := filepath.Join(to, rel)
+
+		if info.IsDir() {
+			if strings.Contains(subTo, "/cue.mod/gen/vendor/") {
+				if err := forceSymlink(subFrom, subTo); err != nil {
+					return err
+				}
+				return filepath.SkipDir
+			}
+
+			ok, err := hasSubDir(subFrom)
+			if err != nil {
+				return err
+			}
+
+			// If no sub dir, could be safe to add link
+			if !ok {
+				if err := forceSymlink(subFrom, subTo); err != nil {
+					return err
+				}
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if strings.Contains(subFrom, "/cue.mod/") {
+			return filepath.SkipDir
+		}
+
+		if filepath.Ext(subFrom) != ".cue" {
+			return nil
+		}
+
+		return forceSymlink(subFrom, subTo)
+	})
+}
+
+func hasSubDir(path string) (ok bool, err error) {
+	err = filepath.Walk(path, func(sub string, info fs.FileInfo, err error) error {
+		if sub == path {
+			return nil
+		}
+		if info.IsDir() {
+			ok = true
+			return filepath.SkipDir
+		}
+		return nil
+	})
+	return
+}
+
+func forceSymlink(from, to string) error {
 	if err := os.RemoveAll(to); err != nil {
 		return err
 	}
-	// make sure parent created
-	if err := os.MkdirAll(filepath.Dir(to), 0777); err != nil {
+	if err := os.MkdirAll(filepath.Dir(to), 0755); err != nil {
 		return err
 	}
-	if err := os.Symlink(from, to); err != nil {
-		return err
-	}
-	return nil
+	return os.Symlink(from, to)
 }
 
 func (i *Path) shouldReplace() bool {

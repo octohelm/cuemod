@@ -6,6 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	cueerrors "cuelang.org/go/cue/errors"
+	cueload "cuelang.org/go/cue/load"
+
 	"cuelang.org/go/cue/build"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
@@ -171,16 +174,17 @@ pkg/
 `)))
 }
 
+func (r *Context) BuildConfig(ctx context.Context, options ...OptionFunc) *cueload.Config {
+	return BuildConfig(append([]OptionFunc{
+		OptRoot(r.Mod.Dir),
+		OptImportFunc(func(importPath string, importedAt string) (resolvedDir string, err error) {
+			return r.Resolve(ctx, importPath, importedAt)
+		}),
+	}, options...)...)
+}
+
 func (r *Context) Build(ctx context.Context, files []string, options ...OptionFunc) *build.Instance {
-	return Build(
-		files,
-		append([]OptionFunc{
-			OptRoot(r.Mod.Dir),
-			OptImportFunc(func(importPath string, importedAt string) (resolvedDir string, err error) {
-				return r.Resolve(ctx, importPath, importedAt)
-			}),
-		}, options...)...,
-	)
+	return BuildInstances(r.BuildConfig(ctx, options...), files)[0]
 }
 
 func (r *Context) Resolve(ctx context.Context, importPath string, importedAt string) (string, error) {
@@ -206,7 +210,10 @@ func (r *Context) autoImport(ctx context.Context, fromPath string) error {
 	}
 
 	for i := range cueFiles {
-		_ = r.Build(ctx, []string{cueFiles[i]})
+		if inst := r.Build(ctx, []string{cueFiles[i]}); inst.Err != nil {
+			cueerrors.Print(os.Stdout, err, nil)
+			return inst.Err
+		}
 	}
 
 	return err

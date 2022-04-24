@@ -65,13 +65,15 @@ func OptImportFunc(importFunc ImportFunc) OptionFunc {
 
 type Instance = build.Instance
 
-func Build(inputs []string, optionFns ...OptionFunc) *Instance {
+func BuildConfig(optionFns ...OptionFunc) *load.Config {
 	c := &load.Config{}
 	for i := range optionFns {
 		optionFns[i](c)
 	}
+	return c
+}
 
-	// load only support related path
+func BuildInstances(c *load.Config, inputs []string) []*Instance {
 	files := make([]string, len(inputs))
 
 	for i, f := range inputs {
@@ -83,5 +85,11 @@ func Build(inputs []string, optionFns ...OptionFunc) *Instance {
 		}
 	}
 
-	return load.Instances(files, c)[0]
+	return load.Instances(files, c)
+}
+
+func Build(inputs []string, optionFns ...OptionFunc) *Instance {
+	c := BuildConfig(optionFns...)
+	// load only support related path
+	return BuildInstances(c, inputs)[0]
 }

@@ -85,4 +85,20 @@ func TestContext(t *testing.T) {
 			t.Log(string(ret))
 		})
 	})
+
+	t.Run("mod dagger-example", func(t *testing.T) {
+		r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger"))
+		t.Log(r.Cleanup())
+
+		t.Run("Get", func(t *testing.T) {
+			err := r.Get(ctx, "./...")
+			NewWithT(t).Expect(err).To(BeNil())
+		})
+
+		//t.Run("EvalContext", func(t *testing.T) {
+		//	ret, err := cuemodx.EvalContext(ctx, r, "./plan.cue", cuex.WithEncoding(cuex.YAML))
+		//	NewWithT(t).Expect(err).To(BeNil())
+		//	t.Log(string(ret))
+		//})
+	})
 }
