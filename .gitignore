@@ -1,7 +1,7 @@
 .idea/
 
 bin/
-_output/
+build/
 vendor/
 jsonnetpkg/
 

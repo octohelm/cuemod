@@ -1,8 +1,53 @@
-PKG = $(shell cat go.mod | grep "^module " | sed -e "s/module //g")
-VERSION = $(shell cat internal/version/version)
-CUEM = go run ./cmd/cuem -v 1 -p ./__examples__
-COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
-TAG ?= $(VERSION)
+export GIT_SHA ?= $(shell git rev-parse HEAD)
+export GIT_REF ?= HEAD
+
+DAGGER = dagger --log-format=plain -p ./dagger
+CUEM = go run ./cmd/cuem
+
+
+tar:
+	mkdir -p build/tar
+	$(foreach n,$(shell ls build/output),\
+		tar -czf "$(PWD)/build/tar/$(n).tar.gz" -C $(PWD)/build/output/$(n) .;)
+.PHONY: tar
+
+push:
+	$(DAGGER) do push
+
+build:
+	$(DAGGER) do build
+.PHONY: build
+
+dagger.dep:
+	$(CUEM) get ./dagger/...
+
+INTERNAL_FORK = go run ./tool/internalfork
+
+fork.go.internal:
+	$(INTERNAL_FORK) \
+		-p cmd/go/internal/modload \
+		-p cmd/go/internal/modfetch \
+		-p internal/execabs \
+		./pkg/modutil/internal
+
+install:
+	$(DAGGER) do build $(shell go env GOOS) $(shell go env GOARCH)
+	mv ./build/output/cuem_$(shell go env GOOS)_$(shell go env GOARCH)/cuem ${GOPATH}/bin/cuem
+
+fmt:
+	goimports -l -w .
+
+tidy:
+	go mod tidy
+
+dep:
+	go get -u -t ./pkg/...
+
+gen-deepcopy:
+	deepcopy-gen \
+		--output-file-base zz_generated.deepcopy \
+		--go-header-file ./hack/boilerplate.go.txt \
+		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
 
 cuem.k.show.pager:
 	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
@@ -36,64 +81,3 @@ cuem.fmt:
 cuem.get:
 	$(CUEM) get -i=go k8s.io/api k8s.io/apimachinery
 	$(CUEM) get ./...
-
-INTERNAL_FORK = go run ./tool/internalfork
-
-fork.go.internal:
-	$(INTERNAL_FORK) \
-		-p cmd/go/internal/modload \
-		-p cmd/go/internal/modfetch \
-		-p internal/execabs \
-		./pkg/modutil/internal
-
-build:
-	goreleaser build --snapshot --rm-dist
-
-fmt:
-	goimports -l -w .
-
-test:
-	go test -v -failfast ./pkg/...
-
-cover:
-	go test -v -coverprofile=coverage.txt -covermode=atomic ./pkg/...
-
-install: build
-	mv ./bin/cuem_$(shell go env GOOS)_$(shell go env GOARCH)/cuem ${GOPATH}/bin/cuem
-
-tidy:
-	go mod tidy
-
-dep:
-	go get -u -t ./...
-
-debug:
-	go test -v ./pkg/cuemod
-	#tree ./pkg/cuemod/testdata/b/cue.mod
-
-gen-deepcopy:
-	deepcopy-gen \
-		--output-file-base zz_generated.deepcopy \
-		--go-header-file ./hack/boilerplate.go.txt \
-		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
-
-PUSH ?= true
-NAMESPACES ?= docker.io/octohelm
-TARGETS ?= cuem
-
-DOCKER_BUILDX_BUILD = docker buildx build \
-	--label=org.opencontainers.image.source=https://github.com/octohelm/cuemod \
-	--label=org.opencontainers.image.revision=$(COMMIT_SHA) \
-	--platform=linux/arm64,linux/amd64
-
-ifeq ($(PUSH),true)
-	DOCKER_BUILDX_BUILD := $(DOCKER_BUILDX_BUILD) --push
-endif
-
-dockerx: build
-	$(foreach target,$(TARGETS),\
-		$(DOCKER_BUILDX_BUILD) \
-		--build-arg=VERSION=$(VERSION) \
-		$(foreach namespace,$(NAMESPACES),--tag=$(namespace)/$(target):$(TAG)) \
-		--file=cmd/$(target)/Dockerfile . ;\
-	)

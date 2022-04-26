@@ -33,11 +33,11 @@ values: {
 		tls?: [...]
 	}
 	nameOverride?: *"" | string
-	nodeSelector?: [string]: _
-	podAnnotations?: [string]: _
+	nodeSelector?: [string]:       _
+	podAnnotations?: [string]:     _
 	podSecurityContext?: [string]: _
 	replicaCount?: *1 | float64
-	resources?: [string]: _
+	resources?: [string]:       _
 	securityContext?: [string]: _
 	service?: {
 		port?: *80 | float64

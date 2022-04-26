@@ -1,5 +1,5 @@
 import (
-	spec "github.com/x/examples/components/nginx"
+	spec "github.com/octohelm/cuemod/__examples__/components/nginx"
 )
 
 spec & {

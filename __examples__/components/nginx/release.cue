@@ -1,7 +1,7 @@
 package nginx
 
 import (
-	"github.com/octohelm/cuem/release"
+	"github.com/octohelm/cuemod/cuepkg/release"
 )
 
 release.#Release & {

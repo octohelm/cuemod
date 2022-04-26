@@ -1,7 +1,6 @@
 # CUE Mod
 
 [![GoDoc Widget](https://godoc.org/github.com/octohelm/cuemod?status.svg)](https://pkg.go.dev/github.com/octohelm/cuemod)
-[![codecov](https://codecov.io/gh/octohelm/cuemod/branch/main/graph/badge.svg)](https://codecov.io/gh/octohelm/cuemod)
 [![Go Report Card](https://goreportcard.com/badge/github.com/octohelm/cuemod)](https://goreportcard.com/report/github.com/octohelm/cuemod)
 
 **ALPHA VERSION**

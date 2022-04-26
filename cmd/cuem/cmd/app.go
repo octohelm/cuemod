@@ -4,11 +4,11 @@ import (
 	"context"
 	"os"
 
-	"github.com/octohelm/cuemod/internal/version"
 	"github.com/octohelm/cuemod/pkg/cli"
+	"github.com/octohelm/cuemod/version"
 )
 
-var app = cli.NewApp("cuemod", version.Version, &ProjectFlags{})
+var app = cli.NewApp("cuemod", version.FullVersion(), &ProjectFlags{})
 
 func Run(ctx context.Context) error {
 	return app.Run(ctx, os.Args)

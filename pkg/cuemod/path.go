@@ -2,6 +2,7 @@ package cuemod
 
 import (
 	"context"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -14,8 +15,20 @@ import (
 func PathFor(mod *Mod, importPath string) *Path {
 	i := &Path{}
 	i.Mod = mod
+	i.Module = mod.Module
 
 	if importPath != "" {
+		// when use replace with custom forked repo
+		// mod.Module may not same as mod.Repo
+		// then should to overwrite this path.Module with mode.Repo
+		if !strings.HasPrefix(importPath, i.Module) {
+			if strings.HasPrefix(importPath, i.Repo) {
+				i.Module = i.Repo
+			} else {
+				panic(fmt.Errorf("import path `%s` not match %s", importPath, mod))
+			}
+		}
+
 		i.SubPath, _ = subPath(i.Module, importPath)
 	}
 
@@ -24,6 +37,7 @@ func PathFor(mod *Mod, importPath string) *Path {
 
 type Path struct {
 	*Mod
+	Module  string
 	SubPath string
 	Replace *ReplaceRule
 }

@@ -1,30 +1,50 @@
-name: test
+name: ci
 
-on: push
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - 'v*'
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+
+      - uses: crazy-max/dagger-action@build-ref
+        with:
+          version: https://github.com/dagger/dagger.git#refs/pull/2310/head
+          install-only: true
 
       - uses: actions/setup-go@v3
         with:
           go-version: '^1.18'
 
-      - name: setup k3s
-        run: |
-          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s -
-          kubectl version
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+      - run: make dagger.dep
 
-      - run: make cover
+      - run: make build push
         env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+          GH_USERNAME: ${{ github.actor }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GIT_SHA: ${{ github.sha }}
+          GIT_REF: ${{ github.ref }}
 
-      - uses: codecov/codecov-action@v3
+      - run: make tar
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         with:
-          file: ./coverage.txt
-          fail_ci_if_error: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: "latest"
+          files: |
+            build/tar/*
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          files: |
+            build/tar/*      
