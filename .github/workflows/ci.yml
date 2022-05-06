@@ -13,16 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: crazy-max/dagger-action@build-ref
+      - uses: dagger/dagger-for-github@main
         with:
-          version: https://github.com/dagger/dagger.git#refs/pull/2310/head
+          version: https://github.com/morlay/dagger.git#release-main
           install-only: true
 
       - uses: actions/setup-go@v3
         with:
           go-version: '^1.18'
-
-      - run: make dagger.dep
 
       - run: make build push
         env:
