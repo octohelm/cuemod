@@ -18,7 +18,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/objx v0.3.0
+	github.com/stretchr/objx v0.4.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3
 	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171
