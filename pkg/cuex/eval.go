@@ -2,6 +2,7 @@ package cuex
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -10,9 +11,6 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueerrors "cuelang.org/go/cue/errors"
 	"sigs.k8s.io/yaml"
-
-	_ "github.com/octohelm/cuemod/pkg/cuex/translator"
-	"github.com/octohelm/cuemod/pkg/cuex/translator/core"
 )
 
 type Encoding = build.Encoding
@@ -84,9 +82,9 @@ func encode(inst *build.Instance, v cue.Value, encoding Encoding) ([]byte, error
 	case CUE:
 		return BundleToRaw(inst)
 	case JSON:
-		return core.MarshalCueValue(v)
+		return json.Marshal(v)
 	case YAML:
-		data, err := core.MarshalCueValue(v)
+		data, err := json.Marshal(v)
 		if err != nil {
 			return nil, err
 		}

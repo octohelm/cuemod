@@ -72,11 +72,9 @@ cuem get github.com/grafana/jsonnet-libs@latest
 * Dependency management based on go modules
     * all dependency codes will download under `$(go env GOMODCACHE)`
     * `GOPROXY` supported to speed up downloading
-* Automate detect witch extractor should be used for generate code to cue.
-    * golang supported
-    * helm chart supported
-    * jsonnet supported
-* Post-processing where value with attribute `@translate(<name>)` when final marshalling.
+* Extract to cue pkg from other language or schema spec.
+    * `golang` supported
+    * k8s `crd` json supported
 
 ## Spec `cue.mod/module.cue`
 
@@ -84,87 +82,33 @@ cuem get github.com/grafana/jsonnet-libs@latest
 // module name
 // for sub mod import, <module>/path/to/sub
 // NOTICE: the module name should be a valid repo name
-module: "github.com/x/b"
+module: "github.com/octohelm/cuemod"
 
-// automately resolve by the jsonnet code `import` or `importstr`
-// rules follow go modules
-require: {		
-    // @vsc("master"), when upgrade, should use vcs version for upgrade.
-    "github.com/grafana/jsonnet-libs":           "v0.0.0-20210315182639-887607c77457" @vcs("master")
-    "github.com/jsonnet-libs/k8s-alpha":         "v0.0.0-20210118111845-5e0d0738721f" @indirect()
+require: {
+	 // @vsc("release-main"), when upgrade, should use vcs version for upgrade.
+	"dagger.io":          "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
+	"k8s.io/api":         "v0.24.0"
+	"universe.dagger.io": "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
+}
+
+require: {
+	"k8s.io/apimachinery": "v0.24.0" @indirect()
 }
 
 replace: {
-    // version lock 
-    "github.com/rancher/local-path-provisioner": "@v0.0.19" 
-    // declare import method for special import path
-    "github.com/rancher/local-path-provisioner/deploy/chart": "" @import("helm")
-    // local replace
-    // **notice** only works for current mod
+	// replace module with spec version
+	"dagger.io":          "github.com/morlay/dagger/pkg/dagger.io@release-main"
+	"universe.dagger.io": "github.com/morlay/dagger/pkg/universe.dagger.io@release-main"
+	
+	 // **notice** only works for current mod
     "github.com/x/a": "../a"
 }
-```
 
-## Post-Processing `@translate(<name>)`
-
-Now cuelang not provide api to added custom functions. So we use the attribute to mark which value should be translated
-to other formats.
-
-### `toml`
-
-```cue
-configmap: xxx: data: "xxx.toml": json.Marshal({ a: 1 }) @translate("toml")
-// why json.Marshal here, just let type constraints happy
-```
-
-### `helm`
-
-```cue
-package localpathprovisioner
-
-import (
-	"github.com/rancher/local-path-provisioner/deploy/chart"
-)
-
-"local-path-provisioner": {
-	chart
-	values: {}
-	release: name:      "local-path-provisioner"
-	release: namespace: "local-path-provisioner"
-} @translate("helm")
-```
-
-### `jsonnet`
-
-```cue
-package grafana
-
-import (
-	"encoding/json"
-
-	"github.com/grafana/jsonnet-libs/grafana"
-)
-
-"grafana": {
-	data: '''
-		local grafana = import 'github.com/grafana/jsonnet-libs/grafana/grafana.libsonnet';
-		
-		{
-		    config+:: (import 'config.jsonnet'),
-		
-		    prometheus_datasource:: grafana.datasource.new('prometheus', $.config.prometheus_url, type='prometheus', default=true),
-		
-		    grafana: grafana
-		         + grafana.withAnonymous()
-		         + grafana.addFolder('Example')
-		         + grafana.addDatasource('prometheus', $.prometheus_datasource)
-		         ,
-		}
-		'''
-
-	imports: "github.com/grafana/jsonnet-libs/grafana/grafana.libsonnet": grafana["grafana.libsonnet"]
-	imports: "config.jsonnet": code: json.Marshal({ prometheus_url: 'http://prometheus' })
-} @translate("jsonnet")
+replace: {
+	// declare import method for special import path
+	"k8s.io/api":          "" @import("go")
+	"k8s.io/apimachinery": "" @import("go")
+}
 ```
 
 ### Known issues
@@ -172,60 +116,4 @@ import (
 #### pkg name may not same as path
 
 Some path like `github.com/istio/istio/manifests/charts/istio-operator`, the `istio-operator` is not a valid identifier
-in cuelang. Should import with `github.com/istio/istio/manifests/charts/istio-operator:istio_operator`
-
-#### dep incompatible go mod repo
-
-For some go project like
-
-```
-$ go mod download -json github.com/grafana/loki@v2.1.0
-{
-        "Path": "github.com/grafana/loki",
-        "Version": "v2.1.0",
-        "Error": "github.com/grafana/loki@v2.1.0: invalid version: module contains a go.mod file, so major version must be compatible: should be v0 or v1, not v2"
-}
-```
-
-Could config `mod.cue` replace with commit hash of the tag to hack
-
-```cue
-replace: {
-    "github.com/grafana/loki": "@1b79df3",
-}
-```
-
-## Plugin Kube
-
-like [Tanka](https://tanka.dev), but for cuelang.
-
-* only k3s/k8s which support `server-apply`
-* make sure the cue file return an object as struct
-  below ([full template](https://github.com/octohelm/cuem/blob/main/release/release.cue)):
-
-```cue
-apiVersion: "octohelm.tech/v1alpha"
-kind:       "Release"
-
-// release name
-metadata: name:      "\(#name)"
-
-// release namespace
-metadata: namespace: "\(#namespace)"
-
-// must an unique `NAME` of `kubectl config get-contexts`
-metadata: labels: context: "\(#context)"
-
-// nested object may contains kube resources
-spec: {} 
-```
-
-```shell
-cd ./__examples__
-cuem k show ./clusters/demo/nginx.cue
-# patch
-cuem k show ./clusters/demo/nginx.cue '{ #values: image: tag: "latest" }'
-cuem k apply ./clusters/demo/nginx.cue
-cuem k prune ./clusters/demo/nginx.cue
-cuem k delete ./clusters/demo/nginx.cue
-```
+in `cue-lang`. Should import with `github.com/istio/istio/manifests/charts/istio-operator:istio_operator`

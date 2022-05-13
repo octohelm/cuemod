@@ -46,32 +46,6 @@ test:
 dep:
 	go get -u -t ./pkg/...
 
-gen-deepcopy:
-	deepcopy-gen \
-		--output-file-base zz_generated.deepcopy \
-		--go-header-file ./hack/boilerplate.go.txt \
-		--input-dirs $(PKG)/pkg/apis/release/v1alpha1
-
-cuem.k.show.pager:
-	$(CUEM) k show ./__examples__/clusters/demo/nginx.cue
-
-cuem.k.show:
-	$(CUEM) k show -o _output/nginx0.yaml ./__examples__/clusters/demo/nginx.cue
-	$(CUEM) k show -o _output/nginx1.yaml ./__examples__/components/nginx '{ #values: image: tag: "latest", #context: "crpe-test" }'
-
-cuem.k.apply:
-	$(CUEM) k apply ./__examples__/clusters/demo/nginx.cue
-
-cuem.k.prune:
-	$(CUEM) k prune ./__examples__/clusters/demo/nginx.cue
-
-cuem.k.delete:
-	$(CUEM) k delete ./__examples__/clusters/demo/nginx.cue
-
-cuem.k.export:
-	rm -rf ./_output
-	$(CUEM) k show -o ./_output ./__examples__/clusters/demo/*.cue
-
 cuem.eval:
 	$(CUEM) eval -w -o _output/nginx.cue ./__examples__/clusters/demo/nginx.cue
 	$(CUEM) eval -o nginx.yaml ./__examples__/clusters/demo/nginx.cue

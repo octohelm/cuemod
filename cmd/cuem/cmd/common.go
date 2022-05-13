@@ -10,7 +10,6 @@ import (
 	"github.com/go-logr/zapr"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 type ProjectFlags struct {
@@ -28,10 +27,6 @@ func (v ProjectFlags) PreRun(ctx context.Context) context.Context {
 }
 
 func NewLogger(lvl int) (l logr.Logger) {
-	defer func() {
-		ctrl.SetLogger(l)
-	}()
-
 	return zapr.NewLoggerWithOptions(
 		func(opts ...zap.Option) *zap.Logger {
 			c := zap.NewProductionConfig()

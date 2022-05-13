@@ -61,7 +61,7 @@ func TestContext(t *testing.T) {
 				files, err := r.ListCue("./...")
 
 				NewWithT(t).Expect(err).To(BeNil())
-				NewWithT(t).Expect(len(files) > 1).To(BeTrue())
+				NewWithT(t).Expect(len(files) > 0).To(BeTrue())
 
 				t.Run("Format", func(t *testing.T) {
 					err := format.FormatFiles(ctx, files, format.FormatOpts{
@@ -76,12 +76,6 @@ func TestContext(t *testing.T) {
 		t.Run("Get", func(t *testing.T) {
 			err := r.Get(ctx, "./...")
 			NewWithT(t).Expect(err).To(BeNil())
-		})
-
-		t.Run("EvalContext", func(t *testing.T) {
-			ret, err := cuemodx.EvalContext(ctx, r, "./jsonnet_demo/jsonnet.cue", cuex.WithEncoding(cuex.YAML))
-			NewWithT(t).Expect(err).To(BeNil())
-			t.Log(string(ret))
 		})
 	})
 

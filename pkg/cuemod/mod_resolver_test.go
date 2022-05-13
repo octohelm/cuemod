@@ -16,15 +16,7 @@ func TestModResolver(t *testing.T) {
 
 	m := newModResolver()
 
-	t.Run("should get go mod", func(t *testing.T) {
-		mod, err := m.Get(ctx, "github.com/grafana/jsonnet-libs/grafana", "master", nil)
-		NewWithT(t).Expect(err).To(BeNil())
-
-		NewWithT(t).Expect(mod.Module).To(Equal("github.com/grafana/jsonnet-libs/grafana"))
-		NewWithT(t).Expect(mod.Repo).To(Equal("github.com/grafana/jsonnet-libs"))
-	})
-
-	t.Run("should get sub go mod", func(t *testing.T) {
+	t.Run("should get sub when go.mod exists", func(t *testing.T) {
 		mod, err := m.Get(ctx, "github.com/open-telemetry/opentelemetry-go/exporters/prometheus", "main", nil)
 		NewWithT(t).Expect(err).To(BeNil())
 

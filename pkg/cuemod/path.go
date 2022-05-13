@@ -3,14 +3,12 @@ package cuemod
 import (
 	"context"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
-
+	"github.com/octohelm/cuemod/pkg/cueify"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
-	"github.com/octohelm/cuemod/pkg/extractor"
+	"github.com/pkg/errors"
 )
 
 func PathFor(mod *Mod, importPath string) *Path {
@@ -28,9 +26,6 @@ func PathFor(mod *Mod, importPath string) *Path {
 			}
 		}
 		i.SubPath, _ = subDir(i.Module, importPath)
-		if i.SubPath != "" {
-			i.Dir = path.Join(i.Dir, i.SubPath)
-		}
 	}
 
 	return i
@@ -106,7 +101,7 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 	if gen != "" {
 		importPathDir := filepath.Join(root, pkgRoot, importPath)
 
-		err := extractor.ExtractToDir(
+		err := cueify.ExtractToDir(
 			ctx,
 			gen,
 			importPathDir,
@@ -167,5 +162,9 @@ func (i Path) ImportPathRootDir() string {
 		return i.Dir
 	}
 	rel, _ := subDir(ipr, ip)
-	return i.Dir[0 : len(i.Dir)-len("/"+rel)]
+	dir := i.Dir
+	if i.SubPath != "" {
+		dir = filepath.Join(dir, i.SubPath)
+	}
+	return dir[0 : len(dir)-len("/"+rel)]
 }
