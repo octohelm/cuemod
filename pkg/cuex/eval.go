@@ -29,7 +29,7 @@ type EvalOption struct {
 	Encoding Encoding
 }
 
-func (o EvalOption) SetDefaults() {
+func (o *EvalOption) SetDefaults() {
 	if o.Encoding == "" {
 		o.Encoding = build.JSON
 	}

@@ -26,7 +26,6 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 	}
 
 	data, err := os.ReadFile(f)
-
 	if err != nil && !os.IsNotExist(err) {
 		return false, err
 	}
@@ -140,7 +139,7 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 		}
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func stringValue(node ast.Node) string {

@@ -7,9 +7,8 @@ import (
 	"sort"
 	"strconv"
 
-	"cuelang.org/go/cue/format"
-
 	"cuelang.org/go/cue/ast"
+	"cuelang.org/go/cue/format"
 )
 
 const ModFilename = "cue.mod/module.cue"

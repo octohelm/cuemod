@@ -236,7 +236,7 @@ func downloadZip(ctx context.Context, mod module.Version, zipfile string) (err e
 		return hashZip(mod, zipfile, ziphashfile)
 	}
 
-	// From here to the os.Rename call below is functionally almost equivalent to
+	// Replace here to the os.Rename call below is functionally almost equivalent to
 	// renameio.WriteToFile, with one key difference: we want to validate the
 	// contents of the file (by hashing it) before we commit it. Because the file
 	// is zip-compressed, we need an actual file — or at least an io.ReaderAt — to

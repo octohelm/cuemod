@@ -19,7 +19,6 @@ func TestContext(t *testing.T) {
 	cwd, _ := os.Getwd()
 
 	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
-
 	ctx = cuemod.WithOpts(ctx, cuemod.OptVerbose(true))
 
 	t.Run("mod a", func(t *testing.T) {
@@ -30,7 +29,7 @@ func TestContext(t *testing.T) {
 			data, err := cuemodx.EvalContext(ctx, r, ".", cuex.WithEncoding(cuex.JSON))
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
-			NewWithT(t).Expect(r.Mod.Require["k8s.io/api"].Version).To(Equal("v0.20.5"))
+			NewWithT(t).Expect(r.Mod.Require["k8s.io/api"].Version).To(Equal("v0.24.0"))
 		})
 
 		t.Run("EvalContext from exported single file", func(t *testing.T) {
@@ -87,18 +86,25 @@ func TestContext(t *testing.T) {
 	})
 
 	t.Run("mod dagger-example", func(t *testing.T) {
-		r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger"))
-		t.Log(r.Cleanup())
+		t.Run("direct", func(t *testing.T) {
+			r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger"))
+			t.Log(r.Cleanup())
 
-		t.Run("Get", func(t *testing.T) {
-			err := r.Get(ctx, "./...")
-			NewWithT(t).Expect(err).To(BeNil())
+			t.Run("Get", func(t *testing.T) {
+				err := r.Get(ctx, "./...")
+				NewWithT(t).Expect(err).To(BeNil())
+			})
 		})
 
-		//t.Run("EvalContext", func(t *testing.T) {
-		//	ret, err := cuemodx.EvalContext(ctx, r, "./plan.cue", cuex.WithEncoding(cuex.YAML))
-		//	NewWithT(t).Expect(err).To(BeNil())
-		//	t.Log(string(ret))
-		//})
+		t.Run("with custom replace", func(t *testing.T) {
+			r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger-replace"))
+			t.Log(r.Cleanup())
+
+			t.Run("Get", func(t *testing.T) {
+				err := r.Get(ctx, "./...")
+				NewWithT(t).Expect(err).To(BeNil())
+			})
+		})
 	})
+
 }

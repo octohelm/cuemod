@@ -5,7 +5,9 @@ package src
 import github_com_jsonnet_libs_k8s_alpha_1_19 "github.com/jsonnet-libs/k8s-alpha/1.19:k8s_alpha"
 
 _files
-_files: "k.libsonnet": {
-	imports: "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet": github_com_jsonnet_libs_k8s_alpha_1_19["main.libsonnet"], data: '''
-							(import 'github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet')'''
+_files: {
+	"k.libsonnet": {
+		imports: "github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet": github_com_jsonnet_libs_k8s_alpha_1_19["main.libsonnet"], data: '''
+			(import 'github.com/jsonnet-libs/k8s-alpha/1.19/main.libsonnet')'''
+	}
 }

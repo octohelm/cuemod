@@ -22,7 +22,7 @@ func isSubDirFor(targetpath string, root string) bool {
 	return strings.HasPrefix(targetpath, root)
 }
 
-func subPath(pkg string, importPath string) (string, error) {
+func subDir(pkg string, importPath string) (string, error) {
 	if isSubDirFor(importPath, pkg) {
 		if len(importPath) > len(pkg)+1 {
 			return importPath[len(pkg)+1:], nil
@@ -36,7 +36,7 @@ func replaceImportPath(to string, from string, importPath string) string {
 	if from == importPath {
 		return to
 	}
-	s, _ := subPath(from, importPath)
+	s, _ := subDir(from, importPath)
 	return filepath.Join(to, s)
 }
 

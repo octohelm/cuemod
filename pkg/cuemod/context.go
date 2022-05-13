@@ -156,7 +156,10 @@ func (r *Context) setRequireFromImportPath(ctx context.Context, p *Path, indirec
 		return err
 	}
 
-	r.Mod.SetRequire(p.Repo, modVersion, indirect)
+	// only root mod could be in require
+	if p.Root {
+		r.Mod.SetRequire(p.ImportPathRoot(), modVersion, indirect)
+	}
 
 	return r.syncFiles()
 }

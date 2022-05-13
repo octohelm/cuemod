@@ -63,7 +63,7 @@ type replaceTargetWithMod struct {
 	mod *Mod
 }
 
-func (r *modResolver) ResolveImportPath(ctx context.Context, root *Mod, importPath string, version string) (*Path, error) {
+func (r *modResolver) ResolveImportPath(ctx context.Context, root *Mod, importPath string, version string) (p *Path, e error) {
 	// self import '<root.module>/dir/to/sub'
 	if isSubDirFor(importPath, root.Module) {
 		return PathFor(root, importPath), nil
@@ -219,7 +219,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 	version := requestedVersion
 
 	// fix /v2
-	sub, _ := subPath(repo, importPath)
+	sub, _ := subDir(repo, importPath)
 	if parts := strings.Split(sub, "/"); len(parts[0]) > 0 && parts[0][0] == 'v' {
 		i, _ := strconv.ParseInt(parts[0][1:], 10, 64)
 		if i >= 2 {
@@ -249,7 +249,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 		}
 	}
 
-	// Mod@version replace
+	// module@version replace
 	if r, ok := r.replace[modfile.PathMayWithVersion{Path: repo, Version: version}]; ok {
 		repo, version = r.Path, r.Version
 	}
@@ -273,6 +273,8 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 		}
 
 		root = m
+		// fetched repo always root
+		root.Root = true
 
 		if _, err := root.LoadInfo(ctx); err != nil {
 			return nil, err
@@ -282,7 +284,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 	}
 
 	if root != nil {
-		// sub dir may as Mod.
+		// sub dir may a mod.
 		importPaths := paths(importPath)
 
 		for _, m := range importPaths {
@@ -293,7 +295,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 			if mod, ok := r.mods[module.Version{Path: m, Version: version}]; ok && mod.Resolved() {
 				return mod, nil
 			} else {
-				rel, _ := subPath(root.Module, m)
+				dir, _ := subDir(root.Module, m)
 
 				sub := Mod{}
 				sub.Repo = root.Repo
@@ -302,11 +304,11 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion str
 				sub.Module = m
 				sub.ModVersion = root.ModVersion
 
-				sub.Dir = filepath.Join(root.Dir, rel)
+				sub.Dir = filepath.Join(root.Dir, dir)
 
 				ok, err := sub.LoadInfo(ctx)
 				if err != nil {
-					// if dir contains go.Mod, will be empty
+					// if dir contains go.mod, it will be empty
 					if os.IsNotExist(errors.Unwrap(err)); err != nil {
 						return r.get(ctx, sub.Module, version, importPath)
 					}

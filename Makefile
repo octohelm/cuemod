@@ -1,9 +1,8 @@
 export GIT_SHA ?= $(shell git rev-parse HEAD)
 export GIT_REF ?= HEAD
 
-DAGGER = dagger --log-format=plain -p ./dagger
+DAGGER = dagger --log-format=plain
 CUEM = go run ./cmd/cuem
-
 
 tar:
 	mkdir -p build/tar
@@ -13,13 +12,14 @@ tar:
 
 push:
 	$(DAGGER) do push
+.PHONY: push
 
 build:
 	$(DAGGER) do build
 .PHONY: build
 
 dagger.dep:
-	$(CUEM) get ./dagger/...
+	$(CUEM) get ./cuepkg/...
 
 INTERNAL_FORK = go run ./tool/internalfork
 
@@ -39,6 +39,9 @@ fmt:
 
 tidy:
 	go mod tidy
+
+test:
+	go test -v -failfast ./pkg/...
 
 dep:
 	go get -u -t ./pkg/...

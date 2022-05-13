@@ -1,7 +1,8 @@
 module: "dagger-example"
 
 require: {
-	"github.com/dagger/dagger": "v0.2.7"
+	"dagger.io":          "v0.2.10"
+	"universe.dagger.io": "v0.2.10"
 }
 
 replace: {

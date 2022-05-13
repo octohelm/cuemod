@@ -1,1 +1,6 @@
-github.com/dagger/dagger v0.2.7 h1:Th5+cavbySa0SkC3oYsI68Yc1RjDiT2dSTC7sR7p4Ac=
+github.com/dagger/dagger v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=
+github.com/dagger/dagger/pkg/dagger.io/dagger v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=
+github.com/dagger/dagger/pkg/dagger.io/dagger/core v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=
+github.com/dagger/dagger/pkg/universe.dagger.io/alpine v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=
+github.com/dagger/dagger/pkg/universe.dagger.io/bash v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=
+github.com/dagger/dagger/pkg/universe.dagger.io/docker v0.2.10 h1:CvkrTpqK/W9UQYR6+nrOBhoHRogBXYtLd4PnCsyKFjY=

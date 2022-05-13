@@ -8,12 +8,14 @@ import (
 )
 
 _files
-_files: "dashboard.jsonnet": {
-	imports: {
-		"grafana/example/dashboard-simple.libsonnet": grafana_example["dashboard-simple.libsonnet"], "grafana/grafana.libsonnet": grafana["grafana.libsonnet"]
+_files: {
+	"dashboard.jsonnet": {
+		imports: {
+			"grafana/example/dashboard-simple.libsonnet": grafana_example["dashboard-simple.libsonnet"], "grafana/grafana.libsonnet": grafana["grafana.libsonnet"]
+		}
+		data: '''
+			local grafana = import 'grafana/grafana.libsonnet';
+			grafana.addDashboard('simple', (import 'grafana/example/dashboard-simple.libsonnet'), folder='Example')
+			'''
 	}
-	data: '''
-		local grafana = import 'grafana/grafana.libsonnet';
-		grafana.addDashboard('simple', (import 'grafana/example/dashboard-simple.libsonnet'), folder='Example')
-		'''
 }

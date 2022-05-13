@@ -19,6 +19,8 @@ type Mod struct {
 	Sum string
 	// Dir module absolute dir
 	Dir string
+	// Root means this import path is mod root
+	Root bool
 }
 
 func (m *Mod) String() string {
@@ -33,12 +35,18 @@ func (m *Mod) LoadInfo(ctx context.Context) (bool, error) {
 		return false, errors.Wrapf(err, "%s not found", m.Dir)
 	}
 
-	modfileExists, err := modfile.LoadModFile(m.Dir, &m.ModFile)
+	exists, err := modfile.LoadModFile(m.Dir, &m.ModFile)
 	if err != nil {
 		return false, err
 	}
 
-	return modfileExists, nil
+	if exists {
+		// module name should be from module.cue
+		m.Module = m.ModFile.Module
+		m.Root = true
+	}
+
+	return exists, nil
 }
 
 func (m *Mod) Resolved() bool {

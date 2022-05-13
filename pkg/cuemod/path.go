@@ -2,11 +2,12 @@ package cuemod
 
 import (
 	"context"
-	"fmt"
-	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/octohelm/cuemod/pkg/extractor"
@@ -24,12 +25,12 @@ func PathFor(mod *Mod, importPath string) *Path {
 		if !strings.HasPrefix(importPath, i.Module) {
 			if strings.HasPrefix(importPath, i.Repo) {
 				i.Module = i.Repo
-			} else {
-				panic(fmt.Errorf("import path `%s` not match %s", importPath, mod))
 			}
 		}
-
-		i.SubPath, _ = subPath(i.Module, importPath)
+		i.SubPath, _ = subDir(i.Module, importPath)
+		if i.SubPath != "" {
+			i.Dir = path.Join(i.Dir, i.SubPath)
+		}
 	}
 
 	return i
@@ -40,6 +41,24 @@ type Path struct {
 	Module  string
 	SubPath string
 	Replace *ReplaceRule
+}
+
+func (i Path) String() string {
+	s := strings.Builder{}
+
+	if i.Replace != nil {
+		s.WriteString(i.Replace.From)
+		s.WriteString(" => ")
+	}
+
+	s.WriteString(i.Mod.String())
+
+	if i.SubPath != "" {
+		s.WriteString("/")
+		s.WriteString(i.SubPath)
+	}
+
+	return s.String()
 }
 
 type ReplaceRule struct {
@@ -63,6 +82,10 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 		return nil
 	}
 
+	if !i.Mod.Root {
+		return nil
+	}
+
 	gen := ""
 
 	if i.Replace != nil && i.Replace.Import != "" {
@@ -74,21 +97,15 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 	}
 
 	importPath := i.ImportPath()
+	pkgRootPath := filepath.Join(root, pkgRoot, i.ImportPathRoot())
 
-	repoRootDir := filepath.Join(root, pkgRoot, i.Repo)
-	importPathDir := filepath.Join(root, pkgRoot, importPath)
-
-	if err := i.symlink(ctx, i.RepoRootDir(), repoRootDir); err != nil {
+	if err := i.symlink(ctx, i.ImportPathRootDir(), pkgRootPath); err != nil {
 		return err
 	}
 
-	if i.shouldReplace() {
-		if err := i.symlink(ctx, i.ImportPathDir(), importPathDir); err != nil {
-			return err
-		}
-	}
-
 	if gen != "" {
+		importPathDir := filepath.Join(root, pkgRoot, importPath)
+
 		err := extractor.ExtractToDir(
 			ctx,
 			gen,
@@ -105,57 +122,10 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 }
 
 func (i *Path) symlink(ctx context.Context, from string, to string) error {
-	return filepath.Walk(from, func(subFrom string, info fs.FileInfo, err error) error {
-		rel, _ := filepath.Rel(from, subFrom)
-		subTo := filepath.Join(to, rel)
-
-		if info.IsDir() {
-			if strings.Contains(subTo, "/cue.mod/gen/vendor/") {
-				if err := forceSymlink(subFrom, subTo); err != nil {
-					return err
-				}
-				return filepath.SkipDir
-			}
-
-			ok, err := hasSubDir(subFrom)
-			if err != nil {
-				return err
-			}
-
-			// If no sub dir, could be safe to add link
-			if !ok {
-				if err := forceSymlink(subFrom, subTo); err != nil {
-					return err
-				}
-				return filepath.SkipDir
-			}
-			return nil
-		}
-
-		if strings.Contains(subFrom, "/cue.mod/") {
-			return filepath.SkipDir
-		}
-
-		if filepath.Ext(subFrom) != ".cue" {
-			return nil
-		}
-
-		return forceSymlink(subFrom, subTo)
-	})
-}
-
-func hasSubDir(path string) (ok bool, err error) {
-	err = filepath.Walk(path, func(sub string, info fs.FileInfo, err error) error {
-		if sub == path {
-			return nil
-		}
-		if info.IsDir() {
-			ok = true
-			return filepath.SkipDir
-		}
-		return nil
-	})
-	return
+	if _, err := os.Stat(from); err != nil {
+		return errors.Wrapf(err, "invalid path %s", from)
+	}
+	return forceSymlink(from, to)
 }
 
 func forceSymlink(from, to string) error {
@@ -179,21 +149,23 @@ func (i *Path) ImportPath() string {
 	return filepath.Join(i.Module, i.SubPath)
 }
 
-func (i *Path) ImportPathDir() string {
-	if i.shouldReplace() {
-		return filepath.Join(i.Dir, i.SubPath)
-	}
-	return i.RepoRootDir()
-}
-
 func (i *Path) ResolvedImportPath() string {
 	return filepath.Join(i.Dir, i.SubPath)
 }
 
-func (i *Path) RepoRootDir() string {
-	if i.Repo == i.Module {
+func (i Path) ImportPathRoot() string {
+	if i.Replace != nil {
+		return i.Replace.From
+	}
+	return i.Repo
+}
+
+func (i Path) ImportPathRootDir() string {
+	ipr := i.ImportPathRoot()
+	ip := i.ImportPath()
+	if ip == ipr {
 		return i.Dir
 	}
-	rel, _ := subPath(i.Repo, i.Module)
+	rel, _ := subDir(ipr, ip)
 	return i.Dir[0 : len(i.Dir)-len("/"+rel)]
 }

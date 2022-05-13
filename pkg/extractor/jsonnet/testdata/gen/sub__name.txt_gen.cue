@@ -3,8 +3,10 @@
 package src
 
 _files
-_files: "sub/name.txt": {
-	imports: {}
-	data: '''
-							grafana'''
+_files: {
+	"sub/name.txt": {
+		imports: {}
+		data: '''
+			grafana'''
+	}
 }

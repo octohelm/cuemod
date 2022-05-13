@@ -156,7 +156,7 @@ func checkVendorConsistency(index *modFileIndex, modFile *modfile.File) {
 		}
 	}
 
-	// Iterate over the Require directives in their original (not indexed) order
+	// Iterate over the Replace directives in their original (not indexed) order
 	// so that the errors match the original file.
 	for _, r := range modFile.Require {
 		if !vendorMeta[r.Mod].Explicit {

@@ -1,13 +1,10 @@
 module: "github.com/octohelm/cuemod"
 
 require: {
-	"dagger.io":          "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
-	"k8s.io/api":         "v0.24.0"
-	"universe.dagger.io": "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
-}
-
-require: {
-	"k8s.io/apimachinery": "v0.24.0" @indirect()
+	"dagger.io":           "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
+	"k8s.io/api":          "v0.24.0"
+	"k8s.io/apimachinery": "v0.24.0"
+	"universe.dagger.io":  "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
 }
 
 replace: {
