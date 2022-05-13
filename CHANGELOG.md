@@ -5,7 +5,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.0](https://github.com/octohelm/cuemod/compare/v0.3.5...v0.4.0)
+
+### Bug Fixes
+
+* **fix(cuemod):** replace fix ([8655f13](https://github.com/octohelm/cuemod/commit/8655f13c4e7d9f4e6634b68d0df882a92a304cce))
+
+
+### Features
+
+* **feat** drop all magics like post-transform ([b895d42](https://github.com/octohelm/cuemod/commit/b895d4245c5ff8e0aaafa407d171626e1977bbac))
+
+
+
 # [0.3.5](https://github.com/octohelm/cuemod/compare/v0.3.4...v0.3.5)
+
 
 
 # [0.3.4](https://github.com/octohelm/cuemod/compare/v0.3.3...v0.3.4)
