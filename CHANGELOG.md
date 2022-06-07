@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.1](https://github.com/octohelm/cuemod/compare/v0.4.0...v0.4.1)
+
+### Bug Fixes
+
+* **fix** fetch mod should check cache first ([5c40b10](https://github.com/octohelm/cuemod/commit/5c40b10bbfb459751b3e303389b73cf7c6700dab))
+
+
+
 # [0.4.0](https://github.com/octohelm/cuemod/compare/v0.3.5...v0.4.0)
 
 ### Bug Fixes
