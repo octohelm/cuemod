@@ -156,20 +156,9 @@ func (r *modResolver) Collect(ctx context.Context, mod *Mod) {
 			return
 		}
 
-		if currentReplaceTarget, ok := r.replace[k]; !ok {
+		// never modify replaced
+		if _, ok := r.replace[k]; !ok {
 			r.replace[k] = replaceTargetWithMod{mod: mod, ReplaceTarget: replaceTarget}
-		} else {
-			if replaceTarget.String() != currentReplaceTarget.PathMayWithVersion.String() {
-				fmt.Printf(`
-[WARNING] '%s' already replaced to 
-	'%s' (using by module '%s'), but another module want to replace as 
-	'%s' (requested by module %s)
-`,
-					k,
-					currentReplaceTarget.PathMayWithVersion, currentReplaceTarget.mod,
-					replaceTarget, mod,
-				)
-			}
 		}
 	}
 }
