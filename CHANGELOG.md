@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.3](https://github.com/octohelm/cuemod/compare/v0.4.2...v0.4.3)
+
+### Bug Fixes
+
+* **fix** sum should sort ([5cf454f](https://github.com/octohelm/cuemod/commit/5cf454fc1b1dce3a82c36b5368cdaff79c7d29e4))
+
+
+
 # [0.4.2](https://github.com/octohelm/cuemod/compare/v0.4.1...v0.4.2)
 
 ### Bug Fixes
