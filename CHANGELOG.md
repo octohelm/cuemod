@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.2](https://github.com/octohelm/cuemod/compare/v0.4.1...v0.4.2)
+
+### Bug Fixes
+
+* **fix** remove replace warning ([ece507b](https://github.com/octohelm/cuemod/commit/ece507beedd9a5c062d3041c4b8d2b2c312f063d))
+
+
+
 # [0.4.1](https://github.com/octohelm/cuemod/compare/v0.4.0...v0.4.1)
 
 ### Bug Fixes
