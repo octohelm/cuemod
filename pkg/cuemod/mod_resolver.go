@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -46,6 +47,10 @@ func (r *modResolver) ModuleSum() []byte {
 			moduleVersions = append(moduleVersions, moduleVersion)
 		}
 	}
+
+	sort.Slice(moduleVersions, func(i, j int) bool {
+		return moduleVersions[i].Path < moduleVersions[j].Path
+	})
 
 	for _, n := range moduleVersions {
 		m := r.mods[n]
