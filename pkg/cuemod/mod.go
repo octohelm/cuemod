@@ -14,12 +14,12 @@ type Mod struct {
 
 	// Repo where module in vcs root
 	Repo string
-	// Sum repo absolute dir sum
-	Sum string
 	// Dir module absolute dir
 	Dir string
 	// Root means this import path is mod root
 	Root bool
+	// Sum repo absolute dir sum
+	Sum string
 }
 
 func (m *Mod) String() string {

@@ -144,9 +144,11 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 				}
 			}
 		}
+
+		return true, nil
 	}
 
-	return true, nil
+	return false, nil
 }
 
 func stringValue(node ast.Node) string {
