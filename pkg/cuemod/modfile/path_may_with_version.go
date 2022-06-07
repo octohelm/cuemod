@@ -19,15 +19,20 @@ func ParsePathMayWithVersion(v string) (*PathMayWithVersion, error) {
 	}
 
 	if len(parts) > 1 {
-		return &PathMayWithVersion{Path: i, Version: parts[1]}, nil
+		vv := strings.Split(parts[1], "#")
+		if len(vv) > 1 {
+			return &PathMayWithVersion{Path: i, Version: vv[0], VcsVersion: vv[1]}, nil
+		}
+		return &PathMayWithVersion{Path: i, Version: vv[0]}, nil
 	}
 	return &PathMayWithVersion{Path: i}, nil
 
 }
 
 type PathMayWithVersion struct {
-	Version string
-	Path    string
+	Path       string
+	Version    string
+	VcsVersion string
 }
 
 func (r *PathMayWithVersion) UnmarshalText(text []byte) error {
@@ -51,8 +56,18 @@ func (r PathMayWithVersion) String() string {
 	if r.IsLocalReplace() {
 		return r.Path
 	}
-	if r.Version != "" {
-		return r.Path + "@" + r.Version
+
+	b := strings.Builder{}
+	b.WriteString(r.Path)
+
+	if r.Version != "" || r.VcsVersion != "" {
+		b.WriteString("@")
+		b.WriteString(r.Version)
+
+		if r.VcsVersion != "" {
+			b.WriteString("#")
+			b.WriteString(r.VcsVersion)
+		}
 	}
-	return r.Path
+	return b.String()
 }

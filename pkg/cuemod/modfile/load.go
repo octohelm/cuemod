@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/parser"
@@ -114,13 +115,19 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 										m.comments[directive+"://"+module] = cg
 
 										r := Require{}
-										r.Version = version
+
+										vv := strings.Split(version, "#")
+										if len(vv) > 1 {
+											r.VcsVersion = ""
+										}
+										r.Version = vv[0]
 
 										for _, attr := range subField.Attrs {
 											k, v := attr.Split()
 
 											switch k {
 											case "vcs":
+												// TODO remove in future
 												value, _ := strconv.Unquote(v)
 												r.VcsVersion = value
 											case "indirect":

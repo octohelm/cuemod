@@ -10,7 +10,6 @@ import (
 
 type Mod struct {
 	modfile.ModFile
-
 	modfile.ModVersion
 
 	// Repo where module in vcs root
@@ -63,6 +62,7 @@ func (m *Mod) SetRequire(module string, modVersion modfile.ModVersion, indirect 
 	}
 
 	r := modfile.Require{}
+
 	r.ModVersion = modVersion
 	r.Indirect = indirect
 
@@ -78,6 +78,15 @@ func (m *Mod) SetRequire(module string, modVersion modfile.ModVersion, indirect 
 	}
 
 	m.Require[module] = r
+
+	if currentReplace, ok := m.Replace[modfile.PathMayWithVersion{Path: module}]; ok {
+		if currentReplace.IsLocalReplace() || currentReplace.Import != "" {
+			return
+		}
+
+		currentReplace.Version = r.ModVersion.Version
+		m.Replace[modfile.PathMayWithVersion{Path: module}] = currentReplace
+	}
 }
 
 func (m *Mod) FixVersion(repo string, version string) string {

@@ -114,7 +114,7 @@ func (m *ModFile) writeReplaces(w io.Writer, replacements []PathMayWithVersion, 
 		f := &ast.Field{Label: ast.NewString(i)}
 
 		if replaceTarget.Path == replaceFrom.Path {
-			f.Value = ast.NewString((&PathMayWithVersion{Version: replaceTarget.Version}).String())
+			f.Value = ast.NewString((&PathMayWithVersion{Version: replaceTarget.Version, VcsVersion: replaceTarget.VcsVersion}).String())
 		} else {
 			f.Value = ast.NewString(replaceTarget.String())
 		}

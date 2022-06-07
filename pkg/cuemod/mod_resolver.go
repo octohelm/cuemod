@@ -41,11 +41,11 @@ func (r *modResolver) ModuleSum() []byte {
 
 	moduleVersions := make([]module.Version, 0)
 
-	for moduleVersion := range r.mods {
-		moduleVersions = append(moduleVersions, moduleVersion)
+	for moduleVersion, m := range r.mods {
+		if m.Root {
+			moduleVersions = append(moduleVersions, moduleVersion)
+		}
 	}
-
-	module.Sort(moduleVersions)
 
 	for _, n := range moduleVersions {
 		m := r.mods[n]

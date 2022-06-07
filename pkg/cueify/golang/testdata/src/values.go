@@ -2,8 +2,6 @@ package src
 
 import (
 	"time"
-
-	yamlv3 "gopkg.in/yaml.v3"
 )
 
 const (
@@ -18,5 +16,3 @@ const (
 )
 
 const Rename = time.ANSIC
-
-const ScalarNode = yamlv3.ScalarNode

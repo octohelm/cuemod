@@ -11,8 +11,8 @@ func TestDownload(t *testing.T) {
 	ctx := context.Background()
 
 	pkgs := map[string]string{
+		"k8s.io/api": "v0.24.0",
 		"github.com/rancher/local-path-provisioner": "v0.0.19",
-		"github.com/jsonnet-libs/k8s-alpha":         "v0.0.0-20210118111845-5e0d0738721f",
 		"github.com/grafana/jsonnet-libs":           "master",
 	}
 

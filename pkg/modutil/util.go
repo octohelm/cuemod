@@ -2,6 +2,7 @@ package modutil
 
 import (
 	"context"
+	"strings"
 
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/vcs"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/web"
@@ -26,10 +27,27 @@ func RepoRootForImportPath(importPath string) (*vcs.RepoRoot, error) {
 
 // Get Module
 func Get(ctx context.Context, path string, version string, verbose bool) *Module {
+	mv := module.Version{Path: path, Version: version}
+	p, err := modfetch.DownloadDir(mv)
+	if err == nil {
+		// found in cache
+		return &Module{
+			Path:    mv.Path,
+			Version: mv.Version,
+			Dir:     p,
+			Sum:     modfetch.Sum(mv),
+		}
+	}
+
 	modload.ForceUseModules = true
 	cfg.BuildX = verbose
 
-	found, err := modload.ListModules(ctx, []string{path + "@" + version}, modload.ListVersions)
+	requestPath := path + "@" + version
+	if strings.HasSuffix(path, ".v3") {
+		requestPath = path
+	}
+
+	found, err := modload.ListModules(ctx, []string{requestPath}, modload.ListVersions)
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +72,16 @@ func Get(ctx context.Context, path string, version string, verbose bool) *Module
 
 // Download Module
 func Download(ctx context.Context, m *Module) {
-	dir, err := modfetch.Download(ctx, module.Version{Path: m.Path, Version: m.Version})
+	mv := module.Version{Path: m.Path, Version: m.Version}
+	dir, err := modfetch.DownloadDir(mv)
+	if err == nil {
+		// found in cache
+		m.Dir = dir
+		m.Sum = modfetch.Sum(module.Version{Path: m.Path, Version: m.Version})
+		return
+	}
+
+	dir, err = modfetch.Download(ctx, mv)
 	if err != nil {
 		m.Error = err.Error()
 		return
