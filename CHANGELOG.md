@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.4](https://github.com/octohelm/cuemod/compare/v0.4.3...v0.4.4)
+
+### Bug Fixes
+
+* **fix** sum only record root pkg ([ab6fe89](https://github.com/octohelm/cuemod/commit/ab6fe8972051d506312ac67f7c58e4719a6d45d6))
+
+
+
 # [0.4.3](https://github.com/octohelm/cuemod/compare/v0.4.2...v0.4.3)
 
 ### Bug Fixes
