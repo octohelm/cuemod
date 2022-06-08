@@ -19,11 +19,11 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 	}
 
 	if m.Replace == nil {
-		m.Replace = map[PathMayWithVersion]ReplaceTarget{}
+		m.Replace = map[VersionedPathIdentity]ReplaceTarget{}
 	}
 
 	if m.Require == nil {
-		m.Require = map[string]Require{}
+		m.Require = map[string]Requirement{}
 	}
 
 	data, err := os.ReadFile(f)
@@ -114,11 +114,11 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 
 										m.comments[directive+"://"+module] = cg
 
-										r := Require{}
+										r := Requirement{}
 
 										vv := strings.Split(version, "#")
 										if len(vv) > 1 {
-											r.VcsVersion = ""
+											r.VcsRef = ""
 										}
 										r.Version = vv[0]
 
@@ -129,7 +129,7 @@ func LoadModFile(dir string, m *ModFile) (bool, error) {
 											case "vcs":
 												// TODO remove in future
 												value, _ := strconv.Unquote(v)
-												r.VcsVersion = value
+												r.VcsRef = value
 											case "indirect":
 												r.Indirect = true
 											}

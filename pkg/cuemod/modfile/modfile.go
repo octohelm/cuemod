@@ -14,13 +14,22 @@ import (
 const ModFilename = "cue.mod/module.cue"
 
 type ModVersion struct {
-	Version    string
-	VcsVersion string
+	Version string
+	VcsRef  string
 }
 
-type Require struct {
+func (mv ModVersion) Exactly() bool {
+	return mv.Version != "" && mv.VcsRef == ""
+}
+
+type Requirement struct {
 	ModVersion
 	Indirect bool
+}
+
+type ReplaceTarget struct {
+	VersionedPathIdentity
+	Import string
 }
 
 type ModFile struct {
@@ -29,18 +38,13 @@ type ModFile struct {
 
 	// Replace
 	// version limit
-	Replace map[PathMayWithVersion]ReplaceTarget
+	Replace map[VersionedPathIdentity]ReplaceTarget
 	// Require same as go root
 	// require { module: version }
 	// indirect require { module:: version }
-	Require map[string]Require
+	Require map[string]Requirement
 
 	comments map[string][]*ast.CommentGroup
-}
-
-type ReplaceTarget struct {
-	PathMayWithVersion
-	Import string
 }
 
 func (m *ModFile) String() string {
@@ -61,17 +65,17 @@ func (m *ModFile) Bytes() []byte {
 
 		sort.Strings(modules)
 
-		m.writeRequires(buf, modules, func(r *Require) bool {
+		m.writeRequires(buf, modules, func(r *Requirement) bool {
 			return !r.Indirect
 		})
 
-		m.writeRequires(buf, modules, func(r *Require) bool {
+		m.writeRequires(buf, modules, func(r *Requirement) bool {
 			return r.Indirect
 		})
 	}
 
 	if len(m.Replace) > 0 {
-		replacements := make([]PathMayWithVersion, 0)
+		replacements := make([]VersionedPathIdentity, 0)
 
 		for r := range m.Replace {
 			replacements = append(replacements, r)
@@ -88,7 +92,6 @@ func (m *ModFile) Bytes() []byte {
 		m.writeReplaces(buf, replacements, func(r *ReplaceTarget) bool {
 			return r.Import != ""
 		})
-
 	}
 
 	data, err := format.Source(buf.Bytes())
@@ -99,7 +102,7 @@ func (m *ModFile) Bytes() []byte {
 	return data
 }
 
-func (m *ModFile) writeReplaces(w io.Writer, replacements []PathMayWithVersion, filter func(replaceTarget *ReplaceTarget) bool) {
+func (m *ModFile) writeReplaces(w io.Writer, replacements []VersionedPathIdentity, filter func(replaceTarget *ReplaceTarget) bool) {
 	fields := make([]interface{}, 0)
 
 	for _, replaceFrom := range replacements {
@@ -114,7 +117,7 @@ func (m *ModFile) writeReplaces(w io.Writer, replacements []PathMayWithVersion, 
 		f := &ast.Field{Label: ast.NewString(i)}
 
 		if replaceTarget.Path == replaceFrom.Path {
-			f.Value = ast.NewString((&PathMayWithVersion{Version: replaceTarget.Version, VcsVersion: replaceTarget.VcsVersion}).String())
+			f.Value = ast.NewString((&VersionedPathIdentity{ModVersion: replaceTarget.ModVersion}).String())
 		} else {
 			f.Value = ast.NewString(replaceTarget.String())
 		}
@@ -143,7 +146,7 @@ replace: %s
 `, string(data))
 }
 
-func (m *ModFile) writeRequires(w io.Writer, modules []string, filter func(r *Require) bool) {
+func (m *ModFile) writeRequires(w io.Writer, modules []string, filter func(r *Requirement) bool) {
 	fields := make([]interface{}, 0)
 
 	// direct require
@@ -156,10 +159,6 @@ func (m *ModFile) writeRequires(w io.Writer, modules []string, filter func(r *Re
 
 		f := &ast.Field{Label: ast.NewString(module)}
 		f.Value = ast.NewString(r.Version)
-
-		if r.VcsVersion != "" && r.VcsVersion != r.Version {
-			f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("vcs", r.VcsVersion)})
-		}
 
 		if r.Indirect {
 			f.Attrs = append(f.Attrs, &ast.Attribute{Text: attr("indirect")})

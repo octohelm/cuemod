@@ -85,30 +85,29 @@ cuem get github.com/grafana/jsonnet-libs@latest
 module: "github.com/octohelm/cuemod"
 
 require: {
-	 // @vsc("release-main"), when upgrade, should use vcs version for upgrade.
-	"dagger.io":          "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
-	"k8s.io/api":         "v0.24.0"
-	"universe.dagger.io": "v0.2.8-0.20220512005159-64cb4f755695" @vcs("release-main")
+	"dagger.io":          "v0.2.8-0.20220512005159-64cb4f755695" 
+	"k8s.io/api":         "v0.24.0" 
+	"universe.dagger.io": "v0.2.8-0.20220512005159-64cb4f755695"
 }
 
 require: {
-	"k8s.io/apimachinery": "v0.24.0" @indirect()
+	"k8s.io/apimachinery": "v0.24.0" @indirect() 
 }
 
 replace: {
 	// replace module with spec version
-	"dagger.io":          "github.com/morlay/dagger/pkg/dagger.io@release-main"
-	"universe.dagger.io": "github.com/morlay/dagger/pkg/universe.dagger.io@release-main"
+	"dagger.io":          "github.com/morlay/dagger/pkg/dagger.io@#release-main"
+	"universe.dagger.io": "github.com/morlay/dagger/pkg/universe.dagger.io@#release-main"
 	
 	 // **notice** only works for current mod
     "github.com/x/a": "../a"
 }
 
 replace: {
-	// declare import method for special import path
-	"k8s.io/api":          "" @import("go")
+	"k8s.io/api": "" @import("go")
 	"k8s.io/apimachinery": "" @import("go")
 }
+
 ```
 
 ### Known issues

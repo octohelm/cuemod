@@ -13,8 +13,7 @@ import (
 
 func PathFor(mod *Mod, importPath string) *Path {
 	i := &Path{}
-	i.Mod = mod
-	i.Module = mod.Module
+	i.Mod = *mod
 
 	if importPath != "" {
 		// when use replace with custom forked repo
@@ -25,6 +24,8 @@ func PathFor(mod *Mod, importPath string) *Path {
 				i.Module = i.Repo
 			}
 		}
+
+		i.Module = i.ModuleRoot()
 		i.SubPath, _ = subDir(i.Module, importPath)
 	}
 
@@ -32,8 +33,7 @@ func PathFor(mod *Mod, importPath string) *Path {
 }
 
 type Path struct {
-	*Mod
-	Module  string
+	Mod
 	SubPath string
 	Replace *ReplaceRule
 }
@@ -43,10 +43,16 @@ func (i Path) String() string {
 
 	if i.Replace != nil {
 		s.WriteString(i.Replace.From)
+
+		if i.SubPath != "" {
+			s.WriteString("/")
+			s.WriteString(i.SubPath)
+		}
+
 		s.WriteString(" => ")
 	}
 
-	s.WriteString(i.Mod.String())
+	s.WriteString(i.Module)
 
 	if i.SubPath != "" {
 		s.WriteString("/")

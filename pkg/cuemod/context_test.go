@@ -29,7 +29,7 @@ func TestContext(t *testing.T) {
 			data, err := cuemodx.EvalContext(ctx, r, ".", cuex.WithEncoding(cuex.JSON))
 			NewWithT(t).Expect(err).To(BeNil())
 			fmt.Println(string(data))
-			NewWithT(t).Expect(r.Mod.Require["k8s.io/api"].Version).To(Equal("v0.24.0"))
+			NewWithT(t).Expect(r.Mod.Require["k8s.io/api"].Version).To(Equal("v0.24.1"))
 		})
 
 		t.Run("EvalContext from exported single file", func(t *testing.T) {

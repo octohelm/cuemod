@@ -3,6 +3,7 @@ package cuemod
 import (
 	"context"
 	"os"
+	"path/filepath"
 
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
@@ -14,12 +15,21 @@ type Mod struct {
 
 	// Repo where module in vcs root
 	Repo string
+	// SubPath mod local sub path
+	SubPath string
 	// Dir module absolute dir
 	Dir string
 	// Root means this import path is mod root
 	Root bool
 	// Sum repo absolute dir sum
 	Sum string
+}
+
+func (m *Mod) ModuleRoot() string {
+	if m.SubPath != "" {
+		return filepath.Join(m.Module, m.SubPath)
+	}
+	return m.Module
 }
 
 func (m *Mod) String() string {
@@ -58,10 +68,10 @@ func (m *Mod) SetRequire(module string, modVersion modfile.ModVersion, indirect 
 	}
 
 	if m.Require == nil {
-		m.Require = map[string]modfile.Require{}
+		m.Require = map[string]modfile.Requirement{}
 	}
 
-	r := modfile.Require{}
+	r := modfile.Requirement{}
 
 	r.ModVersion = modVersion
 	r.Indirect = indirect
@@ -79,21 +89,21 @@ func (m *Mod) SetRequire(module string, modVersion modfile.ModVersion, indirect 
 
 	m.Require[module] = r
 
-	if currentReplace, ok := m.Replace[modfile.PathMayWithVersion{Path: module}]; ok {
+	if currentReplace, ok := m.Replace[modfile.VersionedPathIdentity{Path: module}]; ok {
 		if currentReplace.IsLocalReplace() || currentReplace.Import != "" {
 			return
 		}
 
 		currentReplace.Version = r.ModVersion.Version
-		m.Replace[modfile.PathMayWithVersion{Path: module}] = currentReplace
+		m.Replace[modfile.VersionedPathIdentity{Path: module}] = currentReplace
 	}
 }
 
 func (m *Mod) FixVersion(repo string, version string) string {
 	if m.Require != nil {
 		if r, ok := m.Require[repo]; ok {
-			if r.VcsVersion != "" && r.Version == "v0.0.0" {
-				return r.VcsVersion
+			if r.VcsRef != "" && r.Version == "v0.0.0" {
+				return r.VcsRef
 			}
 			return r.Version
 		}

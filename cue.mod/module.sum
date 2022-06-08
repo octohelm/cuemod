@@ -1,3 +1,4 @@
-github.com/dagger/dagger v0.2.17-0.20220607061721-387f0ef2334f h1:etjAHGeaqWUZlGScQ7fezvhq+Q/Iee5XzRGMw7kB8hY=
+github.com/dagger/dagger v0.2.18-0.20220608023333-dfa7f38ab73d h1:S4E35rNZoOhQP+jhfn2ed2i4cDzMylVibsUu4+NO9KM=
+github.com/dagger/dagger v0.2.18-0.20220608023333-dfa7f38ab73d h1:S4E35rNZoOhQP+jhfn2ed2i4cDzMylVibsUu4+NO9KM=
 k8s.io/api v0.24.1 h1:BjCMRDcyEYz03joa3K1+rbshwh1Ay6oB53+iUx2H8UY=
 k8s.io/apimachinery v0.24.1 h1:ShD4aDxTQKN5zNf8K1RQ2u98ELLdIW7jEnlO9uAMX/I=

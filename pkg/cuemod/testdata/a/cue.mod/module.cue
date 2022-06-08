@@ -1,11 +1,11 @@
 module: "github.com/x/a"
 
 require: {
-	"k8s.io/api": "v0.24.0"
+	"k8s.io/api": "v0.24.1"
 }
 
 require: {
-	"k8s.io/apimachinery": "v0.24.0" @indirect()
+	"k8s.io/apimachinery": "v0.24.1" @indirect()
 }
 
 replace: {

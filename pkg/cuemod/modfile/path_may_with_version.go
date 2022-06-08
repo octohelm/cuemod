@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func ParsePathMayWithVersion(v string) (*PathMayWithVersion, error) {
+func ParsePathMayWithVersion(v string) (*VersionedPathIdentity, error) {
 	if len(v) == 0 {
 		return nil, fmt.Errorf("invalid %s", v)
 	}
@@ -15,27 +15,30 @@ func ParsePathMayWithVersion(v string) (*PathMayWithVersion, error) {
 	i := parts[0]
 
 	if i != "" && i[0] == '.' {
-		return &PathMayWithVersion{Path: i}, nil
+		return &VersionedPathIdentity{Path: i}, nil
 	}
 
 	if len(parts) > 1 {
 		vv := strings.Split(parts[1], "#")
 		if len(vv) > 1 {
-			return &PathMayWithVersion{Path: i, Version: vv[0], VcsVersion: vv[1]}, nil
+			return &VersionedPathIdentity{Path: i, ModVersion: ModVersion{
+				Version: vv[0], VcsRef: vv[1],
+			}}, nil
 		}
-		return &PathMayWithVersion{Path: i, Version: vv[0]}, nil
+		return &VersionedPathIdentity{Path: i, ModVersion: ModVersion{
+			Version: vv[0],
+		}}, nil
 	}
-	return &PathMayWithVersion{Path: i}, nil
+	return &VersionedPathIdentity{Path: i}, nil
 
 }
 
-type PathMayWithVersion struct {
-	Path       string
-	Version    string
-	VcsVersion string
+type VersionedPathIdentity struct {
+	Path string
+	ModVersion
 }
 
-func (r *PathMayWithVersion) UnmarshalText(text []byte) error {
+func (r *VersionedPathIdentity) UnmarshalText(text []byte) error {
 	rp, err := ParsePathMayWithVersion(string(text))
 	if err != nil {
 		return err
@@ -44,15 +47,15 @@ func (r *PathMayWithVersion) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (r PathMayWithVersion) MarshalText() (text []byte, err error) {
+func (r VersionedPathIdentity) MarshalText() (text []byte, err error) {
 	return []byte(r.String()), nil
 }
 
-func (r PathMayWithVersion) IsLocalReplace() bool {
+func (r VersionedPathIdentity) IsLocalReplace() bool {
 	return len(r.Path) > 0 && r.Path[0] == '.'
 }
 
-func (r PathMayWithVersion) String() string {
+func (r VersionedPathIdentity) String() string {
 	if r.IsLocalReplace() {
 		return r.Path
 	}
@@ -60,13 +63,13 @@ func (r PathMayWithVersion) String() string {
 	b := strings.Builder{}
 	b.WriteString(r.Path)
 
-	if r.Version != "" || r.VcsVersion != "" {
+	if r.Version != "" || r.VcsRef != "" {
 		b.WriteString("@")
 		b.WriteString(r.Version)
 
-		if r.VcsVersion != "" {
+		if r.VcsRef != "" {
 			b.WriteString("#")
-			b.WriteString(r.VcsVersion)
+			b.WriteString(r.VcsRef)
 		}
 	}
 	return b.String()

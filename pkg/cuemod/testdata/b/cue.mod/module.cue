@@ -5,8 +5,8 @@ require: {
 }
 
 require: {
-	"k8s.io/api":          "v0.24.0" @indirect()
-	"k8s.io/apimachinery": "v0.24.0" @indirect()
+	"k8s.io/api":          "v0.24.1" @indirect()
+	"k8s.io/apimachinery": "v0.24.1" @indirect()
 }
 
 replace: {
