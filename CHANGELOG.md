@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.7](https://github.com/octohelm/cuemod/compare/v0.4.6...v0.4.7)
+
+### Bug Fixes
+
+* **fix** get import path should use correct vcs ref ([f664979](https://github.com/octohelm/cuemod/commit/f6649798cdaa45a69e97d7c355d50aa26751e956))
+
+
+
 # [0.4.6](https://github.com/octohelm/cuemod/compare/v0.4.5...v0.4.6)
 
 ### Bug Fixes
