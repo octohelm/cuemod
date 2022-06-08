@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.6](https://github.com/octohelm/cuemod/compare/v0.4.5...v0.4.6)
+
+### Bug Fixes
+
+* **fix** get import path should be always upgrade ([f7e3545](https://github.com/octohelm/cuemod/commit/f7e35451af27d88b01768025740b0d7419561ea7))
+
+
+
 # [0.4.5](https://github.com/octohelm/cuemod/compare/v0.4.4...v0.4.5)
 
 ### Bug Fixes
