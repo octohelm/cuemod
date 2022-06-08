@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.5](https://github.com/octohelm/cuemod/compare/v0.4.4...v0.4.5)
+
+### Bug Fixes
+
+* **fix** upgrade issue ([dfae499](https://github.com/octohelm/cuemod/commit/dfae499fd7718a35035526f55d3f6289d3a37e5e))
+
+
+
 # [0.4.4](https://github.com/octohelm/cuemod/compare/v0.4.3...v0.4.4)
 
 ### Bug Fixes
