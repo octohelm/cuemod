@@ -7,14 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
-	"strings"
 
 	"github.com/go-courier/logr"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/octohelm/cuemod/pkg/modutil"
 	"github.com/pkg/errors"
 	"golang.org/x/mod/module"
+	"golang.org/x/mod/semver"
 )
 
 func newModResolver() *modResolver {
@@ -201,12 +200,15 @@ func (r *modResolver) Get(ctx context.Context, pkgImportPath string, modVersion 
 
 func (r *modResolver) get(ctx context.Context, repo string, requestedVersion modfile.ModVersion, importPath string) (*Mod, error) {
 	// fix /v2
-	sub, _ := subDir(repo, importPath)
-	if parts := strings.Split(sub, "/"); len(parts[0]) > 0 && parts[0][0] == 'v' {
-		i, _ := strconv.ParseInt(parts[0][1:], 10, 64)
-		if i >= 2 {
-			repo = repo + "/v" + strconv.FormatInt(i, 10)
-		}
+	if p, m, ok := module.SplitPathVersion(repo); ok {
+		requestedVersion.VcsRef = m
+	} else {
+		repo = p
+	}
+
+	if requestedVersion.Version != "" && !semver.IsValid(requestedVersion.Version) {
+		requestedVersion.VcsRef = requestedVersion.Version
+		requestedVersion.Version = ""
 	}
 
 	if requestedVersion.VcsRef == "" {
