@@ -218,7 +218,9 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion mod
 	forUpgrade := OptsFromContext(ctx).Upgrade
 
 	if forUpgrade || version == "" {
-		version = requestedVersion.VcsRef
+		if requestedVersion.VcsRef != "" {
+			version = requestedVersion.VcsRef
+		}
 	}
 
 	if !forUpgrade {
@@ -232,7 +234,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion mod
 	var root *Mod
 
 	if mod, ok := r.mods[module.Version{Path: repo, Version: version}]; ok && mod.Resolved() {
-		// resole
+		// resolved
 		root = mod
 	} else {
 		m, err := r.downloadIfNeed(ctx, repo, version)

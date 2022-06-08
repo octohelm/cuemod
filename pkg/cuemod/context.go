@@ -138,7 +138,8 @@ func (r *Context) Get(ctx context.Context, i string) error {
 	if i[0] == '.' {
 		return r.autoImport(ctx, i)
 	}
-	return r.download(ctx, i)
+	// get import path should be always upgrade
+	return r.download(WithOpts(ctx, OptUpgrade(true)), i)
 }
 
 func (r *Context) CueModRoot() string {

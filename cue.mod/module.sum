@@ -1,4 +1,1 @@
-github.com/dagger/dagger v0.2.18-0.20220608023333-dfa7f38ab73d h1:S4E35rNZoOhQP+jhfn2ed2i4cDzMylVibsUu4+NO9KM=
-github.com/dagger/dagger v0.2.18-0.20220608023333-dfa7f38ab73d h1:S4E35rNZoOhQP+jhfn2ed2i4cDzMylVibsUu4+NO9KM=
-k8s.io/api v0.24.1 h1:BjCMRDcyEYz03joa3K1+rbshwh1Ay6oB53+iUx2H8UY=
-k8s.io/apimachinery v0.24.1 h1:ShD4aDxTQKN5zNf8K1RQ2u98ELLdIW7jEnlO9uAMX/I=
+github.com/innoai-tech/runtime v0.0.0-20220608062226-8ea0e7f327e6 h1:N9f8lSzpmA75IYgolUS9ecCopiIVUo3e1u1ASXVtrZE=
