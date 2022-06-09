@@ -201,12 +201,14 @@ func (r *modResolver) Get(ctx context.Context, pkgImportPath string, modVersion 
 func (r *modResolver) get(ctx context.Context, repo string, requestedVersion modfile.ModVersion, importPath string) (*Mod, error) {
 	// fix /v2
 	if p, m, ok := module.SplitPathVersion(repo); ok {
-		requestedVersion.VcsRef = m
+		if requestedVersion.VcsRef == "" {
+			requestedVersion.VcsRef = m
+		}
 	} else {
 		repo = p
 	}
 
-	if requestedVersion.Version != "" && !semver.IsValid(requestedVersion.Version) {
+	if requestedVersion.VcsRef == "" && requestedVersion.Version != "" && !semver.IsValid(requestedVersion.Version) {
 		requestedVersion.VcsRef = requestedVersion.Version
 		requestedVersion.Version = ""
 	}

@@ -55,6 +55,9 @@ cuem.eval:
 cuem.fmt:
 	$(CUEM) fmt -l -w ./...
 
+cuem.get.u:
+	$(CUEM) get -u ./...
+
 cuem.get:
 	$(CUEM) get -i=go k8s.io/api k8s.io/apimachinery
 	$(CUEM) get github.com/innoai-tech/runtime@main
