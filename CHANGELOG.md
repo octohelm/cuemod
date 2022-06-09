@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.4.8](https://github.com/octohelm/cuemod/compare/v0.4.7...v0.4.8)
+
+### Bug Fixes
+
+* **fix** should always use VcsRef if exists ([be1b388](https://github.com/octohelm/cuemod/commit/be1b388c6799f4a7764ec645222fcc202e0fd581))
+
+
+
 # [0.4.7](https://github.com/octohelm/cuemod/compare/v0.4.6...v0.4.7)
 
 ### Bug Fixes
