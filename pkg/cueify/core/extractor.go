@@ -8,9 +8,10 @@ import (
 
 	cueast "cuelang.org/go/cue/ast"
 	"cuelang.org/go/cue/format"
-	"github.com/octohelm/cuemod/version"
 	"github.com/pkg/errors"
 	"golang.org/x/mod/sumdb/dirhash"
+
+	"github.com/octohelm/cuemod/pkg/version"
 )
 
 type Extractor interface {

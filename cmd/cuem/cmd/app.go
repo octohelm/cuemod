@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/octohelm/cuemod/pkg/cli"
-	"github.com/octohelm/cuemod/version"
+	"github.com/octohelm/cuemod/pkg/version"
 )
 
 var app = cli.NewApp("cuemod", version.FullVersion(), &ProjectFlags{})

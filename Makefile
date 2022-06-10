@@ -4,12 +4,6 @@ export GIT_REF ?= HEAD
 DAGGER = dagger --log-format=plain
 CUEM = go run ./cmd/cuem
 
-tar:
-	mkdir -p build/tar
-	$(foreach n,$(shell ls build/output),\
-		tar -czf "$(PWD)/build/tar/$(n).tar.gz" -C $(PWD)/build/output/$(n) .;)
-.PHONY: tar
-
 push:
 	$(DAGGER) do push
 .PHONY: push
