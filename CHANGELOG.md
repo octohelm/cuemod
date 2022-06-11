@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.5.0](https://github.com/octohelm/cuemod/compare/v0.4.8...v0.5.0)
+
+### Features
+
+* **feat** added embed stdlib support ([abda8e3](https://github.com/octohelm/cuemod/commit/abda8e30ffcfca0c8aae52f133b51ddcd1220407))
+
+
+
 # [0.4.8](https://github.com/octohelm/cuemod/compare/v0.4.7...v0.4.8)
 
 ### Bug Fixes
