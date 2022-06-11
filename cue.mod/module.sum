@@ -1,3 +1,5 @@
-dagger.io devel h1:XIeREHXLleLJQlR8mZ2dfRAoKbJIIR2u1ZrHaUPTbZs=
-github.com/innoai-tech/runtime v0.0.0-20220610150018-093e8031f7ea h1:/JOw3m7pq+VqjXxZ/oBlaBlOjimOCJYeMKFml7cma7Y=
-universe.dagger.io devel h1:BmO1978PxnkiHCqDdaVLx9VnB4gV1n9v8enKccr/R9k=
+dagger.io v0.3.0 h1:D0849RL/mlhC8R/KEybzvxyUTBQqbcnAeqyfLoNrh/w=
+github.com/dagger/dagger v0.2.18-0.20220608075319-28308bda2857 h1:TKNOxJ7ACO64C2iZqfupiy0IKxAHzOq97Rl30qogKQI=
+github.com/dagger/dagger v0.2.18-0.20220608075319-28308bda2857 h1:TKNOxJ7ACO64C2iZqfupiy0IKxAHzOq97Rl30qogKQI=
+github.com/innoai-tech/runtime v0.0.0-20220611083438-5302b71a14b4 h1:BGb6gYSrEa2TIPuOCQt/DCTsWVCp3Aj+g6NHQp8FniM=
+universe.dagger.io v0.3.0 h1:NZfHcYU+nd4gxBaoQjgxtGz2TJvHWDbxhroqhK6aYz0=
