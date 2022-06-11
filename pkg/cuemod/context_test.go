@@ -13,6 +13,8 @@ import (
 	"github.com/octohelm/cuemod/pkg/cuex"
 	"github.com/octohelm/cuemod/pkg/cuex/format"
 	. "github.com/onsi/gomega"
+
+	_ "github.com/octohelm/cuemod/pkg/cuemod/testdata/embedstdlib"
 )
 
 func TestContext(t *testing.T) {

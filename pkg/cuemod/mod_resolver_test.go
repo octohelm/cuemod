@@ -9,6 +9,8 @@ import (
 	"github.com/go-courier/logr"
 
 	. "github.com/onsi/gomega"
+
+	_ "github.com/octohelm/cuemod/pkg/cuemod/testdata/embedstdlib"
 )
 
 func TestModResolver(t *testing.T) {
@@ -17,6 +19,13 @@ func TestModResolver(t *testing.T) {
 	ctx = WithOpts(ctx, OptVerbose(true))
 
 	m := newModResolver()
+
+	t.Run("should resolve stdlib", func(t *testing.T) {
+		mod, err := m.Get(ctx, "std.x.io/a", modfile.ModVersion{VcsRef: "main"})
+		NewWithT(t).Expect(err).To(BeNil())
+		NewWithT(t).Expect(mod.Module).To(Equal("std.x.io"))
+		NewWithT(t).Expect(mod.Repo).To(Equal("std.x.io"))
+	})
 
 	t.Run("should get sub when go.mod exists", func(t *testing.T) {
 		mod, err := m.Get(ctx, "github.com/open-telemetry/opentelemetry-go/exporters/prometheus", modfile.ModVersion{VcsRef: "main"})

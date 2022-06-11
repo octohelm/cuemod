@@ -2,6 +2,7 @@ module: "github.com/x/a"
 
 require: {
 	"k8s.io/api": "v0.24.1"
+	"std.x.io":   "v0.3.0"
 }
 
 require: {

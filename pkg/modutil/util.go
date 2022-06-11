@@ -21,8 +21,12 @@ type Module struct {
 	Sum     string
 }
 
-func RepoRootForImportPath(importPath string) (*vcs.RepoRoot, error) {
-	return vcs.RepoRootForImportPath(importPath, vcs.IgnoreMod, web.DefaultSecurity)
+func RepoRootForImportPath(importPath string) (string, error) {
+	r, err := vcs.RepoRootForImportPath(importPath, vcs.IgnoreMod, web.DefaultSecurity)
+	if err != nil {
+		return "", err
+	}
+	return r.Root, nil
 }
 
 // Get Module

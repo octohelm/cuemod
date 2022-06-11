@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-courier/logr"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
+	"github.com/octohelm/cuemod/pkg/cuemod/stdlib"
 	"github.com/octohelm/cuemod/pkg/modutil"
 	"github.com/pkg/errors"
 	"golang.org/x/mod/module"
@@ -241,7 +242,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion mod
 		// resolved
 		root = mod
 	} else {
-		m, err := r.downloadIfNeed(ctx, repo, version)
+		m, err := r.resolveMod(ctx, repo, version)
 		if err != nil {
 			return nil, err
 		}
@@ -316,17 +317,38 @@ func (r *modResolver) repoRoot(ctx context.Context, importPath string) (string, 
 
 	logr.FromContext(ctx).Debug(fmt.Sprintf("resolve %s", importPath))
 
-	repo, err := modutil.RepoRootForImportPath(importPath)
-	if err != nil {
-		return "", errors.Wrapf(err, "resolve `%s` failed", importPath)
+	var root string
+
+	if stdrepo, ok := stdlib.RepoRootForImportPath(importPath); ok {
+		root = stdrepo
+	} else {
+		re, err := modutil.RepoRootForImportPath(importPath)
+		if err != nil {
+			return "", errors.Wrapf(err, "resolve `%s` failed", importPath)
+		}
+		root = re
 	}
 
-	r.SetRepoVersion(repo.Root, modfile.ModVersion{})
+	r.SetRepoVersion(root, modfile.ModVersion{})
 
-	return repo.Root, nil
+	return root, nil
 }
 
-func (modResolver) downloadIfNeed(ctx context.Context, pkg string, version string) (*Mod, error) {
+func (r *modResolver) resolveMod(ctx context.Context, pkg string, version string) (*Mod, error) {
+	cuemModRoot := ""
+	if r.root != nil {
+		cuemModRoot = r.root.Dir
+	}
+
+	stdm, err := stdlib.Mount(ctx, pkg, cuemModRoot)
+	if err != nil {
+		return nil, err
+	}
+
+	if stdm != nil {
+		return stdm, nil
+	}
+
 	info := modutil.Get(ctx, pkg, version, OptsFromContext(ctx).Verbose)
 	if info == nil {
 		return nil, fmt.Errorf("can't found %s@%s", pkg, version)
