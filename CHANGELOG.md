@@ -5,6 +5,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.5.1](https://github.com/octohelm/cuemod/compare/v0.5.0...v0.5.1)
+
+### Bug Fixes
+
+* **fix(cuemod):** should parse comments ([84ccb60](https://github.com/octohelm/cuemod/commit/84ccb60a9bdba9a4c0727490ac77307b0df840ce))
+
+
+
 # [0.5.0](https://github.com/octohelm/cuemod/compare/v0.4.8...v0.5.0)
 
 ### Features
