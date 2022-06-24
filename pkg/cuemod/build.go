@@ -31,7 +31,7 @@ type ImportFunc = func(importPath string, importedAt string) (resolvedDir string
 func OptImportFunc(importFunc ImportFunc) OptionFunc {
 	return func(c *load.Config) {
 		c.ParseFile = func(filename string, src any) (*cueast.File, error) {
-			f, err := parser.ParseFile(filename, src)
+			f, err := parser.ParseFile(filename, src, parser.ParseComments)
 			if err != nil {
 				return nil, err
 			}
