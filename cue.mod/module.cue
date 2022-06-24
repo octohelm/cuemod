@@ -2,7 +2,7 @@ module: "github.com/octohelm/cuemod"
 
 require: {
 	"dagger.io":                      "v0.3.0"
-	"github.com/innoai-tech/runtime": "v0.0.0-20220611083438-5302b71a14b4"
+	"github.com/innoai-tech/runtime": "v0.0.0-20220624011524-77ab1f5dc464"
 	"k8s.io/api":                     "v0.24.1"
 	"universe.dagger.io":             "v0.3.0"
 }

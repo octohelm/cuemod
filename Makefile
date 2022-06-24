@@ -1,19 +1,8 @@
 export GIT_SHA ?= $(shell git rev-parse HEAD)
 export GIT_REF ?= HEAD
 
-DAGGER = dagger --log-format=plain
 CUEM = go run ./cmd/cuem
 
-push:
-	$(DAGGER) do push
-.PHONY: push
-
-build:
-	$(DAGGER) do build
-.PHONY: build
-
-dagger.dep:
-	$(CUEM) get ./cuepkg/...
 
 INTERNAL_FORK = go run ./tool/internalfork
 
