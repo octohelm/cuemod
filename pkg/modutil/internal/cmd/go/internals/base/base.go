@@ -12,10 +12,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
-
-	exec "github.com/octohelm/cuemod/pkg/modutil/internal/internals/execabs"
 
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/cfg"
 	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/str"

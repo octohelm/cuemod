@@ -51,7 +51,7 @@ func Get(ctx context.Context, path string, version string, verbose bool) *Module
 		requestPath = path
 	}
 
-	found, err := modload.ListModules(ctx, []string{requestPath}, modload.ListVersions)
+	found, err := modload.ListModules(ctx, []string{requestPath}, modload.ListVersions, "")
 	if err != nil {
 		panic(err)
 	}

@@ -10,7 +10,7 @@ fork.go.internal:
 	$(INTERNAL_FORK) \
 		-p cmd/go/internal/modload \
 		-p cmd/go/internal/modfetch \
-		-p internal/execabs \
+		-p internal/godebug \
 		./pkg/modutil/internal
 
 install:

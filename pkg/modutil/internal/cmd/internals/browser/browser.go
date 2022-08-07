@@ -7,10 +7,9 @@ package browser
 
 import (
 	"os"
+	"os/exec"
 	"runtime"
 	"time"
-
-	exec "github.com/octohelm/cuemod/pkg/modutil/internal/internals/execabs"
 )
 
 // Commands returns a list of possible commands to use to open a url.
