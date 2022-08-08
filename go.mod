@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	cuelang.org/go v0.4.3
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.0.2
 	github.com/go-logr/logr v1.2.3
 	github.com/go-logr/zapr v1.2.3
@@ -12,7 +11,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
-	go.uber.org/zap v1.21.0
+	go.uber.org/zap v1.22.0
 	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3
 	golang.org/x/tools v0.1.10
 	k8s.io/apiextensions-apiserver v0.24.3
