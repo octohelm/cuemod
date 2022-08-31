@@ -4,11 +4,10 @@ go 1.19
 
 require (
 	cuelang.org/go v0.4.3
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.0.2
 	github.com/go-logr/logr v1.2.3
 	github.com/go-logr/zapr v1.2.3
-	github.com/onsi/gomega v1.20.0
+	github.com/onsi/gomega v1.20.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
