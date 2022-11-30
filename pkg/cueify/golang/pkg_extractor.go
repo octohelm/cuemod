@@ -244,7 +244,6 @@ func (e *pkgExtractor) cueTypeFromAstType(ctx context.Context, astType ast.Expr,
 	}
 
 	tpe := e.makeRootType(ctx, astType, defined)
-
 	e.cueTypes[astType] = tpe
 	return tpe
 }
@@ -285,12 +284,13 @@ func (e *pkgExtractor) makeTypeFromNamed(ctx context.Context, named *types.Named
 
 func (e *pkgExtractor) makeTypeFromAstType(ctx context.Context, astType ast.Expr) cueast.Expr {
 	switch x := (astType).(type) {
-
 	case *ast.SelectorExpr:
 		return e.ref(ctx, x)
 	case *ast.Ident:
 		if tv, ok := e.TypesInfo.Types[astType]; ok {
 			switch tv.Type.(type) {
+			case *types.Interface:
+				return any()
 			case *types.Basic:
 				return e.ident(x.Name, false)
 			case *types.Named:

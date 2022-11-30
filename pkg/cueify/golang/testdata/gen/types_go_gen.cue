@@ -10,6 +10,8 @@ import pkg_time "time"
 
 #Map: [#Protocol]: string
 
+#MapAny: [string]: _
+
 #Bytes: bytes
 
 #Slice: [...string]

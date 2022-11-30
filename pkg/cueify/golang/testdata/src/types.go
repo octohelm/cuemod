@@ -11,6 +11,8 @@ type String string
 
 type Map map[Protocol]string
 
+type MapAny map[string]any
+
 type Bytes []byte
 
 type Slice []string

@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	cuelang.org/go v0.5.0-beta.1
+	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.1.0
 	github.com/onsi/gomega v1.20.1
 	github.com/pkg/errors v0.9.1
