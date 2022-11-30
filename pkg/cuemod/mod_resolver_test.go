@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/go-courier/logr/slog"
+
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 
 	"github.com/go-courier/logr"
@@ -14,7 +16,7 @@ import (
 )
 
 func TestModResolver(t *testing.T) {
-	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
+	ctx := logr.WithLogger(context.Background(), slog.Logger(slog.Default()))
 
 	ctx = WithOpts(ctx, OptVerbose(true))
 

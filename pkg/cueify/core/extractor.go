@@ -49,7 +49,6 @@ func (extractors Extractors) Detect(ctx context.Context, src string) (string, ma
 
 func (extractors Extractors) ExtractToDir(ctx context.Context, name string, src string, gen string) error {
 	if extractor, ok := extractors[name]; ok {
-
 		return extractors.do(ctx, extractor, src, gen)
 	}
 	return errors.Errorf("unsupport extractor `%s`", name)

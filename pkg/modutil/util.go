@@ -4,12 +4,11 @@ import (
 	"context"
 	"strings"
 
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/vcs"
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/web"
-
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/cfg"
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/modfetch"
-	"github.com/octohelm/cuemod/pkg/modutil/internal/cmd/go/internals/modload"
+	"github.com/octohelm/cuemod/internal/cmd/go/internals/cfg"
+	"github.com/octohelm/cuemod/internal/cmd/go/internals/modfetch"
+	"github.com/octohelm/cuemod/internal/cmd/go/internals/modload"
+	"github.com/octohelm/cuemod/internal/cmd/go/internals/vcs"
+	"github.com/octohelm/cuemod/internal/cmd/go/internals/web"
 	"golang.org/x/mod/module"
 )
 

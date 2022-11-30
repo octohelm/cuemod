@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/go-courier/logr/slog"
+
 	"github.com/go-courier/logr"
 	"github.com/octohelm/cuemod/pkg/cuemod"
 	"github.com/octohelm/cuemod/pkg/cuemodx"
@@ -20,7 +22,7 @@ import (
 func TestContext(t *testing.T) {
 	cwd, _ := os.Getwd()
 
-	ctx := logr.WithLogger(context.Background(), logr.StdLogger())
+	ctx := logr.WithLogger(context.Background(), slog.Logger(slog.Default()))
 	ctx = cuemod.WithOpts(ctx, cuemod.OptVerbose(true))
 
 	t.Run("mod a", func(t *testing.T) {

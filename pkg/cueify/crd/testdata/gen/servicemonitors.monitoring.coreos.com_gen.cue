@@ -9,7 +9,7 @@ v1: #ServiceMonitor: {
 	kind: "ServiceMonitor"
 	metadata?: {
 		annotations?: [string]: string
-		labels?: [string]: string
+		labels?: [string]:      string
 		name?:      string
 		namespace?: string
 	}
