@@ -1,5 +1,5 @@
-cuelang.org/go v0.5.0-beta.1 h1:E0suGm8KI5S7D6z17xwLxtRQzFU5GITmpRTb6j6Sn78=
-cuelang.org/go v0.5.0-beta.1/go.mod h1:okjJBHFQFer+a41sAe2SaGm1glWS8oEb6CmJvn5Zdws=
+cuelang.org/go v0.5.0-beta.2 h1:am5M7jGvNTJ0rnjrFNyvE7fucL/wRqb0emK4XxdThQI=
+cuelang.org/go v0.5.0-beta.2/go.mod h1:okjJBHFQFer+a41sAe2SaGm1glWS8oEb6CmJvn5Zdws=
 github.com/cockroachdb/apd/v2 v2.0.2 h1:weh8u7Cneje73dDh+2tEVLUvyBc89iwepWCD8b8034E=
 github.com/cockroachdb/apd/v2 v2.0.2/go.mod h1:DDxRlzC2lo3/vSlmSoS7JkqbbrARPuFOGr0B9pvN3Gw=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
