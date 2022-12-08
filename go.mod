@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	cuelang.org/go v0.5.0-beta.1
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.1.0
 	github.com/onsi/gomega v1.20.1
 	github.com/pkg/errors v0.9.1
@@ -14,7 +13,7 @@ require (
 	golang.org/x/mod v0.7.0
 	golang.org/x/tools v0.2.0
 	k8s.io/apiextensions-apiserver v0.25.4
-	k8s.io/apimachinery v0.25.4
+	k8s.io/apimachinery v0.25.5
 	sigs.k8s.io/yaml v1.3.0
 )
 
@@ -36,8 +35,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 	github.com/protocolbuffers/txtpbfmt v0.0.0-20220926135727-61ed6f8e4d6e // indirect
-	golang.org/x/net v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
