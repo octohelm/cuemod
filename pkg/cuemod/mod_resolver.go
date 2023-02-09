@@ -289,7 +289,7 @@ func (r *modResolver) get(ctx context.Context, repo string, requestedVersion mod
 				ok, err := sub.LoadInfo(ctx)
 				if err != nil {
 					// if subPath contains go.mod, it will be empty
-					if os.IsNotExist(errors.Unwrap(err)); err != nil {
+					if os.IsNotExist(errors.Unwrap(err)) {
 						return r.get(ctx, sub.Module, requestedVersion, importPath)
 					}
 					return nil, err
