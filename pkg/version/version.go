@@ -5,13 +5,9 @@ const (
 )
 
 var (
-	Version  = DevelopmentVersion
-	Revision = "-"
+	version = DevelopmentVersion
 )
 
 func FullVersion() string {
-	if len([]byte(Revision)) > 7 {
-		return Version + ".sha+" + Revision[0:7]
-	}
-	return Version + ".sha+" + Revision
+	return version
 }

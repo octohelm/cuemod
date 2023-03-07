@@ -15,6 +15,7 @@ var OSArchSupportsCgo = map[string]bool{
 	"freebsd/amd64":   true,
 	"freebsd/arm":     true,
 	"freebsd/arm64":   true,
+	"freebsd/riscv64": true,
 	"illumos/amd64":   true,
 	"ios/amd64":       true,
 	"ios/arm64":       true,

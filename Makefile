@@ -1,9 +1,5 @@
-export GIT_SHA ?= $(shell git rev-parse HEAD)
-export GIT_REF ?= HEAD
-
-DAGGER=dagger
+WAGON=wagon -p ./wagon.cue
 CUEM = go run ./cmd/cuem
-
 
 INTERNAL_FORK = go run ./tool/internalfork
 
@@ -14,9 +10,14 @@ fork.go.internal:
 		-p internal/godebug \
 		./internal
 
+ship:
+	$(WAGON) do go ship pushx
+
+archive:
+	$(WAGON) do go archive --output ./.wagon/output
+
 install:
-	$(DAGGER) do go archive
-	mv ./build/output/cuem_$(shell go env GOOS)_$(shell go env GOARCH)/cuem ${GOPATH}/bin/cuem
+	go install ./cmd/cuem
 
 fmt:
 	goimports -l -w .

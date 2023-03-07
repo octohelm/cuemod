@@ -1,7 +1,7 @@
 .idea/
+.wagon/
 
 bin/
-build/
 vendor/
 jsonnetpkg/
 

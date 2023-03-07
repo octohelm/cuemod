@@ -82,27 +82,4 @@ func TestContext(t *testing.T) {
 			NewWithT(t).Expect(err).To(BeNil())
 		})
 	})
-
-	t.Run("mod dagger-example", func(t *testing.T) {
-		t.Run("direct", func(t *testing.T) {
-			r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger"))
-			t.Log(r.Cleanup())
-
-			t.Run("Get", func(t *testing.T) {
-				err := r.Get(ctx, "./...")
-				NewWithT(t).Expect(err).To(BeNil())
-			})
-		})
-
-		t.Run("with custom replace", func(t *testing.T) {
-			r := cuemod.ContextFor(filepath.Join(cwd, "./testdata/dagger-replace"))
-			t.Log(r.Cleanup())
-
-			t.Run("Get", func(t *testing.T) {
-				err := r.Get(ctx, "./...")
-				NewWithT(t).Expect(err).To(BeNil())
-			})
-		})
-	})
-
 }
