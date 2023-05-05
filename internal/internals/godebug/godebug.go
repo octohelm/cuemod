@@ -87,6 +87,20 @@ func (s *Setting) Value() string {
 	return *s.value.Load()
 }
 
+// setUpdate is provided by package runtime.
+// It calls update(def, env), where def is the default GODEBUG setting
+// and env is the current value of the $GODEBUG environment variable.
+// After that first call, the runtime calls update(def, env)
+// again each time the environment variable changes
+// (due to use of os.Setenv, for example).
+//
+//go:linkname setUpdate
+func setUpdate(update func(string, string))
+
+func init() {
+	//setUpdate(update)
+}
+
 var updateMu sync.Mutex
 
 // update records an updated GODEBUG setting.
