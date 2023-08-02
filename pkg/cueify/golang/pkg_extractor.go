@@ -462,21 +462,14 @@ func (e *pkgExtractor) addFieldsFromAstStructType(ctx context.Context, x *ast.St
 				continue
 			}
 
-			var label cueast.Label
-
-			if kind == cuetoken.ISA {
-				label = e.ident(fieldName, true)
-			} else {
-				label = cueast.NewString(fieldName)
-			}
+			label := cueast.NewString(fieldName)
 
 			field := &cueast.Field{Label: label, Value: typ}
 
 			addComments(field, e.cueCommentGroup(astField.Doc, true), e.cueCommentGroup(astField.Comment, false))
 
 			if kind == cuetoken.OPTION {
-				field.Token = cuetoken.COLON
-				field.Optional = cuetoken.Blank.Pos()
+				field.Constraint = cuetoken.OPTION
 			}
 
 			add(field)
