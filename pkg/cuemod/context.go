@@ -175,6 +175,7 @@ func (r *Context) syncFiles() error {
 	return writeFile(filepath.Join(r.CueModRoot(), ".gitignore"), []byte(strings.TrimSpace(`
 gen/
 pkg/
+module.sum
 `)))
 }
 
