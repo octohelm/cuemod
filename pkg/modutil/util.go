@@ -4,12 +4,13 @@ import (
 	"context"
 	"strings"
 
+	"golang.org/x/mod/module"
+
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/cfg"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/modfetch"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/modload"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/vcs"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/web"
-	"golang.org/x/mod/module"
 )
 
 type Module struct {
@@ -31,14 +32,14 @@ func RepoRootForImportPath(importPath string) (string, error) {
 // Get Module
 func Get(ctx context.Context, path string, version string, verbose bool) *Module {
 	mv := module.Version{Path: path, Version: version}
-	p, err := modfetch.DownloadDir(mv)
+	p, err := modfetch.DownloadDir(ctx, mv)
 	if err == nil {
 		// found in cache
 		return &Module{
 			Path:    mv.Path,
 			Version: mv.Version,
 			Dir:     p,
-			Sum:     modfetch.Sum(mv),
+			Sum:     modfetch.Sum(ctx, mv),
 		}
 	}
 
@@ -66,7 +67,7 @@ func Get(ctx context.Context, path string, version string, verbose bool) *Module
 			m.Error = info.Error.Err
 		} else {
 			m.Dir = info.Dir
-			m.Sum = modfetch.Sum(module.Version{Path: m.Path, Version: m.Version})
+			m.Sum = modfetch.Sum(ctx, module.Version{Path: m.Path, Version: m.Version})
 		}
 		return m
 	}
@@ -76,11 +77,11 @@ func Get(ctx context.Context, path string, version string, verbose bool) *Module
 // Download Module
 func Download(ctx context.Context, m *Module) {
 	mv := module.Version{Path: m.Path, Version: m.Version}
-	dir, err := modfetch.DownloadDir(mv)
+	dir, err := modfetch.DownloadDir(ctx, mv)
 	if err == nil {
 		// found in cache
 		m.Dir = dir
-		m.Sum = modfetch.Sum(module.Version{Path: m.Path, Version: m.Version})
+		m.Sum = modfetch.Sum(ctx, module.Version{Path: m.Path, Version: m.Version})
 		return
 	}
 
@@ -90,5 +91,5 @@ func Download(ctx context.Context, m *Module) {
 		return
 	}
 	m.Dir = dir
-	m.Sum = modfetch.Sum(module.Version{Path: m.Path, Version: m.Version})
+	m.Sum = modfetch.Sum(ctx, module.Version{Path: m.Path, Version: m.Version})
 }

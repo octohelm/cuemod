@@ -3,10 +3,11 @@ package cmd
 import (
 	"context"
 
+	xslog "log/slog"
+
 	"github.com/go-courier/logr"
 	"github.com/go-courier/logr/slog"
 	"github.com/octohelm/cuemod/pkg/cuemod"
-	xslog "golang.org/x/exp/slog"
 )
 
 type ProjectFlags struct {

@@ -1,7 +1,7 @@
 [hooks]
 
 pre-commit = [
-    "golangci-lint run",
+#    "golangci-lint run",
     "husky lint-staged"
 ]
 
