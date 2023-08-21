@@ -4,6 +4,8 @@ go 1.21
 
 require (
 	cuelang.org/go v0.6.0
+	github.com/blang/semver/v4 v4.0.0
+	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.3.0
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
