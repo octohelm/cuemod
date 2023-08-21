@@ -5,7 +5,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.8.1](https://github.com/octohelm/cuemod/compare/v0.8.0...v0.8.1)
+
+### Bug Fixes
+
+* **fix** GOPROXY GOSUMDB should with default value ([bc39a0b](https://github.com/octohelm/cuemod/commit/bc39a0b93b6251d32b3855d5e46268653c4f9c63))
+
+
+
 # [0.6.3](https://github.com/octohelm/cuemod/compare/v0.6.2...v0.6.3)
+
 
 
 # [0.5.2](https://github.com/octohelm/cuemod/compare/v0.5.1...v0.5.2)
