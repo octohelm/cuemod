@@ -21,6 +21,19 @@ type Module struct {
 	Sum     string
 }
 
+func envOr(key, def string) string {
+	val := cfg.Getenv(key)
+	if val == "" {
+		val = def
+	}
+	return val
+}
+
+func init() {
+	cfg.GOPROXY = envOr("GOPROXY", "https://proxy.golang.org,direct")
+	cfg.GOSUMDB = envOr("GOSUMDB", "sum.golang.org")
+}
+
 func RepoRootForImportPath(importPath string) (string, error) {
 	r, err := vcs.RepoRootForImportPath(importPath, vcs.IgnoreMod, web.DefaultSecurity)
 	if err != nil {
