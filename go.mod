@@ -3,7 +3,7 @@ module github.com/octohelm/cuemod
 go 1.21
 
 require (
-	cuelang.org/go v0.6.0-rc.1
+	cuelang.org/go v0.6.0
 	github.com/go-courier/logr v0.3.0
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
@@ -11,8 +11,8 @@ require (
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/mod v0.12.0
 	golang.org/x/tools v0.9.3
-	k8s.io/apiextensions-apiserver v0.27.4
-	k8s.io/apimachinery v0.27.4
+	k8s.io/apiextensions-apiserver v0.28.0
+	k8s.io/apimachinery v0.28.0
 	sigs.k8s.io/yaml v1.3.0
 )
 
