@@ -58,7 +58,19 @@ func Mount(ctx context.Context, importPath string, modRoot string) (*mod.Mod, er
 			found := stdlibs[lib]
 
 			m := found.Mod
-			m.Dir = filepath.Join(modRoot, "cue.mod/pkg/.stdlib", fmt.Sprintf("%s@%s", m.Repo, m.Version))
+
+			dirSum, err := HashDir(found.fs, ".", "", dirhash.DefaultHash)
+			if err != nil {
+				return nil, err
+			}
+			m.Sum = dirSum
+
+			m.Dir = filepath.Join(modRoot, "cue.mod/pkg/.stdlib", fmt.Sprintf(
+				"%s@%s-%s",
+				m.Repo,
+				m.Version,
+				m.Sum,
+			))
 
 			if !noWrite {
 				if _, err := os.Stat(m.Dir); os.IsNotExist(err) {
@@ -87,12 +99,6 @@ func Mount(ctx context.Context, importPath string, modRoot string) (*mod.Mod, er
 					if err != nil {
 						return nil, err
 					}
-
-					dirSum, err := dirhash.HashDir(m.Dir, "stdlib", dirhash.DefaultHash)
-					if err != nil {
-						return nil, err
-					}
-					m.Sum = dirSum
 				}
 			}
 
@@ -107,4 +113,36 @@ func isSubDirFor(targetpath string, root string) bool {
 	targetpath = targetpath + "/"
 	root = root + "/"
 	return strings.HasPrefix(targetpath, root)
+}
+
+func HashDir(fs fs.ReadDirFS, dir string, prefix string, hash dirhash.Hash) (string, error) {
+	files := make([]string, 0)
+
+	if err := RangeFile(fs, dir, func(filename string) error {
+		files = append(files, filepath.ToSlash(filepath.Join(prefix, filename)))
+		return nil
+	}); err != nil {
+		return "", err
+	}
+
+	return hash(files, func(name string) (io.ReadCloser, error) {
+		return fs.Open(filepath.Join(dir, strings.TrimPrefix(name, prefix)))
+	})
+}
+
+func RangeFile(f fs.ReadDirFS, root string, each func(filename string) error) error {
+	return fs.WalkDir(f, root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		rel := path
+		if root != "" && root != "." {
+			rel, _ = filepath.Rel(root, path)
+		}
+		return each(rel)
+	})
+
 }
