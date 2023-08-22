@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/mod/sumdb/dirhash"
 
-	"github.com/octohelm/cuemod/pkg/version"
+	"github.com/octohelm/cuemod/internal/version"
 )
 
 type Extractor interface {
@@ -63,7 +63,7 @@ func (Extractors) do(ctx context.Context, extractor Extractor, src string, gen s
 		src = origin
 	}
 
-	dirSum, err := dirhash.HashDir(src, "cuem-"+version.FullVersion(), dirhash.DefaultHash)
+	dirSum, err := dirhash.HashDir(src, "cuem-"+version.Version(), dirhash.DefaultHash)
 	if err != nil {
 		return err
 	}

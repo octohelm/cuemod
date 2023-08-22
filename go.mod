@@ -4,15 +4,14 @@ go 1.21
 
 require (
 	cuelang.org/go v0.6.0
-	github.com/blang/semver/v4 v4.0.0
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-courier/logr v0.3.0
+	github.com/octohelm/x v0.0.0-20230809025256-29102caf446f
 	github.com/onsi/gomega v1.27.10
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	golang.org/x/mod v0.12.0
-	golang.org/x/tools v0.9.3
+	golang.org/x/tools v0.12.0
 	k8s.io/apiextensions-apiserver v0.28.0
 	k8s.io/apimachinery v0.28.0
 	sigs.k8s.io/yaml v1.3.0

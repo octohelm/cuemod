@@ -1,4 +1,4 @@
 github.com/x/a v0.0.0 
 k8s.io/api v0.24.1 h1:BjCMRDcyEYz03joa3K1+rbshwh1Ay6oB53+iUx2H8UY=
 k8s.io/apimachinery v0.24.1 h1:ShD4aDxTQKN5zNf8K1RQ2u98ELLdIW7jEnlO9uAMX/I=
-std.x.io v0.3.0 h1:wU2lHdYTLXrS3/7VtCgAEAD3b1W82ovMqk36QjLH/lA=
+std.x.io v0.3.0 h1:zMsusLxlZQl+XnDx7sJb/FTmknIKYsZ767TnFxIPQow=
