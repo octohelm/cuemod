@@ -65,21 +65,30 @@ func RevInfoFromDir(ctx context.Context, dir string) (*RevInfo, error) {
 		return nil, err
 	}
 
-	version := info.Version
-	base, err := module.PseudoVersionBase(version)
-	if err == nil {
-		version = base
-	}
-	if head.Uncommitted {
-		version += "-dirty"
-	}
-
-	info.Version = PseudoVersion(version, info.Time, info.Short, !module.IsPseudoVersion(info.Version))
+	info.Version = ConvertVersion(info.Version, info.Time, info.Short, head.Uncommitted)
 
 	return info, nil
 }
 
-func PseudoVersion(version string, t time.Time, rev string, exact bool) string {
+func ConvertVersion(version string, t time.Time, rev string, dirty bool) string {
+	exact := true
+	base, err := module.PseudoVersionBase(version)
+	if err == nil {
+		version = base
+		exact = false
+	}
+	if version == "" {
+		version = "v0.0.0"
+		exact = true
+	}
+	if dirty {
+		version += "-dirty"
+		exact = false
+	}
+	return pseudoVersion(version, t, rev, exact)
+}
+
+func pseudoVersion(version string, t time.Time, rev string, exact bool) string {
 	major := semver.Major(version)
 	if major == "" {
 		major = "v0"
