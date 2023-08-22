@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/mod/module"
+
 	"github.com/octohelm/cuemod/pkg/cueify"
 	"github.com/octohelm/cuemod/pkg/cuemod/modfile"
 	"github.com/pkg/errors"
@@ -76,8 +78,6 @@ func (i Path) WithReplace(from string, replaceTarget modfile.ReplaceTarget) *Pat
 }
 
 func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
-	pkgRoot := "cue.mod/pkg"
-
 	if root == i.Dir {
 		// skip root dir
 		return nil
@@ -93,28 +93,40 @@ func (i *Path) SymlinkOrImport(ctx context.Context, root string) error {
 		gen = i.Replace.Import
 	}
 
-	if gen != "" {
-		pkgRoot = "cue.mod/gen/vendor"
+	resolveDest := func(base string, withPathMajor bool, genSource bool) string {
+		// for generated code
+		//
+		// pkg/
+		//   .cuemod/<import_path> -> <GOMODCACHE>/<import_path>@<version>/
+		if genSource {
+			return filepath.Join(root, "cue.mod/pkg/.cuemod", base)
+		}
+		// support multi versions of pkg
+		//
+		// gen/
+		//   <import_path>/v2  -> <GOMODCACHE>/<import_path>@<version>/
+		// pkg/
+		//   <import_path> -> <GOMODCACHE>/<import_path>@<version>/
+		if withPathMajor {
+			return filepath.Join(root, "cue.mod/gen", base)
+		}
+		return filepath.Join(root, "cue.mod/pkg", base)
 	}
 
-	importPath := i.ImportPath()
-	pkgRootPath := filepath.Join(root, pkgRoot, i.ImportPathRoot())
+	_, pathMajor, ok := module.SplitPathVersion(i.ImportPathRoot())
+	withPathMajor := ok && pathMajor != ""
 
-	if err := i.symlink(ctx, i.ImportPathRootDir(), pkgRootPath); err != nil {
+	if err := i.symlink(ctx, i.ImportPathRootDir(), resolveDest(i.ImportPathRoot(), withPathMajor, gen != "")); err != nil {
 		return err
 	}
 
 	if gen != "" {
-		importPathDir := filepath.Join(root, pkgRoot, importPath)
-
-		err := cueify.ExtractToDir(
+		if err := cueify.ExtractToDir(
 			ctx,
 			gen,
-			importPathDir,
-			filepath.Join(root, "cue.mod/gen", importPath),
-		)
-
-		if err != nil {
+			resolveDest(i.ImportPath(), withPathMajor, gen != ""),
+			resolveDest(i.ImportPath(), withPathMajor, false),
+		); err != nil {
 			return err
 		}
 	}

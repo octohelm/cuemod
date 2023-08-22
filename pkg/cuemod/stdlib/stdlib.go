@@ -65,7 +65,7 @@ func Mount(ctx context.Context, importPath string, modRoot string) (*mod.Mod, er
 			}
 			m.Sum = dirSum
 
-			m.Dir = filepath.Join(modRoot, "cue.mod/pkg/.stdlib", fmt.Sprintf(
+			m.Dir = filepath.Join(modRoot, "cue.mod/pkg/.cuemod/std", fmt.Sprintf(
 				"%s@%s-%s",
 				m.Repo,
 				m.Version,

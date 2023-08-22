@@ -1,3 +1,6 @@
+github.com/octohelm/cuemod-versioned-example v0.0.0-20230822070100-38465a937b3c h1:j0f2vNEf469zpLPikhs2Vd/F+4COQs2pDbEKVgFFv0k=
+github.com/octohelm/cuemod-versioned-example/v2 v2.0.1 h1:mZN1uH9VBQvXplE0/yUxtpgMCEmZxz2PHsgidC4aFQk=
+github.com/octohelm/cuemod-versioned-example/v2 v2.0.1 h1:mZN1uH9VBQvXplE0/yUxtpgMCEmZxz2PHsgidC4aFQk=
 github.com/x/a v0.0.0 
 k8s.io/api v0.24.1 h1:BjCMRDcyEYz03joa3K1+rbshwh1Ay6oB53+iUx2H8UY=
 k8s.io/apimachinery v0.24.1 h1:ShD4aDxTQKN5zNf8K1RQ2u98ELLdIW7jEnlO9uAMX/I=

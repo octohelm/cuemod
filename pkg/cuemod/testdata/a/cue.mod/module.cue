@@ -1,8 +1,10 @@
 module: "github.com/x/a"
 
 require: {
-	"k8s.io/api": "v0.24.1"
-	"std.x.io":   "v0.3.0"
+	"github.com/octohelm/cuemod-versioned-example":    "v0.0.0-20230822070100-38465a937b3c"
+	"github.com/octohelm/cuemod-versioned-example/v2": "v2.0.1"
+	"k8s.io/api":                                      "v0.24.1"
+	"std.x.io":                                        "v0.3.0"
 }
 
 require: {

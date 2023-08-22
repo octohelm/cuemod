@@ -5,9 +5,11 @@ require: {
 }
 
 require: {
-	"k8s.io/api":          "v0.24.1" @indirect()
-	"k8s.io/apimachinery": "v0.24.1" @indirect()
-	"std.x.io":            "v0.3.0"  @indirect()
+	"github.com/octohelm/cuemod-versioned-example":    "v0.0.0-20230822070100-38465a937b3c" @indirect()
+	"github.com/octohelm/cuemod-versioned-example/v2": "v2.0.1"                             @indirect()
+	"k8s.io/api":                                      "v0.24.1"                            @indirect()
+	"k8s.io/apimachinery":                             "v0.24.1"                            @indirect()
+	"std.x.io":                                        "v0.3.0"                             @indirect()
 }
 
 replace: {

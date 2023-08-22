@@ -165,9 +165,21 @@ func (r *Context) setRequireFromImportPath(ctx context.Context, p *Path, indirec
 	return r.syncFiles()
 }
 
+var gomodStub = []byte(`
+module github.com/octohelm/cuemod/stub
+
+go 1.21
+`)
+
 func (r *Context) syncFiles() error {
 	if err := writeFile(filepath.Join(r.Mod.Dir, modfile.ModFilename), r.Mod.ModFile.Bytes()); err != nil {
-		return nil
+		return err
+	}
+	if err := writeFile(filepath.Join(r.Mod.Dir, "cue.mod/gen/go.mod"), gomodStub); err != nil {
+		return err
+	}
+	if err := writeFile(filepath.Join(r.Mod.Dir, "cue.mod/pkg/go.mod"), gomodStub); err != nil {
+		return err
 	}
 	if err := writeFile(filepath.Join(r.Mod.Dir, ModSumFilename), r.resolver.ModuleSum()); err != nil {
 		return nil
