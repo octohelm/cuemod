@@ -4,6 +4,9 @@ import (
 	"context"
 	_ "unsafe"
 
+	"golang.org/x/mod/modfile"
+	"golang.org/x/mod/module"
+
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/modfetch"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/modfetch/codehost"
 	"github.com/octohelm/cuemod/internal/cmd/go/internals/vcs"
@@ -51,7 +54,23 @@ func RevInfoFromDir(ctx context.Context, dir string) (*RevInfo, error) {
 		return nil, err
 	}
 
-	r, err := newCodeRepo(code, rr.Root, rr.Root)
+	importPath := rr.Root
+
+	data, err := code.ReadFile(ctx, head.Revision, "go.mod", -1)
+	if err == nil {
+		f, err := modfile.ParseLax("go.mod", data, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		// <import_path>/v2
+		_, pathMajor, ok := module.SplitPathVersion(f.Module.Mod.Path)
+		if ok && pathMajor != "" {
+			importPath += pathMajor
+		}
+	}
+
+	r, err := newCodeRepo(code, rr.Root, importPath)
 	if err != nil {
 		return nil, err
 	}
