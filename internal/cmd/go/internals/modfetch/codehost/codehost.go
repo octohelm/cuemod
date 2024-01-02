@@ -380,13 +380,8 @@ func RunWithStdin(ctx context.Context, dir string, stdin io.Reader, cmdline ...a
 	c.Stdin = stdin
 	c.Stderr = &stderr
 	c.Stdout = &stdout
-
-	// only set when dir under GOMODCACHE
-	if strings.HasPrefix(c.Dir, cfg.GOMODCACHE) {
-		// For Git commands, manually supply GIT_DIR so Git works with safe.bareRepository=explicit set. Noop for other commands.
-		c.Env = append(c.Environ(), "GIT_DIR="+dir)
-	}
-
+	// For Git commands, manually supply GIT_DIR so Git works with safe.bareRepository=explicit set. Noop for other commands.
+	c.Env = append(c.Environ(), "GIT_DIR="+dir)
 	err := c.Run()
 	if err != nil {
 		err = &RunError{Cmd: strings.Join(cmd, " ") + " in " + dir, Stderr: stderr.Bytes(), Err: err}

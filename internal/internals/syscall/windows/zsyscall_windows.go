@@ -37,51 +37,51 @@ func errnoErr(e syscall.Errno) error {
 }
 
 var (
-	modadvapi32 = syscall.NewLazyDLL(sysdll.Add("advapi32.dll"))
-	modiphlpapi = syscall.NewLazyDLL(sysdll.Add("iphlpapi.dll"))
-	modkernel32 = syscall.NewLazyDLL(sysdll.Add("kernel32.dll"))
-	modnetapi32 = syscall.NewLazyDLL(sysdll.Add("netapi32.dll"))
-	modpsapi    = syscall.NewLazyDLL(sysdll.Add("psapi.dll"))
-	moduserenv  = syscall.NewLazyDLL(sysdll.Add("userenv.dll"))
-	modws2_32   = syscall.NewLazyDLL(sysdll.Add("ws2_32.dll"))
+	modadvapi32         = syscall.NewLazyDLL(sysdll.Add("advapi32.dll"))
+	modbcryptprimitives = syscall.NewLazyDLL(sysdll.Add("bcryptprimitives.dll"))
+	modiphlpapi         = syscall.NewLazyDLL(sysdll.Add("iphlpapi.dll"))
+	modkernel32         = syscall.NewLazyDLL(sysdll.Add("kernel32.dll"))
+	modnetapi32         = syscall.NewLazyDLL(sysdll.Add("netapi32.dll"))
+	modpsapi            = syscall.NewLazyDLL(sysdll.Add("psapi.dll"))
+	moduserenv          = syscall.NewLazyDLL(sysdll.Add("userenv.dll"))
+	modws2_32           = syscall.NewLazyDLL(sysdll.Add("ws2_32.dll"))
 
-	procAdjustTokenPrivileges         = modadvapi32.NewProc("AdjustTokenPrivileges")
-	procDuplicateTokenEx              = modadvapi32.NewProc("DuplicateTokenEx")
-	procImpersonateSelf               = modadvapi32.NewProc("ImpersonateSelf")
-	procLookupPrivilegeValueW         = modadvapi32.NewProc("LookupPrivilegeValueW")
-	procOpenThreadToken               = modadvapi32.NewProc("OpenThreadToken")
-	procRevertToSelf                  = modadvapi32.NewProc("RevertToSelf")
-	procSetTokenInformation           = modadvapi32.NewProc("SetTokenInformation")
-	procSystemFunction036             = modadvapi32.NewProc("SystemFunction036")
-	procGetAdaptersAddresses          = modiphlpapi.NewProc("GetAdaptersAddresses")
-	procCreateEventW                  = modkernel32.NewProc("CreateEventW")
-	procGetACP                        = modkernel32.NewProc("GetACP")
-	procGetComputerNameExW            = modkernel32.NewProc("GetComputerNameExW")
-	procGetConsoleCP                  = modkernel32.NewProc("GetConsoleCP")
-	procGetCurrentThread              = modkernel32.NewProc("GetCurrentThread")
-	procGetFileInformationByHandleEx  = modkernel32.NewProc("GetFileInformationByHandleEx")
-	procGetFinalPathNameByHandleW     = modkernel32.NewProc("GetFinalPathNameByHandleW")
-	procGetModuleFileNameW            = modkernel32.NewProc("GetModuleFileNameW")
-	procGetTempPath2W                 = modkernel32.NewProc("GetTempPath2W")
-	procGetVolumeInformationByHandleW = modkernel32.NewProc("GetVolumeInformationByHandleW")
-	procLockFileEx                    = modkernel32.NewProc("LockFileEx")
-	procModule32FirstW                = modkernel32.NewProc("Module32FirstW")
-	procModule32NextW                 = modkernel32.NewProc("Module32NextW")
-	procMoveFileExW                   = modkernel32.NewProc("MoveFileExW")
-	procMultiByteToWideChar           = modkernel32.NewProc("MultiByteToWideChar")
-	procRtlLookupFunctionEntry        = modkernel32.NewProc("RtlLookupFunctionEntry")
-	procRtlVirtualUnwind              = modkernel32.NewProc("RtlVirtualUnwind")
-	procSetFileInformationByHandle    = modkernel32.NewProc("SetFileInformationByHandle")
-	procUnlockFileEx                  = modkernel32.NewProc("UnlockFileEx")
-	procVirtualQuery                  = modkernel32.NewProc("VirtualQuery")
-	procNetShareAdd                   = modnetapi32.NewProc("NetShareAdd")
-	procNetShareDel                   = modnetapi32.NewProc("NetShareDel")
-	procNetUserGetLocalGroups         = modnetapi32.NewProc("NetUserGetLocalGroups")
-	procGetProcessMemoryInfo          = modpsapi.NewProc("GetProcessMemoryInfo")
-	procCreateEnvironmentBlock        = moduserenv.NewProc("CreateEnvironmentBlock")
-	procDestroyEnvironmentBlock       = moduserenv.NewProc("DestroyEnvironmentBlock")
-	procGetProfilesDirectoryW         = moduserenv.NewProc("GetProfilesDirectoryW")
-	procWSASocketW                    = modws2_32.NewProc("WSASocketW")
+	procAdjustTokenPrivileges        = modadvapi32.NewProc("AdjustTokenPrivileges")
+	procDuplicateTokenEx             = modadvapi32.NewProc("DuplicateTokenEx")
+	procImpersonateSelf              = modadvapi32.NewProc("ImpersonateSelf")
+	procLookupPrivilegeValueW        = modadvapi32.NewProc("LookupPrivilegeValueW")
+	procOpenThreadToken              = modadvapi32.NewProc("OpenThreadToken")
+	procRevertToSelf                 = modadvapi32.NewProc("RevertToSelf")
+	procSetTokenInformation          = modadvapi32.NewProc("SetTokenInformation")
+	procProcessPrng                  = modbcryptprimitives.NewProc("ProcessPrng")
+	procGetAdaptersAddresses         = modiphlpapi.NewProc("GetAdaptersAddresses")
+	procCreateEventW                 = modkernel32.NewProc("CreateEventW")
+	procGetACP                       = modkernel32.NewProc("GetACP")
+	procGetComputerNameExW           = modkernel32.NewProc("GetComputerNameExW")
+	procGetConsoleCP                 = modkernel32.NewProc("GetConsoleCP")
+	procGetCurrentThread             = modkernel32.NewProc("GetCurrentThread")
+	procGetFileInformationByHandleEx = modkernel32.NewProc("GetFileInformationByHandleEx")
+	procGetFinalPathNameByHandleW    = modkernel32.NewProc("GetFinalPathNameByHandleW")
+	procGetModuleFileNameW           = modkernel32.NewProc("GetModuleFileNameW")
+	procGetTempPath2W                = modkernel32.NewProc("GetTempPath2W")
+	procLockFileEx                   = modkernel32.NewProc("LockFileEx")
+	procModule32FirstW               = modkernel32.NewProc("Module32FirstW")
+	procModule32NextW                = modkernel32.NewProc("Module32NextW")
+	procMoveFileExW                  = modkernel32.NewProc("MoveFileExW")
+	procMultiByteToWideChar          = modkernel32.NewProc("MultiByteToWideChar")
+	procRtlLookupFunctionEntry       = modkernel32.NewProc("RtlLookupFunctionEntry")
+	procRtlVirtualUnwind             = modkernel32.NewProc("RtlVirtualUnwind")
+	procSetFileInformationByHandle   = modkernel32.NewProc("SetFileInformationByHandle")
+	procUnlockFileEx                 = modkernel32.NewProc("UnlockFileEx")
+	procVirtualQuery                 = modkernel32.NewProc("VirtualQuery")
+	procNetShareAdd                  = modnetapi32.NewProc("NetShareAdd")
+	procNetShareDel                  = modnetapi32.NewProc("NetShareDel")
+	procNetUserGetLocalGroups        = modnetapi32.NewProc("NetUserGetLocalGroups")
+	procGetProcessMemoryInfo         = modpsapi.NewProc("GetProcessMemoryInfo")
+	procCreateEnvironmentBlock       = moduserenv.NewProc("CreateEnvironmentBlock")
+	procDestroyEnvironmentBlock      = moduserenv.NewProc("DestroyEnvironmentBlock")
+	procGetProfilesDirectoryW        = moduserenv.NewProc("GetProfilesDirectoryW")
+	procWSASocketW                   = modws2_32.NewProc("WSASocketW")
 )
 
 func adjustTokenPrivileges(token syscall.Token, disableAllPrivileges bool, newstate *TOKEN_PRIVILEGES, buflen uint32, prevstate *TOKEN_PRIVILEGES, returnlen *uint32) (ret uint32, err error) {
@@ -149,12 +149,12 @@ func SetTokenInformation(tokenHandle syscall.Token, tokenInformationClass uint32
 	return
 }
 
-func RtlGenRandom(buf []byte) (err error) {
+func ProcessPrng(buf []byte) (err error) {
 	var _p0 *byte
 	if len(buf) > 0 {
 		_p0 = &buf[0]
 	}
-	r1, _, e1 := syscall.Syscall(procSystemFunction036.Addr(), 2, uintptr(unsafe.Pointer(_p0)), uintptr(len(buf)), 0)
+	r1, _, e1 := syscall.Syscall(procProcessPrng.Addr(), 2, uintptr(unsafe.Pointer(_p0)), uintptr(len(buf)), 0)
 	if r1 == 0 {
 		err = errnoErr(e1)
 	}
@@ -237,14 +237,6 @@ func GetTempPath2(buflen uint32, buf *uint16) (n uint32, err error) {
 	r0, _, e1 := syscall.Syscall(procGetTempPath2W.Addr(), 2, uintptr(buflen), uintptr(unsafe.Pointer(buf)), 0)
 	n = uint32(r0)
 	if n == 0 {
-		err = errnoErr(e1)
-	}
-	return
-}
-
-func GetVolumeInformationByHandle(file syscall.Handle, volumeNameBuffer *uint16, volumeNameSize uint32, volumeNameSerialNumber *uint32, maximumComponentLength *uint32, fileSystemFlags *uint32, fileSystemNameBuffer *uint16, fileSystemNameSize uint32) (err error) {
-	r1, _, e1 := syscall.Syscall9(procGetVolumeInformationByHandleW.Addr(), 8, uintptr(file), uintptr(unsafe.Pointer(volumeNameBuffer)), uintptr(volumeNameSize), uintptr(unsafe.Pointer(volumeNameSerialNumber)), uintptr(unsafe.Pointer(maximumComponentLength)), uintptr(unsafe.Pointer(fileSystemFlags)), uintptr(unsafe.Pointer(fileSystemNameBuffer)), uintptr(fileSystemNameSize), 0)
-	if r1 == 0 {
 		err = errnoErr(e1)
 	}
 	return
