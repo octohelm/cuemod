@@ -2,7 +2,10 @@ package modutil
 
 import (
 	"context"
+	"strings"
 	_ "unsafe"
+
+	"github.com/pkg/errors"
 
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/module"
@@ -20,7 +23,7 @@ func newCodeRepo(code codehost.Repo, codeRoot, path string) (modfetch.Repo, erro
 func lookupCodeRepo(ctx context.Context, rr *vcs.RepoRoot) (codehost.Repo, error)
 
 func finalLookupCodeRepo(ctx context.Context, rr *vcs.RepoRoot, localOk bool) (codehost.Repo, error) {
-	if rr.VCS.Name == "Git" && localOk {
+	if strings.ToLower(rr.VCS.Name) == "git" && localOk {
 		return codehost.LocalGitRepo(ctx, rr.Root)
 	}
 	return lookupCodeRepo(ctx, rr)
@@ -36,12 +39,12 @@ func RevInfoFromDir(ctx context.Context, dir string) (*RevInfo, error) {
 
 	repo, err := c.RemoteRepo(c, rootDir)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "resolve remote repo failed")
 	}
 
 	head, err := c.Status(c, rootDir)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "stat faield")
 	}
 
 	rr := &vcs.RepoRoot{}
@@ -77,7 +80,7 @@ func RevInfoFromDir(ctx context.Context, dir string) (*RevInfo, error) {
 
 	info, err := r.Stat(ctx, head.Revision)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "stat faield")
 	}
 
 	info.Version = version.Convert(info.Version, info.Time, info.Short, head.Uncommitted)
